@@ -1,0 +1,6 @@
+bin/
+lib/
+*.sublime-project
+*.sublime-workspace
+.vscode/
+*.wasm

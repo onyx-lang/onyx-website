@@ -1,0 +1,7 @@
+package otmp
+
+
+#load "core/std"
+#load_all "./src"
+
+

@@ -1,0 +1,19 @@
+{{block "title"}}
+    Wow, such title!
+{{endblock}}
+
+{{block "content"}}
+    <h1>Hi!</h1>
+    <h2>{% $x %}</h2>
+    <h2>{% $y %}</h2>
+
+    <ul>
+    {{foreach $name in $names}}
+        <li>{% $name %}</li>
+    {{endforeach}}
+    </ul>
+{{endblock}}
+
+{{extends "base"}}
+
+

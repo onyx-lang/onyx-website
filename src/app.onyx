@@ -1,0 +1,49 @@
+#inject runtime.vars {
+    Enable_Heap_Debug :: true
+    Debug :: true
+}
+
+use core
+use http {Req :: Request, Res :: Response}
+
+reg: otmp.TemplateRegistry;
+
+@http.route.{.GET, "/index"}
+(req: ^Req, res: ^Res) {
+    reg->render_template("index", ^res.writer, ^.{
+        x = 123,
+        y = "123123",
+        numbers = .[1, 2, 3, 4],
+        names   = .["joe", "jim", "john"],
+    });
+    res->status(200);
+}
+
+main :: () {
+    reg = otmp.registry();
+    reg->load_directory("./www/templates", ".html");
+
+    app := http.application();
+
+    files := http.static("/static/", "./www/static/");
+    app->pipe(^files);
+
+    #if #defined(runtime.vars.Debug) {
+        app->pipe((req, res) => {
+            printf("Before: {}\n", alloc.heap.get_watermark());
+            reg->refresh_templates();
+            printf("After: {}\n", alloc.heap.get_watermark());
+        });
+    }
+
+    router := http.router();
+    router->collect_routes();
+    app->pipe(^router);
+
+    logger := http.logger();
+    app->pipe(^logger);
+
+    app->serve(8080);
+}
+
+

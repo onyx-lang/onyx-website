@@ -1,0 +1,390 @@
+package otmp
+
+
+use core {string, array, iter}
+use core.alloc {as_allocator}
+
+ParseError :: enum {
+    None;
+    Unexpected_Token;
+    Expected_Token;
+
+    Nested_Command;
+
+    Cannot_Nest_Blocks;
+}
+
+
+#package
+TemplateLexer :: struct {
+    // The input string
+    s: ^str;
+    line: u32;
+    col:  u32;
+
+    hit_eof := false;
+
+    inside_command := false;
+    inside_expression := false;
+    error: ParseError;
+
+    token_buffer: [..] TemplateToken;
+}
+
+TemplateToken :: struct {
+    Type :: enum {
+        Error;
+        EOF;
+
+        Text;   // Raw Text
+
+        Command_Start; Command_End;
+        Expression_Start; Expression_End;
+
+        Keyword_Block;
+        Keyword_EndBlock;
+        Keyword_Foreach;
+        Keyword_EndForeach;
+        Keyword_In;
+        Keyword_Extends;
+
+        String_Literal;
+
+        Variable;
+    }
+
+    type: Type;
+    text: str;
+    line: u32;
+    col:  u32;
+}
+
+#inject TemplateLexer {
+    peek :: (self: ^TemplateLexer, n := 0) -> TemplateToken {
+        while n >= self.token_buffer.length {
+            next := self->eat_next_token();
+            if next.type == .EOF do return next;
+
+            self.token_buffer << next;
+        }
+
+        return self.token_buffer[n];
+    }
+
+    consume :: (self: ^TemplateLexer) -> TemplateToken {
+        if !array.empty(self.token_buffer) {
+            tkn := self.token_buffer[0];
+            array.delete(^self.token_buffer, 0);
+            return tkn;
+        }
+
+        return self->eat_next_token();
+    }
+
+    eat_next_token :: (self: ^TemplateLexer) -> TemplateToken {
+        tkn: TemplateToken; 
+        tkn.line = self.line;
+        tkn.col  = self.col;
+        
+        string.strip_leading_whitespace(self.s);
+
+        if string.empty(*self.s) {
+            self.hit_eof = true;
+            yield_token(.EOF);
+        }
+
+        token_match("{{") {
+            if self.inside_command {
+                self.error = .Nested_Command;
+                yield_token(.Error);
+            }
+
+            self.inside_command = true;
+            yield_token(.Command_Start);
+        }
+
+        token_match("}}") {
+            if self.inside_command {
+                self.inside_command = false;
+            }
+
+            yield_token(.Command_End);
+        }
+
+        token_match("{%") {
+            if self.inside_expression {
+                self.error = .Nested_Command;
+                yield_token(.Error);
+            }
+
+            self.inside_expression = true;
+            yield_token(.Expression_Start);
+        }
+
+        token_match("%}") {
+            if self.inside_expression {
+                self.inside_expression = false;
+            }
+
+            yield_token(.Expression_End);
+        }
+
+        if self.inside_command || self.inside_expression {
+            string.strip_leading_whitespace(self.s);
+
+            token_consume("block",      .Keyword_Block);            
+            token_consume("endblock",   .Keyword_EndBlock);            
+            token_consume("foreach",    .Keyword_Foreach);            
+            token_consume("endforeach", .Keyword_EndForeach);            
+            token_consume("in",         .Keyword_In);
+            token_consume("extends",    .Keyword_Extends);
+
+            if self.s.data[0] == #char "\"" {
+                // :TODO add escaped strings
+                string.advance(self.s, 1);
+
+                tkn.text, *self.s = string.bisect(*self.s, #char "\"");
+                
+                yield_token(.String_Literal);
+            }
+
+            if self.s.data[0] == #char "$" {
+                string.advance(self.s, 1);
+
+                tkn.text = string.read_alphanum(self.s);
+
+                yield_token(.Variable);
+            }
+
+        } else {
+            length := 1;
+            while self.s.data[length] != #char "{" && length < self.s.length {
+                length += 1;
+            }
+
+            tkn.text = self.s.data[0 .. length];
+            string.advance(self.s, length);
+            yield_token(.Text);
+        }
+
+        yield_token :: macro (kind: TemplateToken.Type) {
+            tkn.type = kind;
+            return tkn;
+        }
+
+        token_match :: macro (t: str, body: Code) {
+            if string.starts_with(*self.s, t) {
+                string.advance(self.s, t.length);
+
+                #unquote body;
+            }
+        }
+        
+        token_consume :: macro (t: str, kind: TemplateToken.Type) {
+            if string.starts_with(*self.s, t) {
+                tkn.text = self.s.data[0 .. t.length];
+                string.advance(self.s, t.length);
+                yield_token(kind);
+            }
+        }
+    }
+}
+
+#overload
+delete :: (tl: ^TemplateLexer) {
+    delete(^tl.token_buffer);
+}
+
+#overload
+iter.as_iterator :: (tl: ^TemplateLexer) => {
+    return iter.generator(
+        ^.{ tl = tl, hit_error = false },
+        
+        (ctx) => {
+            if !ctx.hit_error {
+                tkn := ctx.tl->consume();
+                if tkn.type == .Error || tkn.type == .EOF {
+                    ctx.hit_error = true;
+                }
+
+                return tkn, true;
+            }
+
+            return .{}, false;
+        }
+    );
+}
+
+
+#package
+TemplateParser :: struct {
+    t: ^Template;
+    l: ^TemplateLexer;
+
+    instruction_targets: [..] ^[..] ^TNode;
+}
+
+#package
+parse_template :: (t: ^Template, s: ^str) -> ParseError {
+    l := TemplateLexer.{s};
+    p := TemplateParser.{t, ^l};
+    p.instruction_targets << ^t.instructions;
+    defer delete(^p.instruction_targets);
+
+    return parse_statements(^p);
+}
+
+#local
+parse_statements :: (use p: ^TemplateParser) -> ParseError {
+    while !p.l.hit_eof {
+        switch tkn := p.l->consume(); tkn.type {
+            case .Command_Start {
+                if err := parse_statement(p); err != .None {
+                    return err;
+                }
+
+                expect_token(p, .Command_End);
+            }
+
+            case .Expression_Start {
+                if node, err := parse_expression(p); err != .None {
+                    return err;
+                } else {
+                    *array.get(instruction_targets, -1) << node;
+                }
+
+                expect_token(p, .Expression_End);
+            }
+
+            case .Text {
+                text_node := make_node(t, TNodeText);
+                text_node.text = string.alloc_copy(tkn.text, as_allocator(^t.node_storage));
+                *array.get(instruction_targets, -1) << text_node;
+            }
+        }
+    }
+
+    return .None;
+}
+
+#local
+parse_statement :: (use p: ^TemplateParser) -> ParseError {
+    switch tkn := p.l->consume(); tkn.type {
+        case .Keyword_Extends {
+            text, err := parse_string(p);
+            if err != .None do return err;
+
+            extend_node := make_node(t, TNodeExtend);
+            extend_node.template_name = text;
+
+            *array.get(instruction_targets, -1) << extend_node;
+        }
+
+        case .Keyword_Block {
+            text, err := parse_string(p);
+            if err != .None do return err;
+
+            block_node := make_node(t, TNodeBlock);
+            block_node.block_name = text;
+
+            *array.get(instruction_targets, -1) << block_node;
+
+            instruction_targets << ^block_node.contents;
+        }
+
+        case .Keyword_EndBlock {
+            array.pop(^instruction_targets);
+        }
+
+        case .Keyword_Foreach {
+            var_tkn: TemplateToken;
+            expect_token(p, .Variable, #(var_tkn));
+
+            expect_token(p, .Keyword_In);
+
+            iter_tkn: TemplateToken;
+            expect_token(p, .Variable, #(iter_tkn));
+
+            var_expr := do {
+                name := string.alloc_copy(iter_tkn.text, as_allocator(^t.node_storage));
+
+                var_expr := make_expr(t, TExprVar);
+                var_expr.var_name = name;
+
+                return var_expr;
+            };
+
+            for_node := make_node(t, TNodeForeach);
+            for_node.var_name = string.alloc_copy(var_tkn.text, as_allocator(^t.node_storage));
+            for_node.list = var_expr;
+
+            *array.get(instruction_targets, -1) << for_node;
+            instruction_targets << ^for_node.body;
+        }
+
+        case .Keyword_EndForeach {
+            array.pop(^instruction_targets);
+        }
+    }
+
+    return .None;
+}
+
+#local
+parse_expression :: (use p: ^TemplateParser) -> (^TExpr, ParseError) {
+    switch tkn := p.l->consume(); tkn.type {
+        case .Keyword_Block {
+            name, err := parse_string(p);
+            if err != .None do return null, err;
+
+            block_expr := make_expr(t, TExprBlock);
+            block_expr.block_name = name;
+
+            return block_expr, .None;
+        }
+
+        case .Variable {
+            name := tkn.text |> string.alloc_copy(as_allocator(^t.node_storage));
+
+            var_expr := make_expr(t, TExprVar);
+            var_expr.var_name = name;
+
+            return var_expr, .None;
+        }
+    }
+
+    return null, .Unexpected_Token;
+}
+
+#local
+parse_string :: (use p: ^TemplateParser) -> (str, ParseError) {
+    str_tkn := p.l->consume();
+    if str_tkn.type != .String_Literal {
+        return "", .Unexpected_Token;
+    }
+
+    value := str_tkn.text |> string.alloc_copy(as_allocator(^t.node_storage));
+
+    return value, .None;
+}
+
+#local
+expect_token :: #match #local {}
+
+#overload
+expect_token :: macro (p: ^TemplateParser, type: TemplateToken.Type, out: Code) {
+    if (p.l->peek()).type != type {
+        return .Expected_Token;
+    }
+
+    (#unquote out) = p.l->consume();
+}
+
+#overload
+expect_token :: macro (p: ^TemplateParser, type: TemplateToken.Type) {
+    if (p.l->peek()).type != type {
+        return .Expected_Token;
+    }
+
+    p.l->consume();
+}

@@ -1,0 +1,90 @@
+package otmp
+
+use core {io, tprintf}
+
+#package
+TemplateRenderer :: struct {
+    t: ^Template;
+    w: ^io.Writer;
+    reg: ^TemplateRegistry;
+
+    scope: ^TemplateScope;
+    blocks: Map(str, ^TNodeBlock);
+
+    error: str;
+}
+
+#package
+render_template :: (use r: ^TemplateRenderer) -> Error {
+    core.printf("{*}\n", scope);
+
+    return render_instructions(r, t.instructions);
+}
+
+#local
+render_instructions :: (use r: ^TemplateRenderer, instrs: [..] ^TNode) -> Error {
+    for instrs {
+        switch it.type {
+            case TNodeText {
+                text := cast(^TNodeText) it;
+                io.write_str(w, text.text);
+            }    
+
+            case TNodeBlock {
+                block := cast(^TNodeBlock) it;
+                if blocks->has(block.block_name) {
+                    error = tprintf("Block '{}' defined multiple times.");
+                    return .Render_Error;
+                }
+
+                blocks[block.block_name] = block;
+            }
+
+            case TNodeExtend {
+                extend := cast(^TNodeExtend) it;
+                template := reg->get_template(extend.template_name);
+                if template == null {
+                    error = tprintf("Template '{}' not found.");
+                    return .Render_Error;
+                }
+
+                if err := render_instructions(r, template.instructions); err != .None {
+                    return err;
+                }
+            }
+
+            case TNodeForeach {
+            }
+
+
+
+            case TExprBlock {
+                block := cast(^TExprBlock) it;
+                if !(blocks->has(block.block_name)) {
+                    continue;
+                }
+
+                if err := render_instructions(r, blocks[block.block_name].contents); err != .None {
+                    return err;
+                }
+            }
+
+            case TExprVar {
+                // :Temporary :TemplateVariables
+                var := cast(^TExprVar) it;
+                if !(scope->has(var.var_name)) {
+                    continue;
+                }
+
+                io.write_format_va(w, "{}", .[scope->get(var.var_name)]);
+            }
+
+            case #default {
+                error = tprintf("Unhandled node type '{}'", it.type);
+                return .Render_Error;
+            }
+        }
+    }
+
+    return .None;
+}
