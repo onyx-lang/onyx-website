@@ -1,6 +1,7 @@
 package otmp
 
 use core {io, tprintf}
+use core.misc {any_iter, any_dereference, any_selector}
 
 #package
 TemplateRenderer :: struct {
@@ -54,6 +55,22 @@ render_instructions :: (use r: ^TemplateRenderer, instrs: [..] ^TNode) -> Error 
             }
 
             case TNodeForeach {
+                // :Temporary :TemplateVariables
+                for_node := cast(^TNodeForeach) it;
+                var := cast(^TExprVar) for_node.list;
+                if !(scope->has(var.var_name)) {
+                    continue;
+                }
+
+                for any_iter(scope->get(var.var_name)) {
+                    scope->put(for_node.var_name, it);
+
+                    if err := render_instructions(r, for_node.body); err != .None {
+                        return err;
+                    }
+                }
+
+                scope->delete(for_node.var_name);
             }
 
 
@@ -69,14 +86,11 @@ render_instructions :: (use r: ^TemplateRenderer, instrs: [..] ^TNode) -> Error 
                 }
             }
 
-            case TExprVar {
-                // :Temporary :TemplateVariables
-                var := cast(^TExprVar) it;
-                if !(scope->has(var.var_name)) {
-                    continue;
-                }
+            case TExprVar, TExprSelector {
+                var := resolve_expr_to_any(r, cast(^TExpr) it);
+                if !var.data do continue;
 
-                io.write_format_va(w, "{}", .[scope->get(var.var_name)]);
+                io.write_format_va(w, "{}", .[var]);
             }
 
             case #default {
@@ -87,4 +101,25 @@ render_instructions :: (use r: ^TemplateRenderer, instrs: [..] ^TNode) -> Error 
     }
 
     return .None;
+}
+
+#local
+resolve_expr_to_any :: (use r: ^TemplateRenderer, expr: ^TExpr) -> any {
+    switch expr.type {
+        case TExprVar {
+            var := cast(^TExprVar) expr;
+            // :ErrorHandling if variable does not exist
+            return scope->get(var.var_name);
+        }
+
+        case TExprSelector {
+            selector := cast(^TExprSelector) expr;
+
+            sub_any := resolve_expr_to_any(r, selector.var);
+            sub_any  = any_dereference(sub_any);
+            return any_selector(sub_any, selector.field);
+        }
+    }
+
+    return .{null, void};
 }

@@ -62,7 +62,9 @@ delete :: (t: ^TemplateRegistry) {
         temp.filepath  = filename |> string.alloc_copy(as_allocator(^self.arena));
         temp.name      = permanent_name;
 
-        parse_template(temp, ^contents);
+        if err := parse_template(temp, ^contents); err != .None {
+            return .Template_Parse_Error;
+        }
 
         self.templates[permanent_name] = temp;
         return .None;

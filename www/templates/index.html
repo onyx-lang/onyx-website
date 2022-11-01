@@ -12,6 +12,28 @@
         <li>{% $name %}</li>
     {{endforeach}}
     </ul>
+
+    <ol>
+    {{foreach $num in $numbers}}
+        <li>{% $num %}</li>
+    {{endforeach}}
+    </ol>
+
+    <table>
+        <tbody>
+            {{foreach $row in $matrix}}
+            <tr>
+                {{foreach $col in $row}}
+                <td>{% $col %}</td>
+                {{endforeach}}
+            </tr>
+            {{endforeach}}
+        </tbody>
+    </table>
+
+    <p>Name: {% $test.templates %} </p>
+    <p>Age:  {% $test.arena %} </p>
+
 {{endblock}}
 
 {{extends "base"}}

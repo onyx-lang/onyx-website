@@ -79,6 +79,8 @@ Error :: enum {
     Template_Not_Found;
     Duplicate_Template;
 
+    Template_Parse_Error;
+
     Render_Error;
 }
 

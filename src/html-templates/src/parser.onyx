@@ -51,6 +51,8 @@ TemplateToken :: struct {
         String_Literal;
 
         Variable;
+        Symbol;
+        Dot;
     }
 
     type: Type;
@@ -78,7 +80,36 @@ TemplateToken :: struct {
             return tkn;
         }
 
-        return self->eat_next_token();
+        tkn := self->eat_next_token();
+        return tkn;
+    }
+
+    eat_characters :: (self: ^TemplateLexer, chars := 1) -> str {
+        for chars {
+            if self.s.data[it] == #char "\n" {
+                self.line += 1;
+                self.col   = 0;
+            }
+
+            self.col += 1;
+        }
+
+        defer string.advance(self.s, chars);
+        return self.s.data[0 .. chars];
+    }
+
+    eat_whitespace :: (self: ^TemplateLexer) {
+        while !string.empty(*self.s) {
+            switch self.s.data[0] {
+                case #char "\n", #char "\t", #char "\r", #char " " {
+                    self->eat_characters(1);
+                }
+
+                case #default {
+                    break break;
+                }
+            }
+        }
     }
 
     eat_next_token :: (self: ^TemplateLexer) -> TemplateToken {
@@ -86,7 +117,7 @@ TemplateToken :: struct {
         tkn.line = self.line;
         tkn.col  = self.col;
         
-        string.strip_leading_whitespace(self.s);
+        self->eat_whitespace();
 
         if string.empty(*self.s) {
             self.hit_eof = true;
@@ -130,7 +161,7 @@ TemplateToken :: struct {
         }
 
         if self.inside_command || self.inside_expression {
-            string.strip_leading_whitespace(self.s);
+            self->eat_whitespace();
 
             token_consume("block",      .Keyword_Block);            
             token_consume("endblock",   .Keyword_EndBlock);            
@@ -138,22 +169,42 @@ TemplateToken :: struct {
             token_consume("endforeach", .Keyword_EndForeach);            
             token_consume("in",         .Keyword_In);
             token_consume("extends",    .Keyword_Extends);
+            token_consume(".",          .Dot);
 
             if self.s.data[0] == #char "\"" {
                 // :TODO add escaped strings
-                string.advance(self.s, 1);
+                self->eat_characters(1);
 
-                tkn.text, *self.s = string.bisect(*self.s, #char "\"");
+                index := string.index_of(*self.s, #char "\"");
+                tkn.text = self->eat_characters(index);
+                self->eat_characters(1);
                 
                 yield_token(.String_Literal);
             }
 
             if self.s.data[0] == #char "$" {
-                string.advance(self.s, 1);
+                self->eat_characters(1);
 
-                tkn.text = string.read_alphanum(self.s);
+                chars := 0;
+                while chars < self.s.length && self.s.data[chars]->is_alphanum() {
+                     chars += 1;
+                }
+
+                tkn.text = self->eat_characters(chars);
 
                 yield_token(.Variable);
+            }
+
+            if self.s.data[0]->is_alphanum() {
+                chars := 0;
+                while chars < self.s.length &&
+                    (self.s.data[chars]->is_alphanum() || self.s.data[chars] == #char "_") {
+                     chars += 1;
+                }
+
+                tkn.text = self->eat_characters(chars);
+
+                yield_token(.Symbol);
             }
 
         } else {
@@ -162,8 +213,7 @@ TemplateToken :: struct {
                 length += 1;
             }
 
-            tkn.text = self.s.data[0 .. length];
-            string.advance(self.s, length);
+            tkn.text = self->eat_characters(length);
             yield_token(.Text);
         }
 
@@ -174,7 +224,7 @@ TemplateToken :: struct {
 
         token_match :: macro (t: str, body: Code) {
             if string.starts_with(*self.s, t) {
-                string.advance(self.s, t.length);
+                tkn.text = self->eat_characters(t.length);
 
                 #unquote body;
             }
@@ -182,8 +232,7 @@ TemplateToken :: struct {
         
         token_consume :: macro (t: str, kind: TemplateToken.Type) {
             if string.starts_with(*self.s, t) {
-                tkn.text = self.s.data[0 .. t.length];
-                string.advance(self.s, t.length);
+                tkn.text = self->eat_characters(t.length);
                 yield_token(kind);
             }
         }
@@ -332,6 +381,9 @@ parse_statement :: (use p: ^TemplateParser) -> ParseError {
 
 #local
 parse_expression :: (use p: ^TemplateParser) -> (^TExpr, ParseError) {
+    retval: ^TExpr = null;
+    err := ParseError.None;
+
     switch tkn := p.l->consume(); tkn.type {
         case .Keyword_Block {
             name, err := parse_string(p);
@@ -340,7 +392,7 @@ parse_expression :: (use p: ^TemplateParser) -> (^TExpr, ParseError) {
             block_expr := make_expr(t, TExprBlock);
             block_expr.block_name = name;
 
-            return block_expr, .None;
+            retval = block_expr;
         }
 
         case .Variable {
@@ -349,11 +401,40 @@ parse_expression :: (use p: ^TemplateParser) -> (^TExpr, ParseError) {
             var_expr := make_expr(t, TExprVar);
             var_expr.var_name = name;
 
-            return var_expr, .None;
+            retval = var_expr;
         }
     }
 
-    return null, .Unexpected_Token;
+    if retval == null {
+        err = .Unexpected_Token;
+    }
+
+    while true do switch tkn := p.l->peek(); tkn.type {
+        case .Dot {
+            p.l->consume();
+
+            sym_tkn: TemplateToken;
+
+            // this is gross...
+            if err := do {
+                expect_token(p, .Symbol, #(sym_tkn));
+                return .None;
+            }; err != .None {
+                err = .Unexpected_Token;
+                break break;
+            }
+
+            select_expr := make_expr(t, TExprSelector);
+            select_expr.var = retval;
+            select_expr.field = sym_tkn.text |> string.alloc_copy(as_allocator(^t.node_storage));
+
+            retval = select_expr;
+        }
+
+        case #default do break break;
+    }
+
+    return retval, err;
 }
 
 #local
@@ -374,7 +455,7 @@ expect_token :: #match #local {}
 #overload
 expect_token :: macro (p: ^TemplateParser, type: TemplateToken.Type, out: Code) {
     if (p.l->peek()).type != type {
-        return .Expected_Token;
+        return ParseError.Expected_Token;
     }
 
     (#unquote out) = p.l->consume();
@@ -383,7 +464,7 @@ expect_token :: macro (p: ^TemplateParser, type: TemplateToken.Type, out: Code) 
 #overload
 expect_token :: macro (p: ^TemplateParser, type: TemplateToken.Type) {
     if (p.l->peek()).type != type {
-        return .Expected_Token;
+        return ParseError.Expected_Token;
     }
 
     p.l->consume();
