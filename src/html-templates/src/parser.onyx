@@ -1,7 +1,7 @@
 package otmp
 
 
-use core {string, array, iter}
+use core {string, array, iter, conv}
 use core.alloc {as_allocator}
 
 ParseError :: enum {
@@ -49,10 +49,14 @@ TemplateToken :: struct {
         Keyword_Extends;
 
         String_Literal;
+        Int_Literal;
 
         Variable;
         Symbol;
+
         Dot;
+        Open_Bracket;
+        Close_Bracket;
     }
 
     type: Type;
@@ -170,6 +174,8 @@ TemplateToken :: struct {
             token_consume("in",         .Keyword_In);
             token_consume("extends",    .Keyword_Extends);
             token_consume(".",          .Dot);
+            token_consume("[",          .Open_Bracket);
+            token_consume("]",          .Close_Bracket);
 
             if self.s.data[0] == #char "\"" {
                 // :TODO add escaped strings
@@ -193,6 +199,17 @@ TemplateToken :: struct {
                 tkn.text = self->eat_characters(chars);
 
                 yield_token(.Variable);
+            }
+
+            if self.s.data[0]->is_num() {
+                chars := 0;
+                while chars < self.s.length && self.s.data[chars]->is_num() {
+                     chars += 1;
+                }
+
+                tkn.text = self->eat_characters(chars);
+
+                yield_token(.Int_Literal);
             }
 
             if self.s.data[0]->is_alphanum() {
@@ -403,6 +420,15 @@ parse_expression :: (use p: ^TemplateParser) -> (^TExpr, ParseError) {
 
             retval = var_expr;
         }
+
+        case .Int_Literal {
+            value: i32 = ~~ conv.str_to_i64(tkn.text);
+
+            int_expr := make_expr(t, TExprInt);
+            int_expr.val = value;
+
+            retval = int_expr;
+        }
     }
 
     if retval == null {
@@ -413,22 +439,38 @@ parse_expression :: (use p: ^TemplateParser) -> (^TExpr, ParseError) {
         case .Dot {
             p.l->consume();
 
-            sym_tkn: TemplateToken;
-
-            // this is gross...
-            if err := do {
-                expect_token(p, .Symbol, #(sym_tkn));
-                return .None;
-            }; err != .None {
+            if (p.l->peek()).type != .Symbol {
                 err = .Unexpected_Token;
                 break break;
             }
+
+            sym_tkn := p.l->consume();
 
             select_expr := make_expr(t, TExprSelector);
             select_expr.var = retval;
             select_expr.field = sym_tkn.text |> string.alloc_copy(as_allocator(^t.node_storage));
 
             retval = select_expr;
+        }
+
+        case .Open_Bracket {
+            p.l->consume();
+
+            expr, err' := parse_expression(p);
+            if err != .None do break break;
+
+            subscript_expr := make_expr(t, TExprSubscript);
+            subscript_expr.var = retval;
+            subscript_expr.sub = expr;
+
+            retval = subscript_expr;
+
+            if (p.l->peek()).type != .Close_Bracket {
+                err = .Unexpected_Token;
+                break break;
+            }
+
+            p.l->consume();
         }
 
         case #default do break break;

@@ -73,6 +73,19 @@ TExprSelector :: struct {
     field: str;     // storage: template.node_storage
 }
 
+TExprSubscript :: struct {
+    use expr: TExpr;
+
+    var: ^TExpr;
+    sub: ^TExpr;
+}
+
+TExprInt :: struct {
+    use expr: TExpr;
+
+    val: i32;
+}
+
 
 Error :: enum {
     None;

@@ -1,7 +1,12 @@
 package otmp
 
 use core {io, tprintf}
-use core.misc {any_iter, any_dereference, any_selector}
+use core.misc {
+    any_iter,
+    any_dereference,
+    any_selector,
+    any_subscript
+}
 
 #package
 TemplateRenderer :: struct {
@@ -86,7 +91,7 @@ render_instructions :: (use r: ^TemplateRenderer, instrs: [..] ^TNode) -> Error 
                 }
             }
 
-            case TExprVar, TExprSelector {
+            case TExprVar, TExprSelector, TExprSubscript {
                 var := resolve_expr_to_any(r, cast(^TExpr) it);
                 if !var.data do continue;
 
@@ -119,7 +124,36 @@ resolve_expr_to_any :: (use r: ^TemplateRenderer, expr: ^TExpr) -> any {
             sub_any  = any_dereference(sub_any);
             return any_selector(sub_any, selector.field);
         }
+
+        case TExprSubscript {
+            subscript := cast(^TExprSubscript) expr;
+
+            sub_any := resolve_expr_to_any(r, subscript.var);
+            sub := any_to_int(resolve_expr_to_any(r, subscript.sub));
+
+            core.printf("{} {}\n", sub_any, sub);
+
+            return any_subscript(sub_any, ~~ sub);
+        }
     }
 
     return .{null, void};
+}
+
+
+#local
+// :StandardLibrary
+any_to_int :: (v: any) -> i64 {
+    switch v.type {
+        C(u32);
+        C(i32);
+        C(u64);
+        C(i64);
+
+        C :: macro (T: type_expr) {
+            case T do return ~~ *cast(^T) v.data;
+        }
+    }
+
+    return 0;
 }
