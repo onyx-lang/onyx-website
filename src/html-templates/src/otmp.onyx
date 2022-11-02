@@ -93,7 +93,7 @@ delete :: (t: ^TemplateRegistry) {
             return .Template_Not_Found;
         }
 
-        tscope, err := core.misc.any_to_map(scope);
+        tscope, _ := core.misc.any_to_map(scope);
         defer delete(^tscope);
 
         return temp->render(self, ^tscope, output);

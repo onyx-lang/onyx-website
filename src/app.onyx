@@ -22,7 +22,7 @@ reg: otmp.TemplateRegistry;
             .[ 9, 10, 11, 12 ]
         ],
 
-        test = ^reg,
+        test = req,
     });
     res->status(200);
 }
@@ -38,9 +38,9 @@ main :: () {
 
     #if #defined(runtime.vars.Debug) {
         app->pipe((req, res) => {
-            printf("Before: {}\n", alloc.heap.get_watermark());
+            // printf("Before: {}\n", alloc.heap.get_watermark());
             reg->refresh_templates();
-            printf("After: {}\n", alloc.heap.get_watermark());
+            // printf("After: {}\n", alloc.heap.get_watermark());
         });
     }
 

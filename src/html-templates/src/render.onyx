@@ -22,8 +22,6 @@ TemplateRenderer :: struct {
 
 #package
 render_template :: (use r: ^TemplateRenderer) -> Error {
-    core.printf("{*}\n", scope);
-
     return render_instructions(r, t.instructions);
 }
 
@@ -130,8 +128,6 @@ resolve_expr_to_any :: (use r: ^TemplateRenderer, expr: ^TExpr) -> any {
 
             sub_any := resolve_expr_to_any(r, subscript.var);
             sub := any_to_int(resolve_expr_to_any(r, subscript.sub));
-
-            core.printf("{} {}\n", sub_any, sub);
 
             return any_subscript(sub_any, ~~ sub);
         }
