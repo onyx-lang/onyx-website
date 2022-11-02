@@ -2,9 +2,20 @@
     padding: 0;
     margin:  0;
     box-sizing: border-box;
+}
 
-    background-color: #111;
-    color: #fff;
+@media (prefers-color-scheme: dark) {
+    * {
+        background-color: #111;
+        color: #fff;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    * {
+        background-color: #ffd;
+        color: #000;
+    }
 }
 
 

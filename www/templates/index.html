@@ -19,17 +19,7 @@
     {{endforeach}}
     </ol>
 
-    <table>
-        <tbody>
-            {{foreach $row in $matrix}}
-            <tr>
-                {{foreach $col in $row}}
-                <td>{% $col %}</td>
-                {{endforeach}}
-            </tr>
-            {{endforeach}}
-        </tbody>
-    </table>
+    {% partial "matrix" $matrix2 $matrix %}
 
     <p>Name: {% $test.headers %} </p>
     <p>Age:  {% $test.cookies %} </p>
