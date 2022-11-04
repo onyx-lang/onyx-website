@@ -29,6 +29,13 @@ reg: otmp.TemplateRegistry;
 
         test = req,
     });
+
+    res->status(200);
+}
+
+@http.route.{.GET, "/slow"}
+(req: ^Req, res: ^Res) {
+    res->html("<h1>Hmmm...</h1>");
     res->status(200);
 }
 
@@ -38,8 +45,8 @@ main :: () {
 
     app := http.application();
 
-    files := http.static("/static/", "./www/static/");
-    app->pipe(^files);
+    // files := http.static("/static/", "./www/static/");
+    // app->pipe(^files);
 
     #if #defined(runtime.vars.Debug) {
         app->pipe((req, res) => {
