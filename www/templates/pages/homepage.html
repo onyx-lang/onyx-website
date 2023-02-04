@@ -1,0 +1,88 @@
+{{block "content"}}
+
+{% partial "navbar" %}
+
+<div class="container center" style="margin: 0 auto">
+<h1>The <b>Onyx</b> Programming Language</h1>
+</div>
+
+<div class="container light center" style="font-size: 24pt">
+<p><b>Onyx</b> is a data-oriented, safe, and modern programming language for application development.</p>
+</div>
+
+<main>
+    <div class="container" style="width: 100%">
+    
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+        <div>
+            <h2>Overview</h2>
+            <br />
+
+            <ul style="font-size: larger;">
+                <li>Runs everywhere using <a href="https://webassembly.org">WebAssembly</a></li>
+                <li>Fast compilation times (300,000+ lines / second)</li>
+                <li>Self-hosted, debuggable runtime using <a href="/ovmwasm">OVM-Wasm</a></li>
+                <li>Secure runtime using <a href="https://wasmer.io">Wasmer</a></li>
+            </ul>
+        </div>
+
+        <pre class="hljs" style="overflow-y: scroll; width: 40%; border: 2px solid black; padding: 8px; display: block"><code class="language-onyx">use core
+
+main :: () {
+    f := factorial(10);
+    println(f);
+}
+
+factorial :: (n: i32) -> i32 {
+    k := 1;
+    for 1 .. n+1 do k *= it;
+    return k;
+}
+</code></pre>
+
+    </div>
+    </div>
+
+    <div class="container light" id="install">
+    <h2>Installation</h2>
+    <br />
+    <h3>Linux</h3>
+        <p>
+            Onyx is developed and tested on a Debian-based Linux system.
+            As I am only one developer, I can only focus on so much. Most of my efforts go towards ensuring Onyx is stable on Linux-based distributions.
+            This does include the Windows Subsystem for Linux (WSL), though that is not thoroughly tested.
+        </p>
+
+
+    <div style="padding-left: 24px">
+        <h4>Debian / Ubuntu</h4>
+            <p>
+                Debian and Ubuntu will soon have the option of adding an APT repository for Onyx.
+                <!-- For now, a Debian package is available <a href="https://repo.onyxlang.io/deb">here</a>. -->
+            </p>
+
+        <h4>All Others</h4>
+            <p>
+                The best way to install Onyx on a Linux system is through directly cloning the Git repository and building it locally.
+                You may want to configure the variables at the top of <code>settings.sh</code> to suit your environment.
+            </p>
+            <pre class="container light merge" style="margin-top: 8px">
+$ git clone https://github.com/onyx-lang/onyx --depth 1
+$ cd onyx
+$ # Configure the top of `./settings.sh` for your system
+$ ./build.sh</pre>
+    </div>
+
+    <h3>Windows</h3>
+
+    <h3>MacOS</h3>
+        <p>Currently, Onyx is not supported on MacOS.</p>
+
+    </div>
+
+    {% partial "footer" %}
+</main>
+
+{{endblock}}
+
+{{extends "base"}}

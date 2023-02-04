@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html class="ui-theme">
+    <head>
+        <title>{% block "title" %}</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="The Onyx programming language, by Brendan Hansen.">
+
+        <link rel="stylesheet" href="/static/css/new_style.css">
+
+        <!-- Including this on every page because why not -->
+        <link rel="stylesheet" href="/static/vendor/highlight.min.css">
+        <script src="/static/vendor/highlight.min.js"></script>
+        <script defer>
+            hljs.highlightAll();
+        </script>
+
+        {% block "styles" %}
+    </head>
+
+    <body>
+        {% block "content" %}
+    </body>
+</html>
