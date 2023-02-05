@@ -50,7 +50,7 @@ a:visited {
 }
 
 .container {
-    padding: 56px 0;
+    padding: 56px 12px;
 }
 
 .container > .container.merge {
@@ -108,7 +108,7 @@ code {
 navbar {
     background: var(--background-color);
     color: var(--foreground-color);
-    padding: 0px;
+    padding: 0 12px;
 
     display: flex;
     flex-direction: row;
@@ -151,4 +151,10 @@ navbar a {
 
 .footer-container > * {
     flex-basis: 0;
+}
+
+.footer-container a {
+    display: block;
+    padding: 2px 0;
+    text-decoration: none;
 }

@@ -1,0 +1,15 @@
+{{block "content"}}
+
+{% partial "navbar" %}
+
+<main>
+    <div class="container">
+        {% $article %}
+    </div>
+
+    {% partial "footer" %}
+</main>
+
+{{endblock}}
+
+{{extends "base"}}
