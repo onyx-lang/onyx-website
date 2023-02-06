@@ -158,3 +158,20 @@ navbar a {
     padding: 2px 0;
     text-decoration: none;
 }
+
+
+
+
+.panel-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.panel-container div {
+    flex-basis: 0;
+    min-width: 200px;
+    padding: 6px 0;
+    /* background-color: var(--background-color); */
+}
