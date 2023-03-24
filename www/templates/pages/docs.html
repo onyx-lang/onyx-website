@@ -1,11 +1,18 @@
-{{block "content"}}
+{{block "page_content"}}
 
-{% partial "navbar" %}
+<div class="container">
+    <h1>Onyx Docs</h1>
 
-<main>
-    {% partial "footer" %}
-</main>
+    <ul>
+        <li><a href="/docs/install">Installation</a></li>
+        <li>Getting Started</li>
+        <li>Language Reference</li>
+        <li>Useful Packages</li>
+    </ul>
+    
+</div>
 
 {{endblock}}
 
-{{extends "base"}}
+{{extends "pages/normal_page"}}
+

@@ -4,36 +4,41 @@
 }
 
 use core
-use http {Req :: Request, Res :: Response}
+use http.server {Req :: Request, Res :: Response, route}
 
 reg: otmp.TemplateRegistry;
-#inject http.Response {
-    render :: (r: ^http.Response, template: str, vars: any) {
-        s := reg->render_template(template, ^r.writer, .{ vars.data, vars.type });
+#inject Res {
+    render :: (r: &Res, template: str, vars: any) {
+        s := reg->render_template(template, &r.writer, .{ vars.data, vars.type });
         r->status(200 if s == .None else 400);
         r->end();
     }
 }
 
-@http.route.{.GET, "/"}
-(req: ^Req, res: ^Res) {
-    res->render("homepage", null);
+@route.{.GET, "/"}
+(req: &Req, res: &Res) {
+    res->render("pages/homepage", null);
 }
 
-@http.route.{.GET, "/docs"}
-(req: ^Req, res: ^Res) {
-    res->render("docs", null);
+@route.{.GET, "/docs"}
+(req: &Req, res: &Res) {
+    res->render("pages/docs", null);
 }
 
-@http.route.{.GET, "/news"}
-(req: ^Req, res: ^Res) {
+@route.{.GET, "/docs/install"}
+(req: &Req, res: &Res) {
+    res->render("pages/docs/install", null);
+}
+
+@route.{.GET, "/news"}
+(req: &Req, res: &Res) {
     if a := req.query->get_opt("a"); a {
         filename := tprintf("www/news-articles/{}.html", a.value);
         if os.file_exists(filename) {
             article := os.get_contents(filename);
-            defer delete(^article);
+            defer delete(&article);
 
-            res->render("news_article", ^.{
+            res->render("pages/news_article", &.{
                 article = article
             });
         }
@@ -42,13 +47,13 @@ reg: otmp.TemplateRegistry;
         articles := make([..] str);
 
         for os.list_directory("www/news-articles") {
-            name := it->name(); 
+            name := it->name();
             if string.ends_with(name, ".html") {
                 articles << string.temp_copy(name[0 .. name.length-5]);
             }
         }
 
-        res->render("news", ^.{
+        res->render("pages/news", &.{
             articles = articles
         });
     }
@@ -58,12 +63,12 @@ main :: () {
     reg = otmp.registry();
     reg->load_directory("./www/templates", ".html");
 
-    app := http.application();
+    app := http.server.application();
 
-    http.set_mime_type("svg", "image/svg+xml");
+    http.server.set_mime_type("svg", "image/svg+xml");
 
-    files := http.static("/static/", "./www/static/");
-    app->pipe(^files);
+    files := http.server.static("/static/", "./www/static/");
+    app->pipe(&files);
 
     #if #defined(runtime.vars.Debug) {
         app->pipe((req, res) => {
@@ -71,18 +76,18 @@ main :: () {
         });
     }
 
-    router := http.router();
+    router := http.server.router();
     router->collect_routes();
-    app->pipe(^router);
+    app->pipe(&router);
 
     app->pipe((req, res) => {
         if !res.completed {
-            res->render("404", null);
+            res->render("pages/404", null);
         }
     });
 
-    logger := http.logger();
-    app->pipe(^logger);
+    logger := http.server.logger();
+    app->pipe(&logger);
 
     app->serve(8080);
     println("Server stopping...");

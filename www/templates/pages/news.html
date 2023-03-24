@@ -1,23 +1,17 @@
-{{block "content"}}
+{{block "page_content"}}
 
-{% partial "navbar" %}
+<div class="container">
+    <h1>News</h1>
 
-<main>
-    <div class="container">
-        <h1>News</h1>
-
-        <ul>
-            {{ foreach $article in $articles }}
-            <li>
-                <a href="/news?a={% $article %}">{% $article %}</a>
-            </li>
-            {{ endforeach }}
-        </ul>
-    </div>
-
-    {% partial "footer" %}
-</main>
+    <ul>
+        {{ foreach $article in $articles }}
+        <li>
+            <a href="/news?a={% $article %}">{% $article %}</a>
+        </li>
+        {{ endforeach }}
+    </ul>
+</div>
 
 {{endblock}}
 
-{{extends "base"}}
+{{extends "pages/normal_page"}}

@@ -167,11 +167,23 @@ navbar a {
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+    gap: 24px;
 }
 
 .panel-container div {
     flex-basis: 0;
-    min-width: 200px;
-    padding: 6px 0;
-    /* background-color: var(--background-color); */
+    flex-grow: 1;
+
+    padding: 12px 0;
+/*    background-color: var(--background-color);*/
 }
+
+.panel-container div h3 {
+    margin-bottom: 4px;
+}
+
+.panel-container div p {
+    width: 100%;
+    text-align: justify;
+}
+

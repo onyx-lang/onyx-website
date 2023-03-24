@@ -1,15 +1,15 @@
 {{block "content"}}
 
-{% partial "navbar" %}
+{% partial "partials/navbar" %}
 
 <main>
     <div class="container">
         {% $article %}
     </div>
 
-    {% partial "footer" %}
+    {% partial "partials/footer" %}
 </main>
 
 {{endblock}}
 
-{{extends "base"}}
+{{extends "pages/base"}}
