@@ -3,6 +3,7 @@ use runtime
 use otmp
 use http
 use http.server {Req :: Request, Res :: Response, route}
+use json
 
 #inject runtime.vars {
     Enable_Heap_Debug :: true
@@ -59,13 +60,22 @@ reg: otmp.TemplateRegistry;
 
 @route.{.GET, "/news"}
 (req: &Req, res: &Res) {
-    articles := make([..] str);
+    Article :: struct { name, description, path, date: str }
+    articles := make([..] Article);
 
-    for os.list_directory("www/news-articles") {
-        name := it->name();
-        if string.ends_with(name, ".html") {
-            articles << string.temp_copy(name[0 .. name.length-5]);
-        }
+    article_file := os.get_contents("www/news-articles/index.json");
+    article_index, json_err := json.decode_with_error(article_file);
+    if json_err->has_error() {
+        res->status(500);
+        return;
+    }
+
+    for article_index.root->as_array() {
+        name := it["name"]->as_str();
+        desc := it["description"]->as_str();
+        path := it["path"]->as_str();
+        date := it["date"]->as_str();
+        articles << .{ name, desc, path, date };
     }
 
     res->render("pages/news", &.{

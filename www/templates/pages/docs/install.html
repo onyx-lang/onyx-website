@@ -3,10 +3,10 @@
 <div class="container">
     <h1>Installing Onyx</h1>
     <p>
-        <a href="#online">Online</a>
-        <a href="#linux">Linux</a>
-        <a href="#windows">Windows</a>
-        <a href="#macos">MacOS</a>
+        <a class="link-button" href="#online">Online</a>
+        <a class="link-button" href="#linux">Linux</a>
+        <a class="link-button" href="#windows">Windows</a>
+        <a class="link-button" href="#macos">MacOS</a>
     </p>
 </div>
 
@@ -20,13 +20,72 @@
 
 <div class="container" id="linux">
     <h2>Linux</h2>
-    <p>
-    </p>
+    <div>
+        <h3>From Source</h3>
+        <p>
+            The easiest way to install Onyx on a Linux system is to clone the repository from GitHub, and then compile from source.
+            This is relatively simple, since Onyx does not use any fancy things in its source tree. Only C code and shell scripts.
+
+            <ol>
+                <li>
+                    Clone the respository at <a href="https://github.com/onyx-lang/onyx">onyx-lang/onyx</a>.
+                    <pre class="hljs"><code class="language-sh">git clone https://github.com/onyx-lang/onyx --depth 1</code></pre>
+                </li>
+                <li>
+                    Navigate into the new "onyx" directory.
+                    <pre class="hljs"><code class="language-sh">cd onyx</code></pre>
+                </li>
+                <li>
+                    Configure the <code>settings.sh</code> file to suit your system needs.
+                    If everything looks good, (or if you don't know what you are looking at), you should be good to go.
+                </li>
+                <li>
+                    Run <code>./build.sh</code>.
+                    This will compile and install Onyx onto your system.
+                    By default, the "onyx" binary will be placed in "/usr/bin", and the necessary libraries/core packages/tooling will be installed at "/usr/share/onyx".
+                </li>
+                <li>
+                    Try running the "onyx help" command. You should see something like this.
+                    <pre class="hljs"><code class="language-sh">$ onyx help
+Onyx toolchain version v0.1.0
+
+The toolchain for the Onyx programming language, created by Brendan Hansen.
+
+Usage:
+	onyx &lt;subcommand&gt;
+
+Subcommands:
+	help      Shows this help message. Use "onyx help <subcommand>".
+	build     Compiles an Onyx program into an executable.
+	run       Compiles and runs an Onyx program, all at once.
+	check     Checks syntax and types of an Onyx program.
+	package   Package manager</code></pre>
+                </li>
+            </ol>
+        </p>
+
+        <h3>Future Plans</h3>
+        <p>
+            In the future, Onyx may ship a ".deb" file for Debian-based distros to easily install.
+            While this is planned, it is not a priority at the moment.
+        </p>
+    </div>
 </div>
 
-<div class="container" id="windows">
+<div class="container light" id="windows">
     <h2>Windows</h2>
     <p>
+    <ol>
+        <li>Download the latest Windows release folder from the <a>Releases</a> on GitHub.</li>
+        <li>Extract the zip file to a permanent location.</li>
+        <li>Modify system environment variables.</li>
+        <ul>
+            <li>Add the extracted folder to your system or user's PATH variable.</li>
+            <li>Make a new variable called "ONYX_PATH", and set it equal to the extracted folder path.</li>
+        </ul>
+        <li>Log out and log back in to let system environment variable update.</li>
+        <li>Open a Command Prompt or Powershell instance, and try running "onyx help".</li>
+    </ol>
     </p>
 </div>
 

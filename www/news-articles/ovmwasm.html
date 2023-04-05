@@ -1,35 +1,33 @@
-<div class="container">
-    <h1>Onyx's Custom Runtime</h1>
+<h1>Onyx's Custom Runtime</h1>
 
-    <p>
-        As Onyx targets WebAssembly (WASM) exclusively, running code outside of the browser requires a <a href="https://webassembly.github.io/spec/core/appendix/embedding.html">WASM embedder</a>.
-        The job of the embedder is to translate the WASM Virtual Instruction Set Architecture into a "real" architecture that can be executed on the host system.
-        There are many great WASM embedders that exist for running WASM outside the browser. Here's a small, non-comprehensive list:
-    </p>
-    <ul>
-        <li><a href="https://wasmer.io">Wasmer</a></li>
-        <li><a href="https://wasmtime.dev">Wasmtime</a></li>
-        <li><a href="https://github.com/wasm3/wasm3">Wasm3</a></li>
-        <li><a href="https://wasmedge.org">WasmEdge</a></li>
-    </ul>
+<p>
+    As Onyx targets WebAssembly (WASM) exclusively, running code outside of the browser requires a <a href="https://webassembly.github.io/spec/core/appendix/embedding.html">WASM embedder</a>.
+    The job of the embedder is to translate the WASM Virtual Instruction Set Architecture into a "real" architecture that can be executed on the host system.
+    There are many great WASM embedders that exist for running WASM outside the browser. Here's a small, non-comprehensive list:
+</p>
+<ul>
+    <li><a href="https://wasmer.io">Wasmer</a></li>
+    <li><a href="https://wasmtime.dev">Wasmtime</a></li>
+    <li><a href="https://github.com/wasm3/wasm3">Wasm3</a></li>
+    <li><a href="https://wasmedge.org">WasmEdge</a></li>
+</ul>
 
-    <p>
-    All of these embedders are great in their own way, but the one thing they are not <em>great</em> at is providing a great developer experience for Onyx. For this reason, Onyx maintains support for two WASM embedders: <em>Wasmer</em> and <em>OVM-Wasm</em>. Wasmer is used as the faster, production-ready embedder, while OVM-Wasm is used as the development embedder.
-    </p>
+<p>
+All of these embedders are great in their own way, but the one thing they are not <em>great</em> at is providing a great developer experience for Onyx. For this reason, Onyx maintains support for two WASM embedders: <em>Wasmer</em> and <em>OVM-Wasm</em>. Wasmer is used as the faster, production-ready embedder, while OVM-Wasm is used as the development embedder.
+</p>
 
-    <p>
-    OVM-Wasm stands for <em>Onyx Virtual Machine for WASM</em>. The Onyx Virtual Machine (OVM) started as a separate project with the goal of providing a separate compile-target for Onyx; however, to reduce complexity, OVM-Wasm was created as a wrapper around OVM, that provides a <a href="https://github.com/WebAssembly/wasm-c-api">wasm-c-api</a> compatible interface, making it a WASM embedder.
-    Since OVM-Wasm is entirely specific to Onyx and can be easily modified to suit the needs of developing Onyx.
-    It has more features compared to a normal WASM embedder, such a <em>debugging interface</em> that is compatible with the Debug Adapter Protocol.
-    </p>
-    
-    <p>
-    Currently, it does not run as fast as it could.
-    This is due to several reason, but largely because it simply compiles WebAssembly down to an <em>interpreted</em> instruction stream, not machine-native instructions.
-    This was done to make OVM-Wasm more portable, but does come at a significant performance cost.
-    To compound onto this fact, the instruction stream itself is not optimized <em>at all</em>.
-    It is the most literal, WASM to OVM conversion possible.
-    This helps make the initial startup time faster, but does incur wasted performance.
-    It is on the (rather large) list of to-dos to add simple optimizations to the embedding process to make OVM-Wasm not <em>horribly</em> slow.
-    </p>
-</div>
+<p>
+OVM-Wasm stands for <em>Onyx Virtual Machine for WASM</em>. The Onyx Virtual Machine (OVM) started as a separate project with the goal of providing a separate compile-target for Onyx; however, to reduce complexity, OVM-Wasm was created as a wrapper around OVM, that provides a <a href="https://github.com/WebAssembly/wasm-c-api">wasm-c-api</a> compatible interface, making it a WASM embedder.
+Since OVM-Wasm is entirely specific to Onyx and can be easily modified to suit the needs of developing Onyx.
+It has more features compared to a normal WASM embedder, such a <em>debugging interface</em> that is compatible with the Debug Adapter Protocol.
+</p>
+
+<p>
+Currently, it does not run as fast as it could.
+This is due to several reasons, but largely because it compiles WebAssembly down to an <em>interpreted</em> instruction stream, not machine-native instructions.
+This was done to make OVM-Wasm more portable, but does come at a significant performance cost.
+To compound onto this fact, the instruction stream itself is not optimized <em>at all</em>.
+It is the most literal, WASM to OVM conversion possible.
+This helps the initial startup time be faster, but does incur wasted performance.
+It is on the (rather large) list of to-dos to add simple optimizations to the embedding process to make OVM-Wasm not <em>as</em> slow.
+</p>

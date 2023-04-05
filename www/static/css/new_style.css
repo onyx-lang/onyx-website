@@ -14,6 +14,7 @@
         --dark-background-color: #111;
         --active-color: #555;
         --link-color: #bbf;
+        --visited-link-color: #bfbfff;
         --foreground-color: #fff;
     }
 }
@@ -27,7 +28,8 @@
         --light-background-color: #e0e0e0;
         --dark-background-color: #c0c0c0;
         --active-color: #cccccc;
-        --link-color: #224;
+        --link-color: #448;
+        --visited-link-color: #669;
         --foreground-color: #000000;
     }
 }
@@ -43,14 +45,27 @@ body {
 
 a {
     color: var(--link-color);
+    text-decoration: none;
+}
+
+a.link-button {
+    padding: 8px;
+    text-decoration: none;
+    background-color: var(--light-background-color);
+    transition: all 300ms;
+}
+
+a.link-button:hover {
+    background-color: var(--active-color);
+    cursor: pointer;
 }
 
 a:visited {
-    color: #88f;
+    color: var(--visited-link-color);
 }
 
 .container {
-    padding: 56px 12px;
+    padding: 48px 12px;
 }
 
 .container > .container.merge {
@@ -66,7 +81,7 @@ a:visited {
     margin-top: 20px;
 }
 
-.container ul {
+.container ul, .container ol {
     padding-left: 20px;
 }
 
@@ -90,7 +105,10 @@ a:visited {
 h1 {
     min-width: 100px;
     font-size: 36pt;
-    font-weight: lighter;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 200;
 }
 
 .container h3 {
@@ -203,3 +221,13 @@ main {
     grid-template-rows: auto 1fr auto;
 }
 
+main pre {
+    border: 1px solid var(--terminal-background-color);
+    box-shadow: 0px 1px 10px 1px rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    display: block;
+}
+
+main li {
+    margin-top: 8px;
+}

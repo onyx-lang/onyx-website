@@ -1,112 +1,180 @@
-/*
- * Visual Studio 2015 dark style
- * Author: Nicolas LLOBERA <nllobera@gmail.com>
- */
+@media (prefers-color-scheme: light) {
+    /*
+    Visual Studio-like style based on original C# coloring by Jason Diamond <jason@diamond.name>
+    */
+    .hljs {
+      background: white;
+      color: black;
+    }
 
-.hljs {
-  background: #1E1E1E;
-  color: #DCDCDC;
+    .hljs-comment,
+    .hljs-quote,
+    .hljs-variable {
+      color: #008000;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-built_in,
+    .hljs-name,
+    .hljs-tag {
+      color: #00f;
+    }
+
+    .hljs-string,
+    .hljs-title,
+    .hljs-section,
+    .hljs-attribute,
+    .hljs-literal,
+    .hljs-template-tag,
+    .hljs-template-variable,
+    .hljs-type,
+    .hljs-addition {
+      color: #a31515;
+    }
+
+    .hljs-deletion,
+    .hljs-selector-attr,
+    .hljs-selector-pseudo,
+    .hljs-meta {
+      color: #2b91af;
+    }
+
+    .hljs-doctag {
+      color: #808080;
+    }
+
+    .hljs-attr {
+      color: #f00;
+    }
+
+    .hljs-symbol,
+    .hljs-bullet,
+    .hljs-link {
+      color: #00b0e8;
+    }
+
+
+    .hljs-emphasis {
+      font-style: italic;
+    }
+
+    .hljs-strong {
+      font-weight: bold;
+    }
 }
 
-.hljs-keyword,
-.hljs-literal,
-.hljs-symbol,
-.hljs-name {
-  color: #569CD6;
-}
-.hljs-link {
-  color: #569CD6;
-  text-decoration: underline;
-}
+@media (prefers-color-scheme: dark) {
+    /*
+     * Visual Studio 2015 dark style
+     * Author: Nicolas LLOBERA <nllobera@gmail.com>
+     */
 
-.hljs-built_in,
-.hljs-type {
-  color: #4EC9B0;
-}
+    .hljs {
+      background: #1E1E1E;
+      color: #DCDCDC;
+    }
 
-.hljs-number,
-.hljs-class {
-  color: #B8D7A3;
-}
+    .hljs-keyword,
+    .hljs-literal,
+    .hljs-symbol,
+    .hljs-name {
+      color: #569CD6;
+    }
+    .hljs-link {
+      color: #569CD6;
+      text-decoration: underline;
+    }
 
-.hljs-string,
-.hljs-meta .hljs-string {
-  color: #D69D85;
-}
+    .hljs-built_in,
+    .hljs-type {
+      color: #4EC9B0;
+    }
 
-.hljs-regexp,
-.hljs-template-tag {
-  color: #9A5334;
-}
+    .hljs-number,
+    .hljs-class {
+      color: #B8D7A3;
+    }
 
-.hljs-subst,
-.hljs-function,
-.hljs-title,
-.hljs-params,
-.hljs-formula {
-  color: #DCDCDC;
-}
+    .hljs-string,
+    .hljs-meta .hljs-string {
+      color: #D69D85;
+    }
 
-.hljs-comment,
-.hljs-quote {
-  color: #57A64A;
-  font-style: italic;
-}
+    .hljs-regexp,
+    .hljs-template-tag {
+      color: #9A5334;
+    }
 
-.hljs-doctag {
-  color: #608B4E;
-}
+    .hljs-subst,
+    .hljs-function,
+    .hljs-title,
+    .hljs-params,
+    .hljs-formula {
+      color: #DCDCDC;
+    }
 
-.hljs-meta,
-.hljs-meta .hljs-keyword,
+    .hljs-comment,
+    .hljs-quote {
+      color: #57A64A;
+      font-style: italic;
+    }
 
-.hljs-tag {
-  color: #9B9B9B;
-}
+    .hljs-doctag {
+      color: #608B4E;
+    }
 
-.hljs-variable,
-.hljs-template-variable {
-  color: #BD63C5;
-}
+    .hljs-meta,
+    .hljs-meta .hljs-keyword,
 
-.hljs-attr,
-.hljs-attribute {
-  color: #9CDCFE;
-}
+    .hljs-tag {
+      color: #9B9B9B;
+    }
 
-.hljs-section {
-  color: gold;
-}
+    .hljs-variable,
+    .hljs-template-variable {
+      color: #BD63C5;
+    }
 
-.hljs-emphasis {
-  font-style: italic;
-}
+    .hljs-attr,
+    .hljs-attribute {
+      color: #9CDCFE;
+    }
 
-.hljs-strong {
-  font-weight: bold;
-}
+    .hljs-section {
+      color: gold;
+    }
 
-/*.hljs-code {
-  font-family:'Monospace';
-}*/
+    .hljs-emphasis {
+      font-style: italic;
+    }
 
-.hljs-bullet,
-.hljs-selector-tag,
-.hljs-selector-id,
-.hljs-selector-class,
-.hljs-selector-attr,
-.hljs-selector-pseudo {
-  color: #D7BA7D;
-}
+    .hljs-strong {
+      font-weight: bold;
+    }
 
-.hljs-addition {
-  background-color: #144212;
-  display: inline-block;
-  width: 100%;
-}
+    /*.hljs-code {
+      font-family:'Monospace';
+    }*/
 
-.hljs-deletion {
-  background-color: #600;
-  display: inline-block;
-  width: 100%;
+    .hljs-bullet,
+    .hljs-selector-tag,
+    .hljs-selector-id,
+    .hljs-selector-class,
+    .hljs-selector-attr,
+    .hljs-selector-pseudo {
+      color: #D7BA7D;
+    }
+
+    .hljs-addition {
+      background-color: #144212;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .hljs-deletion {
+      background-color: #600;
+      display: inline-block;
+      width: 100%;
+    }
 }
