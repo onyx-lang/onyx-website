@@ -62,6 +62,14 @@ a:visited {
     margin: 0 auto;
 }
 
+.container > p {
+    margin-top: 20px;
+}
+
+.container ul {
+    padding-left: 20px;
+}
+
 .container.center {
     display: flex;
     justify-content: center;
@@ -102,6 +110,7 @@ code {
 /* Nagivation */
 .navbar-container {
     max-width: 1200px;
+    width: 1200px;
     margin: 0 auto;
 }
 
@@ -185,5 +194,12 @@ navbar a {
 .panel-container div p {
     width: 100%;
     text-align: justify;
+}
+
+
+main {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
 }
 

@@ -17,12 +17,12 @@
         <ul style="font-size: larger;">
             <li>Runs everywhere using <a href="https://webassembly.org">WebAssembly</a></li>
             <li>Fast compilation times (300,000+ lines / second)</li>
-            <li>Self-hosted, debuggable runtime using <a href="/ovmwasm">OVM-Wasm</a></li>
+            <li>Self-hosted, debuggable runtime using <a href="/news/ovmwasm">OVM-Wasm</a></li>
             <li>Secure runtime using <a href="https://wasmer.io">Wasmer</a></li>
         </ul>
     </div>
 
-    <pre class="hljs" style="overflow-y: scroll; width: 40%; border: 2px solid black; padding: 8px; display: block"><code class="language-onyx">use core
+    <pre class="hljs" style="overflow-y: scroll; width: 40%; border: 2px solid black; padding: 8px; display: block"><code class="language-onyx">use core {println}
 
 main :: () {
     f := factorial(10);
@@ -45,7 +45,7 @@ factorial :: (n: i32) -> i32 {
     <div class="panel-container">
         <div>
             <h3>Portable</h3>
-            <p>By targetting WASM, Onyx can used in the browser, or natively with a custom runtime.</p>
+            <p>By targetting WASM, Onyx can be used in the browser, or natively with a <a href="/news/ovmwasm">custom runtime</a>.</p>
         </div>
         <div>
             <h3>Data-Oriented</h3>

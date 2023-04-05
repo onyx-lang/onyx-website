@@ -1,10 +1,13 @@
+use core {package, *}
+use runtime
+use otmp
+use http
+use http.server {Req :: Request, Res :: Response, route}
+
 #inject runtime.vars {
     Enable_Heap_Debug :: true
     Debug :: true
 }
-
-use core
-use http.server {Req :: Request, Res :: Response, route}
 
 reg: otmp.TemplateRegistry;
 #inject Res {
@@ -20,6 +23,12 @@ reg: otmp.TemplateRegistry;
     res->render("pages/homepage", null);
 }
 
+
+@route.{.GET, "/ovmwasm"}
+(req: &Req, res: &Res) {
+    res->render("pages/ovmwasm", null);
+}
+
 @route.{.GET, "/docs"}
 (req: &Req, res: &Res) {
     res->render("pages/docs", null);
@@ -30,33 +39,38 @@ reg: otmp.TemplateRegistry;
     res->render("pages/docs/install", null);
 }
 
-@route.{.GET, "/news"}
+@route.{.GET, "/news/:article"}
 (req: &Req, res: &Res) {
-    if a := req.query->get_opt("a"); a {
-        filename := tprintf("www/news-articles/{}.html", a.value);
-        if os.file_exists(filename) {
-            article := os.get_contents(filename);
-            defer delete(&article);
+    // TODO: Safety / error checking here
+    filename := tprintf("www/news-articles/{}.html", req.url_params["article"]);
 
-            res->render("pages/news_article", &.{
-                article = article
-            });
-        }
+    if os.file_exists(filename) {
+        article := os.get_contents(filename);
+        defer delete(&article);
+
+        res->render("pages/news_article", &.{
+            article = article
+        });
 
     } else {
-        articles := make([..] str);
-
-        for os.list_directory("www/news-articles") {
-            name := it->name();
-            if string.ends_with(name, ".html") {
-                articles << string.temp_copy(name[0 .. name.length-5]);
-            }
-        }
-
-        res->render("pages/news", &.{
-            articles = articles
-        });
+        res->status(404);
     }
+}
+
+@route.{.GET, "/news"}
+(req: &Req, res: &Res) {
+    articles := make([..] str);
+
+    for os.list_directory("www/news-articles") {
+        name := it->name();
+        if string.ends_with(name, ".html") {
+            articles << string.temp_copy(name[0 .. name.length-5]);
+        }
+    }
+
+    res->render("pages/news", &.{
+        articles = articles
+    });
 }
 
 main :: () {
@@ -89,7 +103,7 @@ main :: () {
     logger := http.server.logger();
     app->pipe(&logger);
 
-    app->serve(8080);
+    app->serve(8081);
     println("Server stopping...");
 }
 
