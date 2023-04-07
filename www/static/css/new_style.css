@@ -231,3 +231,10 @@ main pre {
 main li {
     margin-top: 8px;
 }
+
+#logo:hover #path67 { transform: matrix(0.147954, 0, 0, 0.147954, 35, 9); }
+#logo:hover #path31 { transform: translate(21.5px, -2.5px) rotate(60deg); }
+#logo:hover #path1180 { transform: translate(34.25px, 7px) rotate(120deg); }
+#logo:hover #path537 { transform: translate(51.5px, 11.01px) rotate(150deg); }
+#logo:hover #path1062 { transform: translate(36px, 2px) rotate(90deg); }
+#logo :not(#layer2) path { transition: all 1s ease-in-out; }
