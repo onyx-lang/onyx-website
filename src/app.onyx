@@ -43,7 +43,11 @@ news_articles: Cached_Resource([] Article);
 @route.{.GET, "/news/:article"}
 (req: &Req, res: &Res) {
     article := array.first(news_articles->get() ?? .[], #(it.path == req.url_params["article"]));
-    if !article do return;
+    if !article {
+        res->status(404);
+        res->render("pages/404", null);
+        return;
+    }
 
     filename := tprintf("www/news-articles/{}.html", article.path);
 
