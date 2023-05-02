@@ -1,10 +1,12 @@
+{{block "title"}}Onyx News - {% $article.name %}{{endblock}}
+
 {{block "content"}}
 
 <main>
     {% partial "partials/navbar" %}
 
     <div class="container">
-        {% $article %}
+        {% $article.contents %}
     </div>
 
     {% partial "partials/footer" %}

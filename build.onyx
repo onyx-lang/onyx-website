@@ -1,8 +1,4 @@
-#load "./lib/http-server/module"
-#load "./lib/postgres/module"
-#load "./lib/postgres-orm/module"
-#load "./lib/otmp/module"
-#library_path "./bin"
+#load "./lib/packages"
 
 #load_all "./src"
 

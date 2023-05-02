@@ -14,43 +14,45 @@ reg: otmp.TemplateRegistry;
 #inject Res {
     render :: (r: &Res, template: str, vars: any) {
         s := reg->render_template(template, &r.writer, .{ vars.data, vars.type });
+
+        if s != .None {
+            log(.Warning, "Template Renderer", tprintf("{}", s));
+        }
+
         r->status(200 if s == .None else 400);
         r->end();
     }
 }
 
 @route.{.GET, "/"}
-(req: &Req, res: &Res) {
-    res->render("pages/homepage", null);
-}
-
+(req: &Req, res: &Res) => res->render("pages/homepage", null);
 
 @route.{.GET, "/ovmwasm"}
-(req: &Req, res: &Res) {
-    res->render("pages/ovmwasm", null);
-}
+(req: &Req, res: &Res) => res->render("pages/ovmwasm", null);
 
 @route.{.GET, "/docs"}
-(req: &Req, res: &Res) {
-    res->render("pages/docs", null);
-}
+(req: &Req, res: &Res) => res->render("pages/docs", null);
 
 @route.{.GET, "/docs/install"}
-(req: &Req, res: &Res) {
-    res->render("pages/docs/install", null);
-}
+(req: &Req, res: &Res) => res->render("pages/docs/install", null);
+
+
+Article :: struct { name, description, path, date: str }
+news_articles: Cached_Resource([] Article);
 
 @route.{.GET, "/news/:article"}
 (req: &Req, res: &Res) {
-    // TODO: Safety / error checking here
-    filename := tprintf("www/news-articles/{}.html", req.url_params["article"]);
+    article := array.first(news_articles->get() ?? .[], #(it.path == req.url_params["article"]));
+    if !article do return;
+
+    filename := tprintf("www/news-articles/{}.html", article.path);
 
     if os.file_exists(filename) {
-        article := os.get_contents(filename);
-        defer delete(&article);
+        contents := os.get_contents(filename);
+        defer delete(&contents);
 
         res->render("pages/news_article", &.{
-            article = article
+            article = .{ contents = contents, name = article.name }
         });
 
     } else {
@@ -60,17 +62,7 @@ reg: otmp.TemplateRegistry;
 
 @route.{.GET, "/news"}
 (req: &Req, res: &Res) {
-    Article :: struct { name, description, path, date: str }
-    articles: [] Article;
-
-    article_file := os.get_contents("www/news-articles/index.json");
-    article_index, json_err := json.decode_with_error(article_file);
-    if json_err->has_error() {
-        res->status(500);
-        return;
-    }
-
-    json.as_any(article_index.root, &articles);
+    articles := news_articles->get() ?? .[];
 
     res->render("pages/news", &.{
         articles = articles
@@ -80,6 +72,30 @@ reg: otmp.TemplateRegistry;
 main :: () {
     reg = otmp.registry();
     reg->load_directory("./www/templates", ".html");
+
+    news_articles = .{
+        resource = .{},
+        max_age = 60 * 60, // 1 hour
+
+        fetch_resource = () -> ? [] Article {
+            article_file := os.get_contents("www/news-articles/index.json");
+            article_index, json_err := json.decode_with_error(article_file);
+            if json_err->has_error() {
+                return .{};
+            }
+
+            articles: [] Article;
+            #context_scope {
+                context.allocator = alloc.heap_allocator;
+                json.as_any(article_index.root, &articles);
+            }
+            return articles;
+        },
+
+        release_resource = (articles: &[] Article) {
+            delete(articles, allocator=alloc.heap_allocator);
+        }
+    };
 
     app := http.server.application();
 

@@ -1,0 +1,49 @@
+package main
+
+use core {package, tprintf}
+use core.time
+
+Cached_Resource :: struct (Res: type_expr) {
+    last_retrieved: time.Timestamp;
+    max_age: i32; // In seconds
+
+    resource: ? Res;
+    fetch_resource: () -> ? Res;
+    release_resource: (res: &Res) -> void;
+}
+
+#inject Cached_Resource {
+    get :: (use self: &#Self) -> ? self.Res {
+        if !resource {
+            update_resource(self);
+        }
+
+        if time.duration(time.now(), last_retrieved) > max_age {
+            update_resource(self);
+        }
+
+        return self.resource;
+    }
+}
+
+#local
+update_resource :: (self: &Cached_Resource($T)) {
+    if self.resource {
+        self.release_resource(&self.resource.value);
+        self.resource->reset();
+    }
+
+    self.resource = self.fetch_resource();
+    self.last_retrieved = time.now();
+}
+
+
+
+#inject time {
+    duration :: (t2, t1: time.Timestamp) -> i32 {
+        t1_ := t1;
+        t2_ := t2;
+        return ~~(t2_->to_epoch() - t1_->to_epoch());
+    }
+}
+

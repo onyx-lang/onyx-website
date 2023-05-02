@@ -1,0 +1,91 @@
+<h1>Onyx's Memory Model</h1>
+
+<p>
+When choosing and/or learning a programming language, the memory model is one of the first things you will have to understand to successfully use the language.
+In broad terms, there are three memory models employed in programming languages used today: <i>manual, manual with assistance, and automatic.</i>
+</p>
+
+<p>
+In a <i>manual</i> memory model, almost all memory allocations and deallocations are done, well, manually.
+You, the programmer, are responsible for diligently freeing <i>every</i> piece of memory you allocate; otherwise, over time, your program's memory usage will increase and start consuming a lot of system resources.
+</p>
+<blockquote>
+    Do note, that this only applies to programs that run for a long time, or need to work with a lot of resources.
+    Forgetting to free a 100 element array in your small 10 line program is not going to be the end of the world.
+    The operating system is responsible for reclaiming all resources your program used when your program exits.
+</blockquote>
+
+<p>
+In an <i>automatic</i> memory model, you are not responsible for managing any allocation made by your program.
+Programming languages with this memory model generally employ a garbage collector or reference counted pointers.
+</p>
+
+<p>
+The third and final memory model is <i>manual with assistance</i>, which is the memory model that Onyx uses.
+This model trusts the programmer to understand their memory needs, allowing total control over memory.
+However, it also offers core library support for describing the memory model.
+</p>
+
+<h2>Allocators</h2>
+
+<p>
+Onyx abstracts the notion of memory management into an <i>Allocator</i>.
+Anything that requires allocating memory should consume an Allocator as a parameter.
+This is the pattern followed by everything in the core library; all memory allocations are configurable.
+Also as a convience, the default allocator used by the core library is <code>context.allocator</code>.
+This is a thread-local variable that is a general purpose heap allocator by default, but can be changed.
+This allows for changing the allocator used by a library even if the library does not take an allocator as a paramter.
+</p>
+
+<p>
+Most programmers will not have to write their own allocator.
+Instead they will use one of half-dozen provided out of the box by the core libraries.
+</p>
+
+<h3>Heap Allocator</h3>
+<p>
+In every Onyx program, there is a single general purpose heap allocator.
+It can be accessed in <code>core.alloc.heap_allocator</code>.
+It is automatically setup before your program reaches <code>main</code>.
+It is also the default allocator used by <code>context.allocator</code>, meaning functions like <code>new</code>, <code>make</code>, and <code>calloc</code> will use it by default.
+</p>
+
+<blockquote>
+While Onyx has its own heap allocation procedures, the heap allocator is effectively equivalent to C's <code>malloc</code> and <code>free</code>.
+You are responsible for manually freeing the memory allocated from it.
+</blockquote>
+
+<p>
+Here is an example of using the heap allocator directly.
+</p>
+
+<pre class="hljs"><code class="language-onyx">use core {*}
+
+main :: () {
+    // Directly allocate an array of 10 u32's.
+    data := cast([&] u32) alloc.heap_allocator->alloc(sizeof u32 * 10);
+
+    // Ensure the memory is freed when the function returns.
+    defer alloc.heap_allocator->free(data);
+
+    // Fill the array with squares
+    for 10 {
+        data[it] = it * it;
+    }
+
+    // Print out the array
+    for 10 {
+        println(data[it]);
+    }
+}
+</code></pre>
+
+
+<h3>Arena Allocator</h3>
+
+<p>
+While the general purpose heap allocator will work in any situation, it is not the fastest.
+Also, it requires you to correctly manage the memory allocated from it, which can be error prone.
+</p>
+
+
