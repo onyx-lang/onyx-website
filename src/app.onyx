@@ -61,6 +61,8 @@ news_articles: Cached_Resource([] Article);
 
     } else {
         res->status(404);
+        res->render("pages/404", null);
+        return;
     }
 }
 
