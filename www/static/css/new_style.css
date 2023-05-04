@@ -163,15 +163,14 @@ code {
 
 
 /* Nagivation */
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: 800px) {
     .navbar-container {
         max-width: 1200px;
-        width: 1200px;
         margin: 0 auto;
     }
 }
 
-@media screen and (max-width: 1199px) {
+@media screen and (max-width: 799px) {
     .navbar-container {
         width: 100%;
         margin: 0 auto;
@@ -216,13 +215,13 @@ navbar a {
     text-decoration: none;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 800px) {
     #mobile-hamburger, .hamburger-piece {
         display: none;
     }
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 799px) {
     navbar div {
         display: none;
     }
