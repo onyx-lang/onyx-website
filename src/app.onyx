@@ -103,32 +103,33 @@ main :: () {
         }
     };
 
-    app := http.server.application();
-
     http.server.set_mime_type("svg", "image/svg+xml");
 
+    pipes := http.server.pipeline();
+
     files := http.server.static("/static/", "./www/static/");
-    app->pipe(&files);
+    pipes->pipe(&files);
 
     #if #defined(runtime.vars.Debug) {
-        app->pipe((req, res) => {
+        pipes->pipe((req, res) => {
             reg->refresh_templates();
         });
     }
 
     router := http.server.router();
     router->collect_routes();
-    app->pipe(&router);
+    pipes->pipe(&router);
 
-    app->pipe((req, res) => {
+    pipes->pipe((req, res) => {
         if !res.completed {
             res->render("pages/404", null);
         }
     });
 
     logger := http.server.logger();
-    app->pipe(&logger);
+    pipes->pipe(&logger);
 
+    app := http.server.tcp(pipes);
     app->serve(8081);
     println("Server stopping...");
 }

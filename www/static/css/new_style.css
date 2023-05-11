@@ -259,8 +259,6 @@ navbar a {
 
 /* Footer */
 .footer-container {
-    position: sticky;
-    bottom: 0;
     display: flex;
     flex-direction: var(--default-flex-direction);
 }
