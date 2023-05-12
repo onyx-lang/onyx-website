@@ -1,0 +1,128 @@
+{{block "title"}}Onyx Environment Setup{{endblock}}
+
+{{ block "page_content" }}
+
+<div class="container">
+    <h1>Setting Up Your Environment for Onyx</h1>
+    <p>
+        <a class="link-button" href="#lsp">LSP</a>
+        <a class="link-button" href="#vim">Vim / Neovim</a>
+        <a class="link-button" href="#vscode">VS Code</a>
+        <a class="link-button" href="#sublime-text">Sublime text</a>
+        <a class="link-button" href="#emacs">Emacs</a>
+    </p>
+</div>
+
+<div class="container" id="lsp">
+    <h2>Language Server</h2>
+    <p>
+    If you are unfamiliar, a <em>Language Server</em> abstracts the tooling and language specific functionality out of editors and into a reusable component.
+    This way, it is easier to develop in-editor functionality across multiple editors, as the same work does not need to be replicated for each supported editor.
+    </p>
+
+    <p>
+    At the time of writing, the language server for onyx (<code>onyx-lsp</code>), is only supported on Linux.
+    This will be addressed soon.
+    </p>
+
+    <h3>Installing the Language Server</h3>
+    <ol>
+        <li>On Linux or Windows Subsystem for Linux, clone the <a href="https://github.com/onyx-lang/onyx-lsp">onyx-lsp</a> repository.</li>
+        <li>Go into the <code>run_tree</code> folder.</li>
+        <li>Run <code>chmod +x onyx-lsp install</code>, then <code>./install</code>.</li>
+        <li>Test the installation by running <code>onyx-lsp</code>. If the command is found and running, you're good to go.</li>
+    </ol>
+
+    <h3>Neovim</h3>
+    <p>To use the language server in NeoVim, you need to have <a href="https://github.com/neovim/nvim-lspconfig">the NeoVim lspconfig package</a> installed.</p>
+    <p>Then, you need the following in your NeoVim configuration somewhere:</p>
+    <pre class="hljs"><code class="language-lua">local lspconfig = require 'lspconfig'
+local configs = require 'lspconfig.configs'
+
+configs.onyx = {
+    default_config = {
+        cmd = { "onyx-lsp" },
+        filetypes = { "onyx" },
+        root_dir = function(filename)
+            local utils = require "lspconfig.util"
+            return utils.search_ancestors(filename, function(path)
+                if utils.path.is_file(utils.path.join(path, "onyx-lsp.ini")) then
+                    return path
+                end
+            end)
+        end;
+        settings = {}
+    }
+}
+
+lspconfig.onyx.setup {
+    on_attach = function(client)
+        print("Onyx LSP started.")
+    end
+}</code></pre>
+
+    <h3>Visual Studio Code</h3>
+    <p>Installing the extension automatically enables the language server in VS Code.</p>
+
+    <h3>Sublime Text</h3>
+    <p>
+        Install the <code>LSP</code> package, and add the following custom configuration.
+        See more information on <a href="https://lsp.sublimetext.io">the LSP package docs</a>.
+    </p>
+    <pre class="hljs"><code class="language-json">{
+  "clients": {
+    "onyx": {
+      "enabled": true,
+      "command": ["onyx-lsp"],
+      "selector": "source.onyx"
+    }
+  }
+}</pre></code>
+</div>
+
+<div class="container light" id="vim">
+    <h2>Vim / Neovim</h2>
+    <p>
+    Follow the instructions on the <a href="https://github.com/onyx-lang/onyx.vim">onyx.vim</a> GitHub repo.
+    </p>
+
+    <p>
+    Note, that this extension currently does not setup the LSP, and that must be done separately.
+    </p>
+</div>
+
+<div class="container" id="vscode">
+    <h2>Visual Studio Code</h2>
+    <p>
+    Currently, Onyx does not have a published extension for Visual Studio Code, but you are able to install it manually. In your downloaded or cloned copy of Onyx, there is a <code>misc/vscode</code> folder, which contains multiple versions of the Onyx extension.
+    </p>
+
+    <p>To install the extension in VS Code,</p>
+    <ol>
+        <li>Hit "Control+Shift+P" on Windows/Linux, or "Command+Shift+P" on MacOS.</li>
+        <li>Search for and select "Extensions: Install from VSIX".</li>
+        <li>Go to the downloaded copy of Onyx and select the newest version of the Onyx extension in <code>misc/vscode</code>.
+        <li>Restart VS Code.</li>
+    </ol>
+
+    <p>This extension does have support for the <code>onyx-lsp</code>, assuming that is setup.
+</div>
+
+<div class="container light" id="sublime-text">
+    <h2>Sublime Text</h2>
+    <p>
+    Currently, Onyx does not have a published package on Sublime Text's Package Control, but like VS Code, you are able to install it manually. In the <code>misc</code> folder, there is a file called <code>onyx.sublime-syntax</code>. Simply copy this into the <code>Packages/User</code> folder for Sublime Text. See more details <a href="https://www.sublimetext.com/docs/packages.html">here</a>.
+    </p>
+</div>
+
+<div class="container" id="emacs">
+    <h2>Emacs</h2>
+    <p>
+    Currently, Onyx does not have a published package for Emacs. In the <code>misc</code> folder, there is an Emacs Lisp file that provides an <code>onyx-mode</code>. You should be able to load it into your Emacs config and enable <code>onyx-mode</code> to get syntax highlighting.
+    </p>
+</div>
+
+
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}

@@ -306,12 +306,13 @@ main {
 }
 
 main pre {
-    border: 1px solid var(--terminal-background-color);
-    box-shadow: 0px 1px 10px 1px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--dark-background-color);
+    border-radius: 4px;
+    box-shadow: 0px 1px 6px 1px rgba(0, 0, 0, 0.2);
     padding: 8px;
     display: block;
-    overflow-y: scroll;
-    overflow-x: scroll;
+    overflow-y: auto;
+    overflow-x: auto;
 }
 
 pre code {

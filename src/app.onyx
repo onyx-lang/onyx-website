@@ -36,6 +36,9 @@ reg: otmp.TemplateRegistry;
 @route.{.GET, "/docs/install"}
 (req: &Req, res: &Res) => res->render("pages/docs/install", null);
 
+@route.{.GET, "/docs/setup"}
+(req: &Req, res: &Res) => res->render("pages/docs/setup", null);
+
 
 Article :: struct { name, description, path, date: str }
 news_articles: Cached_Resource([] Article);
