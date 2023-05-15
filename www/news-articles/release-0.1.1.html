@@ -1,0 +1,109 @@
+<h1>Beta Release 0.1.1</h1>
+
+<p>
+    This release of Onyx brings minor changes and additions, with some general bugfixes.
+</p>
+
+<h2>WASI Improvements</h2>
+<p>
+    Much of the work done in this release was focused on improving the support of the <a href="https://wasi.dev">WASI</a> runtime.
+    WASI has seen new features in the past couple of months, with support for things like threads and accepting socket connections.
+    Onyx is adding support for these features as they become relatively standardized.
+</p>
+
+<p>
+    This release, Onyx adds support for <a href="https://github.com/WebAssembly/wasi-threads">WASI Threads</a>.
+    It uses the same API for threads that already existed, but now programs targetting the WASI runtime can also use it. Note, for now it is required to pass the <code>--multi-threaded</code> argument when compiling to use threads.
+</p>
+
+<h2>Foreign Block Tags</h2>
+<p>
+    You can now place tags on procedures defined in a <code>#foreign</code> block.
+</p>
+
+<pre class="hljs"><code class="language-onyx">Metadata :: struct {
+    name: str;
+}
+
+#foreign "module" {
+    @Metadata.{ "metadata name" }
+    foreign_procedure :: () -> void ---
+}</code></pre>
+
+<p>
+    These tags can be accessed in the following way.
+</p>
+
+<pre class="hljs"><code class="language-onyx">use runtime
+
+for block: runtime.info.foreign_blocks {
+    for func: block.funcs {
+        tags: [] any = func.tags;
+        // ...
+    }
+}
+</code></pre>
+
+<p>
+    This feature is the baseline for creating sophisticated binding generators.
+</p>
+
+<h2>Onyx Package Manager</h2>
+<p>
+    The Onyx package manager is more stable and looks a bit better now.
+</p>
+<p>
+    It also now has rudimentary support for package templates.
+    Simply run <code>onyx pkg new 'template_name' 'destination_directory'</code>.
+    There is a single pre-installed template called <code>default</code> that gives you a simple project.
+</p>
+<pre class="hljs"><code class="language-sh">$ onyx pkg new default example-project
+Name of the project: example-project
+Description of the project: Description of the project
+Git repository for project: 
+Author name: Brendan Hansen
+    Creating  example-project/.gitignore
+    Creating  example-project/onyx-lsp.ini
+    Creating  example-project/onyx-pkg.ini
+    Creating  example-project/src/main.onyx
+     Running  git init
+</code></pre>
+
+<h2>Changelog</h2>
+<pre>
+Additions:
+* Ability to have tags on `#foreign` block procedures.
+    - This will enable the creation different binding generators, such jsbindgen.
+* WASI support for threads at the platform layer.
+    - Requires passing '--multi-threaded' CLI flag.
+* `#distinct` types can now be made over any type.
+    - Used to be only primitives.
+* New `logo-new-256.ico` for favicon on website.
+* `u8.to_upper` and `u8.to_lower`
+* `iter.empty`
+* `json.Value->as_array_iter()`, `json.Value->as_map_iter()`
+* `onyx pkg new` for creating a project from a template
+* `#load_all_recursive` to recursively load all `.onyx` files in a directory.
+
+Removals:
+
+Changes:
+* Undefined function imports in `onyx run` no longer cause an immediate error.
+    - Instead, an error is produced when the function is called.
+* API for time remains the same, but reduced dependencies on external time things,
+    like strftime, localtime and mktime.
+* Ergnomic improvements to `onyx pkg`.
+* Not relying on time for random number seeding, if cryptographic random number generation is possible.
+    - Using `getrandom` on Linux, and `BcryptGenRandom` on Windows.
+    - Using `random_get` on WASI.
+
+Bugfixes:
+* Fixed missing `use core` in `optional.onyx`.
+    - Fixes `Optional.reset` and `Optional.hash`
+* Fixed missing newline in `onyx help build` documentation.
+* Fixed WASI compilation due to misconfigured environment code.
+* Fixed WASI `__dir_open` permissions.
+* Fixed `core.encoding.ini` clearing the temporary allocator.
+</pre>
+
+

@@ -1,9 +1,9 @@
 [
     {
-        "name": "Onyx's Memory Model",
-        "path": "memory_model",
-        "date": "29th April 2023",
-        "description": "A explanation of the memory model employed by Onyx."
+        "name": "Beta Release 0.1.1",
+        "path": "release-0.1.1",
+        "date": "15th May 2023",
+        "description": "Onyx's beta 0.1.1 release"
     },
     {
         "name": "Onyx's Custom Runtime",
