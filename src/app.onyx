@@ -7,7 +7,7 @@ use core.encoding.json
 
 #inject runtime.vars {
     Enable_Heap_Debug :: true
-    Debug :: true
+    // Debug :: true
 }
 
 reg: otmp.TemplateRegistry;
