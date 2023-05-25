@@ -29,7 +29,7 @@ Cached_Resource :: struct (Res: type_expr) {
 #local
 update_resource :: (self: &Cached_Resource($T)) {
     if self.resource {
-        self.release_resource(&self.resource.value);
+        self.release_resource(self.resource->unwrap_ptr());
         self.resource->reset();
     }
 
