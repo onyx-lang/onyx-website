@@ -25,7 +25,10 @@ reg: otmp.TemplateRegistry;
 }
 
 @route.{.GET, "/"}
-(req: &Req, res: &Res) => res->render("pages/homepage", null);
+(req: &Req, res: &Res) {
+    articles := iter.as_iter(news_articles->get() ?? .[])->take(2)->collect();
+    res->render("pages/homepage", &.{ articles = articles });
+}
 
 @route.{.GET, "/ovmwasm"}
 (req: &Req, res: &Res) => res->render("pages/ovmwasm", null);
