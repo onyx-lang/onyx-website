@@ -158,6 +158,7 @@ h1, h2, h3, h4, h5, h6 {
 
 code {
     font-size: 0.9em;
+    font-family: fira, monospace;
 }
 
 
@@ -363,3 +364,7 @@ main li {
     }
 }
 
+@font-face {
+    font-family: fira;
+    src: url(../font/FiraCode-Regular.woff);
+}

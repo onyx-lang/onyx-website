@@ -1,0 +1,137 @@
+<h1>Beta Release 0.1.2</h1>
+
+<p>
+    This release of Onyx brings a substantial new feature called <em>tagged unions</em>, and a collection of other small bugfixes.
+</p>
+
+<h2>Tagged Unions</h2>
+<p>
+    Tagged unions are a big addition to the type system in Onyx, as they allow you to represent a new <em>kind</em> of type.
+    They bring a number of safety and sanity features that Onyx had been lacking in its type system.
+</p>
+
+<p>
+    At their core, tagged unions store at most one type of data at a time, and know which type they are currently holding.
+    In order to use the data in the tagged union, you must do a <code>switch</code> statement, which guarantees that you can only access the data if it is of the correct type.
+</p>
+
+<p>
+    Let's look at a code example.
+</p>
+
+<pre class="hljs"><code class="language-onyx">
+MultipleTypes :: union {
+    int: i32;
+    float: f32;
+    string: str;
+}   
+
+main :: () {
+    value := MultipleTypes.{ string="Tagged unions are cool!" };
+
+    switch value {
+        case .int do println("It was an integer!");
+        case .float do println("It was a float!");
+        case .string do println("It was a string!");
+    }
+}
+</code></pre>
+
+<p>
+    This code will print <code>It was a string!</code>, because <code>value</code> currently holds the <code>string</code> variant.
+    This is specified with <code>MultipleTypes.{ XXX = ... }</code>; <code>XXX</code> must be one of the variants of <code>MultipleTypes</code>.
+</p>
+
+<p>
+    In order to access the data inside of the union, you can use a switch with a <em>capture</em>, like so.
+</p>
+
+<pre class="hljs"><code class="language-onyx">
+main :: () {
+    value := MultipleTypes.{ string="Tagged unions are cool!" };
+
+    switch value {
+        case .int => int_value do printf("It was an integer: {}\n", int_value);
+
+        case .float => float_value do println("It was a float: {}\n", float_value);
+
+        // You can also use it by pointer by placing a '&' before the variable.
+        case .string => &str_value do println("It was a string: {}\n", *str_value);
+    }
+}
+</code></pre>
+
+<p>
+    You can also directly access the fields, like you would a structure.
+    However, instead of getting the data directly, you get an <em>Optional</em> of the data.
+    You then have to use the methods of the <em>Optional</em> type to access the data.
+</p>
+
+
+<pre class="hljs"><code class="language-onyx">MultipleTypes :: union {
+    int: i32;
+    float: f32;
+    string: str;
+}   
+
+main :: () {
+    v := MultipleTypes.{ float = 12.34 };
+    
+    // Using Optional.unwrap to get the data.
+    // This will cause an exception if the union does not currently hold a 'float'.
+    float_value := v.float->unwrap();
+    println(float_value);
+}
+</code></pre>
+
+<p>
+    Tagged unions can also be polymorphic, just like structures. With this feature, this is how the <code>Optional</code> type is now defined.
+</p>
+
+<pre class="hljs"><code class="language-onyx">Optional :: union (Value_Type: type_expr) {
+    None: void;
+    Some: Value_Type;
+}
+
+main :: () {
+    v := Optional(i32).{ Some = 123 };
+
+    switch v {
+        case .None {
+            println("No value :(");
+        }
+
+        case .Some => int_value {
+            printf("Int value: {}\n", int_value);
+        }
+    }
+}
+</code></pre>
+
+
+<h2>Full Changelog</h2>
+<pre>Additions:
+* Tagged unions (<code>union</code> type)
+* String literals can have unicode code points.
+    - '\uXXXX' for small code points (less than U+FFFF)
+    - '\UXXXXXX' for large code points
+    - Does not support UTF-16 surrogate pairs
+* <code>iter.next_opt</code>
+* <code>memory.ptr_add</code>
+* <code>misc.any_member</code>
+
+Removals:
+
+Changes:
+* <Code>optional</code> is now a tagged-union
+* <Code>result</code> is now a tagged-union
+* <code>iter.single</code> can take a <code>dispose</code> function, which is called on close of the
+    iterator, with the single value yielded.
+* <code>io.write_escaped_str</code> supports escaping "\\" now.
+* In Javascript runtime, made <code>__read_from_input</code> not defined right away, so
+    it can be overridden depending on the needs of the program.
+
+Bugfixes:
+* <code>json</code> encoder was wrongly not encoding strings when using <code>encode</code> on an <code>any</code>.
+</pre>
+
