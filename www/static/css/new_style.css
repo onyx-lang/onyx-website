@@ -161,9 +161,15 @@ code {
     font-family: fira, monospace;
 }
 
+p code {
+    background: var(--terminal-background-color);
+    color: var(--terminal-foreground-color);
+    border-radius: 4px;
+}
 
 
-/* Nagivation */
+
+/* Navigation */
 @media screen and (min-width: 800px) {
     .navbar-container {
         max-width: 1200px;

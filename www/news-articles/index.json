@@ -1,5 +1,11 @@
 [
     {
+        "name": "Beta Release 0.1.3",
+        "path": "release-0.1.3",
+        "date": "18th June 2023",
+        "description": "Onyx's beta 0.1.3 release"
+    },
+    {
         "name": "Beta Release 0.1.2",
         "path": "release-0.1.2",
         "date": "28th May 2023",
