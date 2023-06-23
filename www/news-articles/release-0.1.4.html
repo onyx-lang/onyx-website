@@ -1,0 +1,91 @@
+<h1>Beta Release 0.1.4</h1>
+
+<p>
+This is a small release that brings a <strong>big breaking change</strong> to most Onyx programs.
+In short, <code>map.get</code> now returns an <em>Optional</em>, instead of the value directly.
+This leads to cleaner and more understandable code.
+</p>
+
+<p>
+The Onyx package manager also sees a small update in the outputted library directory when packages are synchronized.
+Assuming you are using the provided <code>packages.onyx</code> file, this should be a transparent change.
+</p>
+
+<h2>Map uses Optional</h2>
+
+<p>
+The <code>map.get</code> procedure is now defined like so:
+</p>
+
+<pre class="hljs"><code class="language-onyx">Map.get :: (m: &Map($K, $V), k: K) -> ? V { ... }</code></pre>
+
+<p>
+This is more idiomatic as now the procedure can actually return "no result", without returning a dummy default value.
+However, as <code>Map</code> is a core data structure used by many programs, this will break many programs.
+This is why this release is smaller than most, as I want to get this change out there.
+All libraries have been updated for this already.
+</p>
+
+<p>
+To convert existing code, you will likely just need to add <code>?? .{}</code> after the <code>map.get</code> or <code>m[key]</code>.
+This will provide a default value if <code>None</code> was returned.
+</p>
+
+<p>
+A useful pattern I found myself using while converting the standard library was this:
+</p>
+
+<pre class="hljs"><code class="language-onyx">
+m: Map(str, str);
+// ...
+m->get("some key")->with([the_value] {
+    // Do something with "the_value"
+    println(the_value);
+});
+</code></pre>
+
+<p>
+The code inside of the <code>with</code> block is only executed if the value was present, so this acts like a <code>map.has</code> and <code>map.get</code> all at once.
+</p>
+
+<h2>Onyx package folder structure</h2>
+
+<p>
+In this version of Onyx, the package manager no longer outputs a flat directory structure for the included packages.
+Instead, the <em>full path</em> to the package is used.
+</p>
+
+<p>
+For example, if you include <code>https://github.com/someuser/somepackage</code>, then the path to that library will be <code>./lib/github.com/someuser/somepackage</code>.
+This way, package names do not have to be unique across the Onyx ecosystem, as this is impossible to enforce as Onyx does not have a centralized package version manager.
+</p>
+
+<p>
+This change should be transparent so long as you are using the <code>./lib/packages.onyx</code> file.
+The next time you run <code>onyx package sync</code> this new folder structure will be created and switched to.
+</p>
+
+<h2>Full Changelog</h2>
+<pre>
+Release v0.1.4
+-----------
+22nd June 2023
+
+Additions:
+
+Removals:
+- Deprecated `map.get_opt`.
+    - This is unnecessary with the new semantics of `map.get`.
+
+Changes:
+- `onyx pkg` now stores synchronized packages in a different folder hierarchy.
+    - This is a transparent change so long as you use the `lib/packages.onyx` file.
+- `Map` implementation no longer holds a default value. Instead, it returns an optional from `map.get`.
+    - This is a significant breaking change that will affect many programs.
+
+Bugfixes:
+- Fixed a bug that made relative imports not always relative to the current file.
+    - This may break some programs that were accidentally using this "feature".
+- Fixed a bug with small a `union` over small data types, such as booleans.
+    - There was an alignment issue, which caused the union to be smaller than expected.
+</pre>

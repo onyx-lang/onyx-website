@@ -48,7 +48,8 @@ news_articles: Cached_Resource([] Article);
 
 @route.{.GET, "/news/:article"}
 (req: &Req, res: &Res) {
-    article := array.first(news_articles->get() ?? .[], [n](n.path == req.url_params["article"]));
+    article_path := req.url_params["article"] ?? "";
+    article := array.first(news_articles->get() ?? .[], [n](n.path == article_path));
     if !article {
         res->status(404);
         res->render("pages/404", null);
