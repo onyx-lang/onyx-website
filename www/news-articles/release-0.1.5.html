@@ -1,0 +1,76 @@
+<h1>Beta Release 0.1.5</h1>
+
+<p>
+This release brings additions to Onyx's platform layer, allowing for missing things like <em>futexes</em> and TTY control. 
+</p>
+
+<h2>Futexes</h2>
+
+<p>
+A fast-userspace mutex (or <em>futex</em>) is mechanism that allows any memory address to be used as a resource that can be waited on and woken up.
+Most users will not have to use futexes in their own programs, but they significantly benefit the standard synchronization library.
+They allow for mutexes, semaphores and condition variables to not rely on spin-looping to wait.
+</p>
+
+<p>
+Before futexes, the following kind of program would have had an expensive spin-loop that would have negated the efficiency trying to be gained.
+Now, both threads barely use any CPU time.
+</p>
+
+<pre class="hljs"><code class="language-onyx">use core {*}
+
+counter: sync.Semaphore;
+
+main :: () {
+    sync.semaphore_init(&counter, 0);
+
+    // Spawn a thread that infinitely waits for a semaphore to be signaled.
+    t: thread.Thread;
+    thread.spawn(&t, cast(&i32, null), _ => {
+        while true {
+            sync.semaphore_wait(&counter);
+            println("Got a signal!");
+        }
+    });
+
+    // Every second, signal the semaphore.
+    while true {
+        os.sleep(1000);
+        sync.semaphore_post(&counter);
+    }
+}
+</code></pre>
+
+<p>
+Futexes are available in the <code>onyx</code> and <code>js</code> platform layers.
+The <code>wasi</code> platform layer currently does not support futexes of any kind.
+However, a new WASI standard, WASIX, does support futexes.
+</p>
+
+<h2>Full Changelog</h2>
+<pre>
+Additions:
+- Added ability to control the size of the tag type for tagged unions.
+    - `union #tag_type u8`
+- Infrastructure to have custom sub-commands.
+    - Any `*.wasm` file in `$ONYX_PATH/tools` is available to run with `onyx <cmd>`
+- `__futex_wait` and `__futex_wake` to platform layer.
+    - This allows for non-busy-waiting on mutexes and semaphores.
+    - Currently implemented for Onyx and JS platforms; WASI is impossible, but WASIX will come soon.
+- `--skip-native` flag to `onyx pkg sync` to skip compiling native libraries.
+- Ability to tag methods on structures.
+- `tty_get` and `tty_set` functions in `core.os`
+    - Allows for controlling raw and echoed input
+    - Currently only for `onyx` runtime and on Linux only.
+- `-Dno_entrypoint` for programs that do not have a `main` function.
+
+Removals:
+- `Wait_Notify_Available` global in `runtime` package.
+    - This is no longer needed as futexes are preferred instead of wait/notify.
+
+Changes:
+
+Bugfixes:
+- Fixed bug in `json.encode` that caused arrays of structures to not be outputted correctly.
+- Fixed bug in `onyx pkg` that caused `onyx pkg new` to not work as intended.
+</pre>
