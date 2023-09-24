@@ -1,0 +1,59 @@
+<h1>Beta Release 0.1.6</h1>
+<p>
+There has not been a new release of Onyx in several months. I have been working on other projects (using Onyx!) and have not had the time need to dedicate to new features in the language. That being said Onyx already has many of the features that I need for my projects, so I have not felt the need to add new features. However, I have been fixing bugfixes and blatant misimplementations of core library procedures that have been getting in my way. Enough of these have accumulated over the past couple of months that I believe it is worth it to publish them in a new bugfix release.
+</p>
+
+<p>
+There is <em>one</em> new feature worth mentioning and that is <em>tagged globals</em>.
+</p>
+
+<h2>Tagged Globals</h2>
+<p>
+Just like procedures, structures, and tagged unions, global variables can now be tagged with a compile-time constant value that is accessible while the program is running. They can be accessed using <code>runtime.info.get_globals_with_tag</code>.
+</p>
+
+<pre class="hljs"><code class="language-onyx">use core {*}
+use runtime
+
+#tag "A tag value."
+a_global: i32;
+
+main :: () {
+    for runtime.info.get_globals_with_tag(str) {
+        printf("{} with type {} has a tag: '{}'", it.data, it.type, *it.tag);
+    }
+}
+</code></pre>
+
+<h2>Full Changelog</h2>
+<pre>
+Additions:
+- Tagging global variables.
+    - Just like procedure and structure tags.
+    - Use `runtime.info.tagged_globals` and `runtime.info.get_globals_with_tag()`
+- `logf` for formatted logging.
+    - This is only present if `conv.format` is present.
+- Ability to debug GC allocator by defining `runtime.vars.Enable_GC_Debug`.
+- Ability to set allocator on `Map`.
+- `string.to_cstr_on_stack`
+- `Date.day_of_week()`
+
+Removals:
+
+Changes:
+- `misc.any_to_map` now returns `? Map(str, any)`.
+- Build scripts on Linux no longer internally use `sudo`, requiring the script to be run with `sudo` instead.
+    - This makes it possible to easily build Onyx into a container image.
+- Parse errors with an unexpected symbol now say the symbol's name instead of TOKEN_TYPE_SYMBOL.
+
+Bugfixes:
+- `alloc.arena.clear` would not leave the arena in a proper state for further allocations.
+- `array.filter` was implemented incorrectly.
+- `runtime.platform.__get_env` was implemented incorrectly on Onyx runtime.
+- `Result.is_ok` and `Result.is_err` were implemented with incorrect return types.
+- `Timestamp.from_date` was implemented incorrectly.
+- `Date.add_months` was implemented incorrectly.
+- `alloc.atomic` was left untested.
+- `Reader.read_bytes` was implemented incorrectly.
+- `string.last_index_of` was implemented incorrectly.
+</pre>

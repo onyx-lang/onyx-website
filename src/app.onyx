@@ -19,6 +19,7 @@ reg: otmp.TemplateRegistry;
             log(.Warning, "Template Renderer", tprintf("{}", s));
         }
 
+        r.headers["content-type"] = "text/html";
         r->status(200 if s == .None else 400);
         r->end();
     }
@@ -133,10 +134,10 @@ main :: () {
         }
     });
 
-    logger := http.server.logger();
+    logger := http.server.logger(style=.V2);
     pipes->pipe(&logger);
 
-    app := http.server.tcp(pipes);
+    app := http.server.tcp(pipes, .{ thread_count = 4 });
     app->serve(8081);
     println("Server stopping...");
 }
