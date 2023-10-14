@@ -2,48 +2,145 @@
     The Onyx Programming Language
 {{ endblock }}
 
+{{ let navbar_page = "home" }}
+
 {{ block "page_content" }}
 
-<div class="container center" style="margin: 0 auto">
-<h1>The <b>Onyx</b> Programming Language</h1>
+<div class="container">
+    <div style="text-align: center;">
+        <h1>The <b>Onyx</b> Programming Language</h1>
+    </div>
+    <div style="font-size: 20pt; text-align: center; margin-top: 8px">
+        <p>A data-oriented, safe, and modern programming language</p>
+    </div>
 </div>
 
-<div class="container light center" style="font-size: 24pt">
-<p><b>Onyx</b> is a data-oriented, safe, and modern programming language for application development</p>
+<div class="container light">
+    <h2 style="margin-bottom: 8px">Recent News</h2>
+</div>
+{% partial "partials/news_listing" %}
+
+<div class="container light">
+    <h2>Overview</h2>
 </div>
 
 <div class="container">
-<div class="split right-40">
     <div>
-        <h2>Overview</h2>
+        <h2>Syntax</h2>
         <br />
-
-        <ul style="font-size: larger;">
-            <li>Runs everywhere using <a href="https://webassembly.org">WebAssembly</a></li>
-            <li>Lightning fast compilation</li>
-            <li>Self-hosted, debuggable runtime using <a href="/news/ovmwasm">OVM-Wasm</a></li>
-            <li>Secure and fast runtime using <a href="https://wasmer.io">Wasmer</a></li>
-        </ul>
+        <p>Onyx uses a modernized C-like syntax, similar to Jai or Odin. Start learning the syntax from official <a href="https://docs.onyxlang.io/book">Language Reference Book</a>.</p>
     </div>
 
-    <pre class="hljs"><code class="language-onyx">use core {println}
+    <pre class="hljs"><code class="language-onyx">use core { printf, iter }
 
 main :: () {
-    f := factorial(10);
-    println(f);
+    for i: 1 .. 10 {
+        fact := factorial(i);
+        printf("{}! = {}\n", i, fact);
+    }
 }
 
 factorial :: (n: i32) -> i32 {
-    k := 1;
-    for 1 .. n+1 do k *= it;
-    return k;
+    return iter.as_iter(1 .. n)
+        |> iter.fold(1, (x, y) => x * y);
 }
 </code></pre>
 
 </div>
+
+<div class="container light">
+    <div>
+        <h2>Type Safety</h2>
+        <br />
+        <p>Onyx is <b>strictly</b> type-checked. However, the type-inference systems in Onyx usually allow you to omit types.</p>
+    </div>
+
+    <pre class="hljs"><code class="language-onyx">use core { printf }
+
+main :: () {
+    // Inferred variable type
+    x := 10;
+
+    // Function with entirely infered types.
+    change_value :: x => x + 10;
+
+    // Onyx figures out the types of `change_value` when you call it.
+    printf("The value is {}.\n", change_value(x));
+}
+</code></pre>
+
+</div>
+
+<div class="container">
+    <div>
+        <h2>Compilation</h2>
+        <br />
+        <p>Onyx's compiler is written entirely in C and features incredibly fast compilation. The web-server for this website was compiled in <b>49 milliseconds</b>.</p>
+    </div>
+
+    <pre class="hljs"><code>$ onyx build -V ./src/app.onyx
+File search path:
+        /usr/share/onyx
+        .
+
+Type table size: 131244 bytes.
+Foreign blocks size: 8 bytes.
+Tagged procedure size: 504 bytes.
+Tagged global size: 8 bytes.
+
+Statistics:
+    Time taken: 49.000000 ms
+    Processed 20607 lines (420551.031250 lines/second).
+    Processed 107338 tokens (2190571.500000 tokens/second)
+</code></pre>
 </div>
 
 <div class="container light">
+    <div>
+        <h2>WebAssembly</h2>
+        <br />
+        <p>Onyx compiles solely to <a href="https://webassembly.org">WebAssembly</a>. You can use the builtin WebAssembly runtime using <code>onyx run</code>, or compile to WASM and run using a WebAssembly runner, like Wasmer or Wasmtime.</p>
+    </div>
+
+    <pre class="hljs"><code># Compile and run directly.
+$ onyx run hello.onyx
+Hello, World!
+
+# This time target 'WASI'.
+$ onyx build -r wasi -o hello.wasm hello.onyx
+
+# Run using Wasmer.
+$ wasmer run hello.wasm
+Hello, World!
+</code></pre>
+</div>
+
+<div class="container">
+    <div>
+        <h2>C-FFI</h2>
+        <br />
+        <p>Onyx features built-in support for linking to native C-libraries.</p>
+    </div>
+
+    <pre class="hljs"><code class="language-onyx">use core {*}
+
+// Using #dyncall dynamically loads the library at runtime.
+#foreign #dyncall "libc.so" {
+    write :: (fd: i32, data: [&] u8, count: i32) -> i32 ---
+}
+
+main :: () {
+    msg: [] u8 = "Hello, libc!";
+
+    write(1, msg.data, msg.length);
+}
+    </code></pre>
+</div>
+
+</div>
+</div>
+
+<!-- <div class="container light">
     <h2 style="margin-bottom: 8px">Features</h2>
 
     <div class="panel-container">
@@ -64,12 +161,8 @@ factorial :: (n: i32) -> i32 {
             <p>Onyx enables programmer expressiveness, while making it easy to write bug-free code.</p>
         </div>
     </div>
-</div>
+</div> -->
 
-<div class="container">
-    <h2 style="margin-bottom: 8px">Recent News</h2>
-    {% partial "partials/news_listing" %}
-</div>
 
 
 {{endblock}}

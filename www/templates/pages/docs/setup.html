@@ -1,9 +1,14 @@
 {{block "title"}}Onyx Environment Setup{{endblock}}
 
+{{ let navbar_page = "docs" }}
+
 {{ block "page_content" }}
 
 <div class="container">
     <h1>Setting Up Your Environment for Onyx</h1>
+
+    <p>The following sections will help set up an environment for you to program Onyx effectively.</p>
+
     <p>
         <a class="link-button" href="#lsp">LSP</a>
         <a class="link-button" href="#vim">Vim / Neovim</a>
@@ -11,9 +16,13 @@
         <a class="link-button" href="#sublime-text">Sublime text</a>
         <a class="link-button" href="#emacs">Emacs</a>
     </p>
+
+    <p style="opacity: 0.5; font-size: 0.75em">
+        (If you don't see your favorite editor here, consider making a <a href="https://github.com/onyx-lang/onyx/issues">issue</a>!)
+    </p>
 </div>
 
-<div class="container" id="lsp">
+<div class="container light" id="lsp">
     <h2>Language Server</h2>
     <p>
     If you are unfamiliar, a <em>Language Server</em> abstracts the tooling and language specific functionality out of editors and into a reusable component.
@@ -80,7 +89,7 @@ lspconfig.onyx.setup {
 }</pre></code>
 </div>
 
-<div class="container light" id="vim">
+<div class="container " id="vim">
     <h2>Vim / Neovim</h2>
     <p>
     Follow the instructions on the <a href="https://github.com/onyx-lang/onyx.vim">onyx.vim</a> GitHub repo.
@@ -91,7 +100,7 @@ lspconfig.onyx.setup {
     </p>
 </div>
 
-<div class="container" id="vscode">
+<div class="container light" id="vscode">
     <h2>Visual Studio Code</h2>
     <p>
     Currently, Onyx does not have a published extension for Visual Studio Code, but you are able to install it manually. In your downloaded or cloned copy of Onyx, there is a <code>misc/vscode</code> folder, which contains multiple versions of the Onyx extension.
@@ -108,14 +117,14 @@ lspconfig.onyx.setup {
     <p>This extension does have support for the <code>onyx-lsp</code>, assuming that is setup.
 </div>
 
-<div class="container light" id="sublime-text">
+<div class="container " id="sublime-text">
     <h2>Sublime Text</h2>
     <p>
     Currently, Onyx does not have a published package on Sublime Text's Package Control, but like VS Code, you are able to install it manually. In the <code>misc</code> folder, there is a file called <code>onyx.sublime-syntax</code>. Simply copy this into the <code>Packages/User</code> folder for Sublime Text. See more details <a href="https://www.sublimetext.com/docs/packages.html">here</a>.
     </p>
 </div>
 
-<div class="container" id="emacs">
+<div class="container light" id="emacs">
     <h2>Emacs</h2>
     <p>
     Currently, Onyx does not have a published package for Emacs. In the <code>misc</code> folder, there is an Emacs Lisp file that provides an <code>onyx-mode</code>. You should be able to load it into your Emacs config and enable <code>onyx-mode</code> to get syntax highlighting.
