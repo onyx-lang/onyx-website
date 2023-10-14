@@ -352,7 +352,7 @@ main li {
     #desktop_logo:hover #path67      { transform: matrix(0.147954, 0, 0, 0.147954, 35, 9); }
     #desktop_logo:hover #path31      { transform: translate(21.5px, -2.5px) rotate(60deg); }
     #desktop_logo:hover #path1180    { transform: translate(34.25px, 7px) rotate(120deg); }
-    #desktop_logo:hover #path537     { transform: translate(51.5px, 11.01px) rotate(150deg); }
+    #desktop_logo:hover #path537     { transform-origin: center; transform: rotate(150deg) translate(17px, -4.3px); }
     #desktop_logo:hover #path1062    { transform: translate(36px, 2px) rotate(90deg); }
     #desktop_logo :not(#layer2) path { transition: all 1s ease-in-out; }
 }
