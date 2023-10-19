@@ -7,13 +7,15 @@ use core.encoding.json
 
 #inject runtime.vars {
     Enable_Heap_Debug :: true
-    Debug :: true
+    // Debug :: true
 }
 
 reg: otmp.TemplateRegistry;
 #inject Res {
     render :: (r: &Res, template: str, vars: any) {
         m := misc.any_to_map(vars) ?? make(Map(str, any));
+        defer delete(&m);
+
         s := reg->render_template(template, &r.writer, &m);
 
         if s != .None {
