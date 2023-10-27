@@ -1,0 +1,149 @@
+<h1>Beta Release 0.1.7</h1>
+<p>
+    This release of Onyx brings exciting and overdue features, including switch expression, WASIX support and an overhauled networking layer.
+</p>
+
+<h2>Switch Expressions</h2>
+<p>
+    Switch expressions allow you to write inline <code>switch</code> statements that evaluate to values, removing
+    a common pattern that can be seen here:
+</p>
+
+<pre class="hljs"><code class="language-onyx">x: u32;
+switch value {
+    case .Case1 do x = 2;
+    case .Case2 do x = 3;
+    case .Case3 do x = 5;
+    case .Case4 do x = 7;
+}
+</code></pre>
+
+<p>
+    The above code can be rewritten like so:
+</p>
+
+<pre class="hljs"><code class="language-onyx">// When `switch` appears in an expression, its cases must look like
+//    case X => value
+//
+x: u32 = switch value {
+    case .Case1 => 2;
+    case .Case2 => 3;
+    case .Case3 => 5;
+    case .Case4 => 7;
+}
+</code></pre>
+
+<p>
+    One caveat to this new feature is that it stole the syntax for capturing a value when switching over a tagged
+    union. To fix this, <code>case</code> blocks that capture the union value were given a new syntax that looks like <code>for</code>-loops.
+</p>
+
+<pre class="hljs"><code class="language-onyx">x: ? i32 = .{ Some = 123 };
+
+switch x {
+    // By value
+    case value: .Some {
+        printf("X has value {}\n", value);
+    }
+
+    // Or by pointer
+    case &value: .Some {
+        printf("X has value {}\n", *value);
+    }
+}
+</code></pre>
+
+
+<h2>Networking Overhaul</h2>
+<p>
+A majority of the work done in this release was refactoring the networking portion of the core libraries to
+operate at the <em>platform</em> layer. The platform layer is an abstraction layer that sits just above all
+of the interesting system level operations, like file-operations, threads, and now networking.
+</p>
+
+<p>
+Before, all network code was not abstracted because the <code>onyx</code> runtime was the only one that could
+support networking, so it wasn't a high priority item to refactor. That has changed however, with Wasmer's
+introduction of <em>WASIX</em>.
+</p>
+
+<h2>WASIX</h2>
+<p>
+<a href="https://wasix.org">WASIX</a> is an extention of WASI, with inspiration from POSIX functions. It brings many useful things like networking,
+TTY, futexes, better threads, and even <code>setjmp</code>/<code>longjmp</code>.
+</p>
+
+<p>
+This version of Onyx enables networking, TTY control, and futexes when compiling to the <code>wasi</code> runtime when <code>runtime.vars.WASIX</code>
+is defined. You can easily do this by passing <code>-DWASIX</code> on the command line or by adding this line of code to your file.
+</p>
+<pre class="hljs"><code class="language-onyx">use runtime
+#inject runtime.vars.WASIX :: true
+</code></pre>
+
+<h2>DynCallback Integration</h2>
+<p>
+A long awaited feature when it comes to working with C libraries is the ability to pass an Onyx function to a C library as a callback.
+This is a common pattern employed by many C libraries, so it would be very nice to support it. Thanks to <code><a href="https://dyncall.org">dyncallback</a></code>,
+this is possible and very easy.
+</p>
+
+<p>
+The <code>cbindgen</code> library now supports translating functions passed as arguments into the C bindings that wrap an Onyx function
+in a native function using <code>dyncallback</code>.
+</p>
+
+<pre class="hljs"><code class="language-onyx">#foreign "libraryA" {
+    external_func :: (callback: (i32) -> void) -> void ---
+}
+
+main :: () {
+    external_func(x => {
+        println(x);
+    });
+}
+</code></pre>
+
+<p>
+Note that while it should be possible to use this with other WebAssembly runtimes, Wasmer does not currently provide a couple of
+crucial functions in their C api to make this work. So sadly, you must be using the <code>ovmwasm</code> runtime to use this feature.
+</p>
+
+<h2>Full Changelog</h2>
+<pre>
+Additions:
+- Support for WASIX, a new, extended standard to WASI, popularized by Wasmer.
+    - Define `WASIX` in `runtime.vars` to enable it. (`-DWASIX` on the CLI)
+    - Adds support for networking, futexes, and TTY control in WASI.
+- `switch` expressions.
+    - `switch` can appear at the expression level, and uses `case X => value` to
+      specify cases.
+- `cbindgen` now supports passing functions as arguments.
+    - Internally uses dyncallback
+    - Only for OVM-wasm and Linux, for now.
+- Scoped values in interfaces. `X :: ...` is allowed in an interface now.
+- `#inject` works on interfaces.
+- Polling to the `io.Stream` functionality.
+    - Used to query when data is read/write-able from a stream, for supported streams.
+    - `io.stream_poll`
+- `misc.any_unwrap` to unwrap an `any` containing an optional.
+- `json.decode_with_result`
+- `json.decode_into`
+- `slice.group_by`
+
+Removals:
+
+Changes:
+- Complete overhaul of networking in the core library.
+    - Backwards compatiblity was not strictly maintained, but common functions did
+      not change, like `socket_send` and `socket_recv`.
+- When debugging, `/ 0` or `% 0` will trigger an exception to debug the error.
+
+Bugfixes:
+- `alloc.atomic` package was broken when `sync` package was missing.
+- `X.foo` would not work if `X` was a pointer to a union.
+- Captures by pointer would break if the value was a primitive whose address wasn't
+  taken anywhere else.
+- Symbol name reported by documentation generation was incorrect for some methods.
+</pre>
+
