@@ -7,6 +7,15 @@
 <main>
     {% partial "partials/navbar" %}
 
+    <div class="container header">
+        <h1>
+            {% $article.name %}
+        </h1>
+        <p>
+            {% $article.description %}
+        </p>
+    </div>
+
     <div class="container">
         {% $article.contents %}
     </div>

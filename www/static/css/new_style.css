@@ -4,34 +4,22 @@
     box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-    .ui-theme {
-        --terminal-background-color: #070707;
-        --terminal-foreground-color: #ffffff;
+.ui-theme {
+    --terminal-background-color: #dddddd;
+    --terminal-foreground-color: #000000;
 
-        --background-color: #222;
-        --light-background-color: #333;
-        --dark-background-color: #111;
-        --active-color: #555;
-        --link-color: #bbf;
-        --visited-link-color: #bfbfff;
-        --foreground-color: #fff;
-    }
-}
+    --background-color: #f0f0f5;
+    --light-background-color: #e0e0e6;
+    --dark-background-color: var(--header-color);
+    --active-color: #cccccc;
 
-@media (prefers-color-scheme: light) {
-    .ui-theme {
-        --terminal-background-color: #dddddd;
-        --terminal-foreground-color: #000000;
+    --header-color: #303033;
+    --header-text: #ffffff;
+    --header-accent: #505055;
 
-        --background-color: #f0f0f0;
-        --light-background-color: #e0e0e0;
-        --dark-background-color: #c0c0c0;
-        --active-color: #cccccc;
-        --link-color: #448;
-        --visited-link-color: #669;
-        --foreground-color: #000000;
-    }
+    --link-color: #448;
+    --visited-link-color: #669;
+    --foreground-color: #000000;
 }
 
 @media (min-width: 800px) {
@@ -108,10 +96,16 @@ a:visited {
 
 .container.dark {
     background: var(--dark-background-color);
+    color: var(--header-text);
 }
 
 .container.light {
     background: var(--light-background-color);
+}
+
+.container.header {
+    background: var(--header-color);
+    color: var(--header-text);
 }
 
 @media screen and (min-width: 800px) {
@@ -176,6 +170,13 @@ p code {
 /* Navigation */
 @media screen and (min-width: 800px) {
     .navbar-container {
+        background: var(--header-color);
+        color: var(--header-text);
+
+        width: 100%;
+    }
+
+    navbar {
         max-width: 1200px;
         margin: 0 auto;
     }
@@ -183,6 +184,9 @@ p code {
 
 @media screen and (max-width: 799px) {
     .navbar-container {
+        background: var(--header-color);
+        color: var(--header-text);
+
         width: 100%;
         margin: 0 auto;
     }
@@ -190,8 +194,8 @@ p code {
 
 
 navbar {
-    background: var(--background-color);
-    color: var(--foreground-color);
+    background: var(--header-color);
+    color: var(--header-text);
     padding: 0 12px;
 
     display: flex;
@@ -219,15 +223,15 @@ navbar a span.active {
 
 navbar a span:hover {
     cursor: pointer;
-    background-color: var(--light-background-color);
+    background-color: var(--header-accent);
 }
 
 navbar a:visited {
-    color: var(--foreground-color);
+    color: var(--header-text);
 }
 
 navbar a {
-    color: var(--foreground-color);
+    color: var(--header-text);
     text-decoration: none;
 }
 

@@ -3,43 +3,43 @@
         "name": "Beta Release 0.1.7",
         "path": "release-0.1.7",
         "date": "25th October 2023",
-        "description": "Onyx's beta 0.1.7 release"
+        "description": "This release of Onyx brings exciting and overdue features, including switch expressions, WASIX support and an overhauled networking layer."
     },
     {
         "name": "Beta Release 0.1.6",
         "path": "release-0.1.6",
         "date": "24th September 2023",
-        "description": "Onyx's beta 0.1.6 release"
+        "description": "There has not been a new release of Onyx in several months. I have been working on other projects (using Onyx!) and have not had the time needed to dedicate to new features in the language. That being said, Onyx already has many of the features that I need for my projects, so I have not felt the need to add new features. However, I have been fixing bugs and blatant wrong implementations of core library procedures that have been getting in my way. Enough of these have accumulated over the past couple of months that I believe it is worth it to publish them in a new bugfix release."
     },
     {
         "name": "Beta Release 0.1.5",
         "path": "release-0.1.5",
         "date": "18th July 2023",
-        "description": "Onyx's beta 0.1.5 release"
+        "description": "This release brings additions to Onyx's platform layer, allowing for missing things like <em>futexes</em> and TTY control."
     },
     {
         "name": "Beta Release 0.1.4",
         "path": "release-0.1.4",
         "date": "22nd June 2023",
-        "description": "Onyx's beta 0.1.4 release"
+        "description": "This is a small release that brings a <strong>big breaking change</strong> to most Onyx programs.  In short, <code>map.get</code> now returns an <em>Optional</em>, instead of the value directly.  This leads to cleaner and more understandable code."
     },
     {
         "name": "Beta Release 0.1.3",
         "path": "release-0.1.3",
         "date": "18th June 2023",
-        "description": "Onyx's beta 0.1.3 release"
+        "description": "This release of Onyx brings a large change to the compile-time code blocks feature, runtime stack traces, as well as a massive speedup to Onyx's <code>ovmwasm</code> runtime. There are also numerous additions to the standard library."
     },
     {
         "name": "Beta Release 0.1.2",
         "path": "release-0.1.2",
         "date": "28th May 2023",
-        "description": "Onyx's beta 0.1.2 release"
+        "description": "This release of Onyx brings a substantial new feature called <em>tagged unions</em>, and a collection of other small bugfixes."
     },
     {
         "name": "Beta Release 0.1.1",
         "path": "release-0.1.1",
         "date": "15th May 2023",
-        "description": "Onyx's beta 0.1.1 release"
+        "description": "This release of Onyx brings minor changes and additions, with some general bugfixes."
     },
     {
         "name": "Onyx's Custom Runtime",

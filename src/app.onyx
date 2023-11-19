@@ -67,7 +67,7 @@ news_articles: Cached_Resource([] Article);
         defer delete(&contents);
 
         res->render("pages/news_article", &.{
-            article = .{ contents = contents, name = article.name }
+            article = .{ contents = contents, name = article.name, description = article.description }
         });
 
     } else {
@@ -140,8 +140,11 @@ main :: () {
     logger := http.server.logger(style=.V2);
     pipes->pipe(&logger);
 
-    app := http.server.tcp(pipes, .{ thread_count = 4 });
-    app->serve(8081);
+    app := http.server.tcp(pipes, .{ thread_count = 0 });
+
+    port := conv.parse_int(os.env("SERVER_PORT") ?? "8000");
+
+    app->serve(~~port);
     println("Server stopping...");
 }
 
