@@ -1,5 +1,5 @@
 {{ block "title" }}
-    The Onyx Programming Language
+    Onyx Programming Language
 {{ endblock }}
 
 {{ let navbar_page = "home" }}
@@ -15,11 +15,14 @@
     </div>
 </div>
 
+<!-- <div class="container light">
+    <h2 style="margin-bottom: 8px">Get Started</h2>
+</div> -->
 
 <div class="container">
     <div style="text-align: center;">
         <div style="margin-bottom: 26px">
-            Run the following command in your favorite shell on <strong>Linux or MacOS</strong> and get started with Onyx.
+            Install in one command, or build <a href="/docs/install">from source</a>.
         </div>
         <div>
             <span style="font-size: 16pt; font-family: monospace; padding: 20px; color: var(--header-text); background: var(--header-color); border-radius: 8px; box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.4)">
@@ -27,11 +30,11 @@
             </span>
         </div>
         <div style="margin-top: 40px">
-            Or try Onyx online and read the docs!
+            Alternatively, try Onyx online and read the docs!
         </div>
         <div style="margin-top: 26px; display: flex; flex-direction: row; gap: 40px;">
-            <a style="flex: 1; border-radius: 8px; padding: 16px; font-size: 16pt; background: var(--header-color); color: var(--header-text); box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.4)" href="/playground">TRY ONLINE</a>
-            <a style="flex: 1; border-radius: 8px; padding: 16px; font-size: 16pt; background: var(--header-color); color: var(--header-text); box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.4)" href="/docs">READ THE DOCS</a>
+            <a style="flex: 1; border-radius: 8px; padding: 16px; font-size: 16pt; border: 1px solid var(--header-color); border-radius: 8px; box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.4)" href="/playground">TRY ONLINE</a>
+            <a style="flex: 1; border-radius: 8px; padding: 16px; font-size: 16pt; border: 1px solid var(--header-color); border-radius: 8px; box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.4)" href="/docs">READ THE DOCS</a>
         </div>
     </div>
 </div>
@@ -44,7 +47,7 @@
 {% partial "partials/news_listing" %}
 
 <div class="container light">
-    <h2>Overview</h2>
+    <h2>Language Overview</h2>
 </div>
 
 <div class="container">
@@ -71,7 +74,7 @@ factorial :: (n: i32) -> i32 {
 
 </div>
 
-<div class="container light">
+<div class="container">
     <div>
         <h2>Type Safety</h2>
         <br />
@@ -96,7 +99,7 @@ main :: () {
 
 <div class="container">
     <div>
-        <h2>Compilation</h2>
+        <h2>Fast Compilation</h2>
         <br />
         <p>Onyx's compiler is written entirely in C and features incredibly fast compilation. The web-server for this website was compiled in <b>49 milliseconds</b>.</p>
     </div>
@@ -118,11 +121,11 @@ Statistics:
 </code></pre>
 </div>
 
-<div class="container light">
+<div class="container">
     <div>
         <h2>WebAssembly</h2>
         <br />
-        <p>Onyx compiles solely to <a href="https://webassembly.org">WebAssembly</a>. You can use the builtin WebAssembly runtime using <code>onyx run</code>, or compile to WASM and run using a WebAssembly runner, like Wasmer or Wasmtime.</p>
+        <p>Onyx compiles solely to <a href="https://webassembly.org">WebAssembly</a>. You can use a builtin WebAssembly runtime using <code>onyx run</code>, or compile to WASM and run using a WebAssembly runner, like Wasmer or Wasmtime.</p>
     </div>
 
     <pre class="hljs"><code># Compile and run directly.
@@ -162,31 +165,6 @@ main :: () {
 
 </div>
 </div>
-
-<!-- <div class="container light">
-    <h2 style="margin-bottom: 8px">Features</h2>
-
-    <div class="panel-container">
-        <div>
-            <h3>Portable</h3>
-            <p>By targetting WASM, Onyx can be used in the browser, or natively with a <a href="/news/ovmwasm">custom runtime</a>.</p>
-        </div>
-        <div>
-            <h3>Data-Oriented</h3>
-            <p>Ditch complicated classes and inheritance. Just focus on modeling the data for your application.</p>
-        </div>
-        <div>
-            <h3>Extensible</h3>
-            <p>With a C binding generation library, a useful C library is just one-step away.</p>
-        </div>
-        <div>
-            <h3>Fun and Safe</h3>
-            <p>Onyx enables programmer expressiveness, while making it easy to write bug-free code.</p>
-        </div>
-    </div>
-</div> -->
-
-
 
 {{endblock}}
 

@@ -8,97 +8,84 @@
     <h1>Installing Onyx</h1>
     <p>
         <a class="link-button" href="#online">Online</a>
-        <a class="link-button" href="#linux">Linux</a>
+        <a class="link-button" href="#linux-macos">Linux</a>
+        <a class="link-button" href="#linux-macos">MacOS</a>
         <a class="link-button" href="#windows">Windows</a>
-        <a class="link-button" href="#macos">MacOS</a>
+        <a class="link-button" href="#source">From Source</a>
     </p>
 </div>
 
 <div class="container light" id="online">
     <h2>Try Online</h2>
+</div>
+<div class="container">
     <p>
-        Onyx is available to try online for free in <a href="/playground/">Onyx Playground</a>.
+        Onyx is available to try online for free in the Onyx Playground.
         It allows you learn the syntax from examples, without installing the language onto your system.
+    </p>
+    <p>
+        <a class="link-button" href="/playground">Go to Playground</a>
     </p>
 </div>
 
-<div class="container" id="linux">
-    <h2>Linux</h2>
-    <div>
-        <h3>From Source</h3>
-        <p>
-            The easiest way to install Onyx on a Linux system is to clone the repository from GitHub, and then compile from source.
-            This is relatively simple, since Onyx does not use any fancy things in its source tree. Only C code and shell scripts.
+<div class="container light" id="linux-macos">
+    <h2>Linux / MacOS</h2>
+</div>
+<div class="container">
+    <p>
+        The easiest way to install Onyx on a Linux or MacOS system is to use the installation script you can find at <a href="https://get.onyxlang.io">get.onyxlang.io</a>.
+        You can download and run the script in one bash command.
+        You will be asked to pick a WebAssembly runtime for your installation. See the <a href="#">compatibility and feature chart</a> to help you decide.
+    </p>
 
-            <ol>
-                <li>
-                    Clone the respository at <a href="https://github.com/onyx-lang/onyx">onyx-lang/onyx</a>.
-                    <pre class="hljs"><code class="language-sh">git clone https://github.com/onyx-lang/onyx --depth 1</code></pre>
-                </li>
-                <li>
-                    Navigate into the new "onyx" directory.
-                    <pre class="hljs"><code class="language-sh">cd onyx</code></pre>
-                </li>
-                <li>
-                    Configure the <code>settings.sh</code> file to suit your system needs.
-                    If everything looks good, (or if you don't know what you are looking at), you should be good to go.
-                </li>
-                <li>
-                    Run <code>./build.sh</code>.
-                    This will compile and install Onyx onto your system.
-                    By default, the "onyx" binary will be placed in "/usr/bin", and the necessary libraries/core packages/tooling will be installed at "/usr/share/onyx".
-                </li>
-                <li>
-                    Try running the "onyx help" command. You should see something like this.
-                    <pre class="hljs"><code class="language-sh">$ onyx help
-Onyx toolchain version v0.1.0
+    <pre class="hljs"><code class="language-sh">sh <(curl https://get.onyxlang.io -sSfL)</code></pre>
 
-The toolchain for the Onyx programming language, created by Brendan Hansen.
-
-Usage:
-        onyx &lt;subcommand&gt;
-
-Subcommands:
-        help      Shows this help message. Use "onyx help &lt;subcommand&gt;".
-        build     Compiles an Onyx program into an executable.
-        run       Compiles and runs an Onyx program, all at once.
-        check     Checks syntax and types of an Onyx program.
-        watch     Continuously rebuilds an Onyx program on file changes.
-        package   Package manager</code></pre>
-                </li>
-            </ol>
-        </p>
-
-        <h3>Future Plans</h3>
-        <p>
-            In the future, Onyx may ship a ".deb" file for Debian-based distros to easily install.
-            While this is planned, it is not a priority at the moment.
-        </p>
-    </div>
 </div>
 
 <div class="container light" id="windows">
     <h2>Windows</h2>
+</div>
+<div class="container">
     <p>
     <ol>
-        <li>Download the latest Windows release folder from the <a>Releases</a> on GitHub.</li>
+        <li>Download the latest Windows release from the <a href="https://github.com/onyx-lang/onyx/releases/latest">Releases</a> on GitHub.</li>
         <li>Extract the zip file to a permanent location.</li>
         <li>Modify system environment variables.</li>
         <ul>
-            <li>Add the extracted folder to your system or user's PATH variable.</li>
-            <li>Make a new variable called "ONYX_PATH", and set it equal to the extracted folder path.</li>
+            <li><p>Make a new variable called <code>ONYX_PATH</code>, and set it equal to the extracted folder path.</p></li>
+            <li><p>Add the extracted folder to your user's <code>PATH</code> variable.</p></li>
         </ul>
-        <li>Log out and log back in to let system environment variable update.</li>
-        <li>Open a Command Prompt or Powershell instance, and try running "onyx help".</li>
+        <li>Log out and log back in to let system environment variables update.</li>
+        <li><p>Open a Command Prompt or Powershell instance, and try running <code>onyx</code>.</p></li>
     </ol>
     </p>
 </div>
 
-<div class="container" id="macos">
-    <h2>MacOS</h2>
+<div class="container light" id="source">
+    <h2>From Source</h2>
+</div>
+
+<div class="container">
     <p>
-    MacOS support is not being actively worked on at the moment. In theory, if the compiler would work on MacOS, WebAssembly binaries would have no problem running using Wasmer, Wasmtime, or a similar runtime. Onyx is always open for contributions from others on its <a href="https://github.com/onyx-lang/onyx/pulls">pull requests</a>.
+        Building Onyx from source is easy. If you want to use the Wasmer runtime, you will need to have Wasmer installed. See their <a href="https://docs.wasmer.io/install">installation instructions</a> for details.
     </p>
+
+    <p>To build on Linux or MacOS, run the following commands.</p>
+    <pre class="hljs"><code class="language-sh"># Download Onyx.
+git clone https://github.com/onyx-lang/onyx --depth 1
+cd onyx
+# Load settings used for compilation. Change these settings if you would like.
+source settings.sh
+# Compile and install Onyx.
+./build.sh compile install</code></pre>
+
+    <p>To build on Windows, run the following commands.</p>
+    <pre class="hljs"><code class="language-dos">REM Ensure cl.exe is able to run in the current prompt.
+REM Download Onyx.
+git clone https://github.com/onyx-lang/onyx --depth 1
+cd onyx
+REM Run the build script. The Onyx executable will be in the current directory.
+build.bat</code></pre>
 </div>
 
 

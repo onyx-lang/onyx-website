@@ -5,8 +5,8 @@
 }
 
 .ui-theme {
-    --terminal-background-color: #dddddd;
-    --terminal-foreground-color: #000000;
+    --terminal-background-color: #303033;
+    --terminal-foreground-color: #ffffff;
 
     --background-color: #f0f0f5;
     --light-background-color: #e0e0e6;
@@ -138,6 +138,12 @@ h2 {
     font-size: 2rem;
 }
 
+h3 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-weight: 200;
 }
@@ -163,6 +169,7 @@ p code {
     background: var(--terminal-background-color);
     color: var(--terminal-foreground-color);
     border-radius: 4px;
+    padding: 2px;
 }
 
 
@@ -349,7 +356,7 @@ main blockquote {
 }
 
 main li {
-    margin-top: 8px;
+    margin-top: 24px;
 }
 
 @media (min-width: 800px) {
