@@ -44,7 +44,10 @@ reg: otmp.TemplateRegistry;
 (req: &Req, res: &Res) => res->render("pages/docs/install", null);
 
 @route.{.GET, "/docs/setup"}
-(req: &Req, res: &Res) => res->render("pages/docs/setup", null);
+(req: &Req, res: &Res) => res->render("pages/docs/env_setup", null);
+
+@route.{.GET, "/docs/getting_started"}
+(req: &Req, res: &Res) => res->render("pages/docs/getting_started", null);
 
 
 Article :: struct { name, description, path, date: str }

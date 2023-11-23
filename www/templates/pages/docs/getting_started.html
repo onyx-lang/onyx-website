@@ -1,0 +1,83 @@
+{{ block "title" }}
+    Getting Started
+{{ endblock }}
+
+{{ block "page_content" }}
+
+<div class="container header">
+    <h1>Getting Started</h1>
+</div>
+
+<div class="container">
+    <p>
+        This short guide will walk you through getting Onyx installed on your system, creating your first project, and running your first program.
+        There are more in-depths guides after this one.
+    </p>
+</div>
+
+<div class="container">
+    <h2>Step 1: Install Onyx</h2>
+    <p>On any Linux, MacOS, or WSL system, run the following command to install Onyx onto your system.</p>
+    <pre class="hljs"><code class="language-sh">sh <(curl https://get.onyxlang.io -sSfL)</code></pre>
+
+    <p>
+        For more details, or how to install on Windows, see the <a href="/docs/install">installation</a> docs.
+    </p>
+</div>
+
+<div class="container">
+    <h2>Step 2: Create an Onyx project</h2>
+
+    <p>
+        <em>This is an optional step, but does set you up to use packages in your project.</em>
+        <em>Learn more about the package manager <a href="/docs/package">here</a>.</em>
+    </p>
+
+    <p>Create a new directory and setup a new project. Optionally project values when prompted.</p>
+    <pre class="hljs"><code class="language-sh">$ mkdir my-onyx-project
+$ cd my-onyx-project
+$ onyx pkg init
+Creating new project manifest in ./onyx-pkg.kdl.
+
+Package name: my-onyx-project
+Package description: My first Onyx project
+Package url: 
+Package author: Brendan Hansen
+Package version (0.0.1):</code></pre>
+</div>
+
+<div class="container">
+    <h2>Step 3: Write your first Onyx program</h2>
+    <p>
+        Open your favorite text editor, optionally install <a href="/docs/setup">editor support</a>, and create a new file called <code>main.onyx</code> in this project folder.
+        Write the following code in that file.
+    </p>
+    <pre class="hljs"><code class="language-onyx">use core {printf}
+
+main :: () {
+    printf("Hello, Onyx!\n");
+}</code></pre>
+
+    <p>
+        This code brings in the <code>printf</code> symbol from the core libraries so we can print to the console.
+        Then in the <code>main</code> function, we print "Hello, Onyx!".
+    </p>
+</div>
+
+<div class="container">
+    <h2>Step 4: Run your program!</h2>
+    <p>To run the program our newly created program, we use the following command from within the project folder.</p>
+    <pre class="hljs"><code class="language-onyx">$ onyx run main.onyx
+Hello, Onyx!</code></pre>
+
+    <p>
+        Congratulations! You just wrote your first Onyx program.
+    </p>
+    <p>
+        Now you can <a href="/docs">read the docs</a> and experiment with Onyx in this project.
+    </p>
+</div>
+
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}
