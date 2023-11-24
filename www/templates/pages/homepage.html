@@ -34,7 +34,7 @@
         </div>
     </div>-->
 
-    <div class="container card" style="width: 800px">
+    <div class="container card" id="install-card">
         <div style="font-size: 14pt; font-family: fira; padding: 20px;">
             <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Install Onyx in one command</span></div>
             <div id="install-command">
@@ -54,9 +54,11 @@
 
 <div class="container">
     <div class="title">
-        <h2>Language Overview</h2>
+        <h2>Language Features</h2>
     </div>
 
+<div class="scrollport">
+<div>
     <div>
         <h2>Syntax</h2>
         <br />
@@ -80,7 +82,7 @@ factorial :: (n: i32) -> i32 {
 
 </div>
 
-<div class="container">
+<div>
     <div>
         <h2>Type Safety</h2>
         <br />
@@ -103,7 +105,7 @@ main :: () {
 
 </div>
 
-<div class="container">
+<div>
     <div>
         <h2>Fast Compilation</h2>
         <br />
@@ -127,7 +129,7 @@ Statistics:
 </code></pre>
 </div>
 
-<div class="container">
+<div>
     <div>
         <h2>WebAssembly</h2>
         <br />
@@ -147,7 +149,7 @@ Hello, World!
 </code></pre>
 </div>
 
-<div class="container">
+<div>
     <div>
         <h2>C-FFI</h2>
         <br />
@@ -168,6 +170,7 @@ main :: () {
 }
     </code></pre>
 </div>
+</div>
 
 <div class="container">
     <div class="title">
@@ -186,6 +189,23 @@ document.querySelector("#install-command .copy-button").addEventListener("click"
         setTimeout(_ => { e.target.innerHTML="Copy" }, 5000);
     });
 })
+
+let rotator = document.querySelector(".scrollport");
+let rotatorIndex = 0;
+let ignoreNextScroll = false;
+let rotatorInterval = setInterval(_ => {
+    rotatorIndex += 1;
+    rotatorIndex %= rotator.children.length;
+    let f = 1.0 / (rotator.children.length - 1);
+
+    ignoreNextScroll = true; 
+    rotator.scrollTo({ top: 0, left: f * rotatorIndex * (rotator.scrollWidth - 1200), behavior: 'smooth'});
+}, 5000);
+
+rotator.addEventListener("scrollend", (e) => {
+    if (ignoreNextScroll) ignoreNextScroll = false;
+    else                  clearInterval(rotatorInterval);
+});
 </script>
 
 {{endblock}}

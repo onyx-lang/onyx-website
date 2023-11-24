@@ -116,7 +116,7 @@ a.cta-button:hover {
 }
 
 .container.card > * {
-    background: #000;
+    background: linear-gradient(135deg, #000, var(--accent-background));
     box-shadow: 0px 7px 41px 30px rgba(200, 200, 230, 0.2);
     border-radius: 8px;
     border: 1px solid var(--primary);
@@ -347,6 +347,7 @@ main {
 }
 
 main pre {
+    background: linear-gradient(135deg, #000, var(--accent-background));
     border: 1px solid var(--primary);
     border-radius: 6px;
     box-shadow: 0px 7px 41px 30px rgba(200, 200, 230, 0.2);
@@ -421,6 +422,30 @@ main li {
 
 #install-command:hover .copy-button {
     opacity: 1;
+}
+
+@media screen and (min-width: 800px) {
+    #install-card {
+        width: 800px;
+    }
+}
+
+.scrollport {
+    mask-image: linear-gradient(to right, #0000 0, #000 10%, #000 90%, #0000 100%);
+    -webkit-mask-image: linear-gradient(to right, #0000 0, #000 10%, #000 90%, #0000 100%);
+
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+
+    display: flex;
+    gap: 100px;
+    align-items: start;
+    padding: 0 100px;
+    padding-bottom: 32px;
+}
+
+.scrollport > div {
+    min-width: 1000px;
 }
 
 ::-webkit-scrollbar{
