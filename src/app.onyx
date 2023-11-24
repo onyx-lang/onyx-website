@@ -8,6 +8,7 @@ use core.encoding.json
 #inject runtime.vars {
     Enable_Heap_Debug :: true
     // Debug :: true
+    CGI_MODE :: true
 }
 
 reg: otmp.TemplateRegistry;
@@ -48,6 +49,13 @@ reg: otmp.TemplateRegistry;
 
 @route.{.GET, "/docs/getting_started"}
 (req: &Req, res: &Res) => res->render("pages/docs/getting_started", null);
+
+@route.{.GET, "/robots.txt"}
+(req: &Req, res: &Res) {
+    res->file("./www/static/robots.txt");
+    res->status(200);
+    res->end();
+}
 
 
 Article :: struct { name, description, path, date: str }
@@ -143,12 +151,17 @@ main :: () {
     logger := http.server.logger(style=.V2);
     pipes->pipe(&logger);
 
-    app := http.server.tcp(pipes, .{ thread_count = 0 });
+    #if #defined(runtime.vars.CGI_MODE) {
+        http.server.cgi(pipes);
 
-    port := conv.parse_int(os.env("SERVER_PORT") ?? "8000");
+    } else {
+        app := http.server.tcp(pipes, .{ thread_count = 8 });
 
-    app->serve(~~port);
-    println("Server stopping...");
+        port := conv.parse_int(os.env("SERVER_PORT") ?? "8000");
+
+        app->serve(~~port);
+        println("Server stopping...");
+    }
 }
 
 

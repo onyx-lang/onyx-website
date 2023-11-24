@@ -7,25 +7,21 @@
 {{ block "page_content" }}
 
 <div class="container header">
-    <div style="text-align: center;">
-        <h1>The <b>Onyx</b> Programming Language</h1>
+    <div style="height: 20rem; display: flex; flex-direction: column; place-content: center;">
+        <div style="text-align: center;">
+            <h1>The <b>Onyx</b> Programming Language</h1>
+        </div>
+        <div style="font-size: 20pt; text-align: center; margin-top: 8px">
+            <p>A data-oriented, safe, and modern programming language</p>
+        </div>
     </div>
-    <div style="font-size: 20pt; text-align: center; margin-top: 8px">
-        <p>A data-oriented, safe, and modern programming language</p>
-    </div>
-</div>
 
-<!-- <div class="container light">
-    <h2 style="margin-bottom: 8px">Get Started</h2>
-</div> -->
-
-<div class="container">
-    <div style="text-align: center;">
+    <!--<div style="text-align: center;">
         <div style="margin-bottom: 26px">
             Install in one command, or build <a href="/docs/install">from source</a>.
         </div>
         <div>
-            <span style="font-size: 16pt; font-family: monospace; padding: 20px; color: var(--header-text); background: var(--header-color); border-radius: 8px; box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.4)">
+            <span style="font-size: 16pt; font-family: monospace; padding: 20px; color: var(--header-text); background: var(--primary); border-radius: 8px; box-shadow: 0px 1px 12px 2px rgba(200, 200, 230, 0.4)">
                 sh&nbsp;&lt;(curl&nbsp;https://get.onyxlang.io&nbsp;-sSfL)
             </span>
         </div>
@@ -33,24 +29,34 @@
             Alternatively, try Onyx online and read the docs!
         </div>
         <div style="margin-top: 26px; display: flex; flex-direction: row; gap: 40px;">
-            <a style="flex: 1; border-radius: 8px; padding: 16px; font-size: 16pt; border: 1px solid var(--header-color); border-radius: 8px; box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.4)" href="/playground">TRY ONLINE</a>
-            <a style="flex: 1; border-radius: 8px; padding: 16px; font-size: 16pt; border: 1px solid var(--header-color); border-radius: 8px; box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.4)" href="/docs">READ THE DOCS</a>
+            <a class="cta-button" href="/playground">TRY ONLINE</a>
+            <a class="cta-button" href="/docs">READ THE DOCS</a>
+        </div>
+    </div>-->
+
+    <div class="container card" style="width: 800px">
+        <div style="font-size: 14pt; font-family: fira; padding: 20px;">
+            <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Install Onyx in one command</span></div>
+            <div id="install-command">
+                <span style="color: #444;">$</span> <span style="color: var(--accent)">sh</span>&nbsp;&lt;(curl&nbsp;https://get.onyxlang.io&nbsp;-sSfL)
+                <span class="copy-button">Copy</span>
+            </div>
+            <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Read the docs</span></div>
+            <div><span style="color: #444;">$</span> <span style="color: var(--accent)">curl</span> <a style="text-decoration: underline" href="/docs">onyxlang.io/docs</a></div>
+            <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Try Onyx in your browser</span></div>
+            <div><span style="color: #444;">$</span> <span style="color: var(--accent)">curl</span> <a style="text-decoration: underline" href="/playground">onyxlang.io/playground</a></div>
         </div>
     </div>
 </div>
 
 
 
-<div class="container light">
-    <h2 style="margin-bottom: 8px">Recent News</h2>
-</div>
-{% partial "partials/news_listing" %}
-
-<div class="container light">
-    <h2>Language Overview</h2>
-</div>
 
 <div class="container">
+    <div class="title">
+        <h2>Language Overview</h2>
+    </div>
+
     <div>
         <h2>Syntax</h2>
         <br />
@@ -163,8 +169,24 @@ main :: () {
     </code></pre>
 </div>
 
+<div class="container">
+    <div class="title">
+        <h2 style="margin-bottom: 8px">Recent News</h2>
+    </div>
+</div>
+{% partial "partials/news_listing" %}
+
 </div>
 </div>
+
+<script>
+document.querySelector("#install-command .copy-button").addEventListener("click", e => {
+    navigator.clipboard.writeText("sh <(curl https://get.onyxlang.io -sSfL)").then(_ => {
+        e.target.innerHTML = "Copied!";
+        setTimeout(_ => { e.target.innerHTML="Copy" }, 5000);
+    });
+})
+</script>
 
 {{endblock}}
 
