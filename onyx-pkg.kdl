@@ -12,7 +12,21 @@ config {
 }
 
 dependencies {
-    http-server "0.2.24" git="git://onyxlang.io/repo/http-server" 
-    otmp "0.0.26" git="git://onyxlang.io/repo/otmp" 
+    http-server "0.2.24" git="git://repo.onyxlang.io/repo/http-server" 
+    otmp "0.0.26" git="git://repo.onyxlang.io/repo/otmp" 
+}
+
+build {
+    default {
+        target "out.wasm" 
+        runtime "onyx" 
+        source "build.onyx" 
+    }
+    wasmer {
+        target "wasmer.wasm" 
+        runtime "wasi" 
+        source "build.onyx" 
+        define "WASIX" "CGI_MODE" 
+    }
 }
 

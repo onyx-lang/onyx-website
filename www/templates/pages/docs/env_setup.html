@@ -106,11 +106,11 @@
     <p>On Linux, MacOS, or the Windows Subsystem for Linux, run the following commands.</p>
     <pre class="hljs"><code class="language-sh"># Clone the Onyx Language Server
 git clone https://github.com/onyx-lang/onyx-lsp
-cd onyx-lsp/run_tree
+cd onyx-lsp
 # Make the install script executable
-chmod +x ./install
-# Install the LSP
-./install</code></pre>
+chmod +x ./install.sh
+# Install the LSP (compiles and places the WASM file into $ONYX_PATH/tools)
+./install.sh</code></pre>
 
     <h3>Visual Studio Code</h3>
     <p>Installing the extension automatically enables the language server in VS Code.</p>

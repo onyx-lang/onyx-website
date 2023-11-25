@@ -8,7 +8,7 @@ use core.encoding.json
 #inject runtime.vars {
     Enable_Heap_Debug :: true
     // Debug :: true
-    CGI_MODE :: true
+    // CGI_MODE :: true
 }
 
 reg: otmp.TemplateRegistry;
@@ -98,6 +98,8 @@ news_articles: Cached_Resource([] Article);
 }
 
 main :: () {
+    default_log_level(.Error);
+    
     reg = otmp.registry();
     reg->load_directory("./www/templates", ".html");
 
@@ -148,13 +150,14 @@ main :: () {
         }
     });
 
-    logger := http.server.logger(style=.V2);
-    pipes->pipe(&logger);
 
     #if #defined(runtime.vars.CGI_MODE) {
         http.server.cgi(pipes);
 
     } else {
+        logger := http.server.logger(style=.V2);
+        pipes->pipe(&logger);
+
         app := http.server.tcp(pipes, .{ thread_count = 8 });
 
         port := conv.parse_int(os.env("SERVER_PORT") ?? "8000");
