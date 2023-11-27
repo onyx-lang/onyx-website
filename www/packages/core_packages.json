@@ -2,86 +2,86 @@
     {
         "name": "http-server",
         "url": "https://github.com/onyx-lang/pkg-http-server",
-        "description": ""
+        "description": "A simple HTTP Server package inspired by ExpressJS and Flask. Works on the Onyx runtime and WASIX."
     },
     {
         "name": "raylib",
         "url": "https://github.com/onyx-lang/pkg-raylib",
-        "description": ""
+        "description": "Bindings for the popular Raylib video game library."
     },
     {
         "name": "stb_image",
         "url": "https://github.com/onyx-lang/pkg-stb_image",
-        "description": ""
+        "description": "Bindings for the <a href=\"https://github.com/nothings/stb\">stb_image.h</a> C library. Only absolutely necessary functions are currently implemented."
     },
     {
         "name": "stb_truetype",
         "url": "https://github.com/onyx-lang/pkg-stb_truetype",
-        "description": ""
+        "description": "Bindings for the <a href=\"https://github.com/nothings/stb\">stb_truetype.h</a> C library. Only absolutely necessary functions are currently implemented."
     },
     {
         "name": "perlin",
         "url": "https://github.com/onyx-lang/pkg-perlin",
-        "description": ""
+        "description": "A very simple implementation of the 3d-perlin noise algorithm."
     },
     {
         "name": "postgres",
         "url": "https://github.com/onyx-lang/pkg-postgres",
-        "description": ""
+        "description": "Bindings for <code>libpq</code>."
     },
     {
         "name": "postgres-orm",
         "url": "https://github.com/onyx-lang/pkg-postgres-orm",
-        "description": ""
+        "description": "A simple Object Relational Mapper for a PostgresQL database."
     },
     {
         "name": "qoi",
         "url": "https://github.com/onyx-lang/pkg-qoi",
-        "description": ""
+        "description": "An implementation of the Quite OK image format. Currently only the decoder is implemented."
     },
     {
         "name": "http-client",
         "url": "https://github.com/onyx-lang/pkg-http-client",
-        "description": ""
+        "description": "An HTTP client capable of sending HTTP(S)/1.1 requests."
     },
     {
         "name": "openssl",
         "url": "https://github.com/onyx-lang/pkg-openssl",
-        "description": ""
+        "description": "Bindings for <code>openssl</code>."
     },
     {
         "name": "glfw3",
         "url": "https://github.com/onyx-lang/pkg-glfw3",
-        "description": ""
+        "description": "Bindings for <a href=\"https://glfw.org\">GLFW3</a>."
     },
     {
         "name": "openal",
         "url": "https://github.com/onyx-lang/pkg-openal",
-        "description": ""
+        "description": "Bindings for OpenAL."
     },
     {
         "name": "opengles",
         "url": "https://github.com/onyx-lang/pkg-opengles",
-        "description": ""
+        "description": "Bindings for OpenGL ES 3.2."
     },
     {
         "name": "opencl",
         "url": "https://github.com/onyx-lang/pkg-opencl",
-        "description": ""
+        "description": "Bindings for OpenCL."
     },
     {
         "name": "ncurses",
         "url": "https://github.com/onyx-lang/pkg-ncurses",
-        "description": ""
+        "description": "Bindings for the <code>ncurses</code> library."
     },
     {
         "name": "json-rpc",
         "url": "https://github.com/onyx-lang/pkg-json-rpc",
-        "description": ""
+        "description": "A simple JSON-RPC server implementation. Used by the Onyx langauge server."
     },
     {
         "name": "otmp",
         "url": "https://github.com/onyx-lang/pkg-otmp",
-        "description": ""
+        "description": "A string templating language, similar to Jinja or Mustache."
     }
 ]

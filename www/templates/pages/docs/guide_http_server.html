@@ -10,8 +10,7 @@
 
     <p>
         This guide walks you through all steps of setting up an HTTP server Onyx,
-        writing some routes on it, and then deploying it to Wasmer Edge or Spin
-        using WCGI.
+        writing some routes on it, and then deploying it to Wasmer Edge using WCGI.
     </p>
 </div>
 
@@ -51,7 +50,7 @@ onyx package sync</code></pre>
     <p>
         You can now write the code for your server.
         Begin by creating a <code>main.onyx</code> file that will house your code.
-        In this file, you first need to load your packages and use <code>http</code> package.
+        In this file, you first need to load your packages and use the <code>http</code> package.
     </p>
 
     <pre class="hljs"><code class="language-onyx">#load "./lib/packages"
@@ -65,7 +64,7 @@ use http.server { Request, Response, route }</code></pre>
 
     <p>
         Now you write a simple <code>main</code> function that will create a TCP HTTP server,
-        with one route for the getting <code>"/"</code> endpoint.
+        with one route for getting the <code>"/"</code> endpoint.
     </p>
 
     <pre class="hljs"><code class="language-onyx">main :: () {

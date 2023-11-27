@@ -340,6 +340,7 @@ navbar a {
     display: block;
     padding: 2px 0;
     text-decoration: none;
+    color: var(--accent);
 }
 
 

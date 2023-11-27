@@ -13,7 +13,7 @@ config {
 
 dependencies {
     http-server "0.2.24" git="git://repo.onyxlang.io/repo/http-server" 
-    otmp "0.0.26" git="git://repo.onyxlang.io/repo/otmp" 
+    otmp "0.0.27" git="git://repo.onyxlang.io/repo/otmp" 
 }
 
 build {

@@ -1,6 +1,8 @@
 
 <div class="navbar-container">
     <navbar>
+        {{ if navbar_logo_hidden == true }}
+        {{ else }}
         <a href="/" aria-label="Go to the homepage">
             <svg viewBox="0 0 64 16" version="1.1" id="desktop_logo" alt="Onyx Logo">
                 {% partial "partials/logo_svg" %}
@@ -9,6 +11,7 @@
                 {% partial "partials/logo_svg" %}
             </svg>
         </a>
+        {{ endif }}
 
         <input type="checkbox" id="mobile-hamburger" />
         <span class='hamburger'>
