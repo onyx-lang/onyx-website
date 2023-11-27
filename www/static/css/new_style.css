@@ -43,7 +43,7 @@ body {
 
 a {
     color: var(--text);
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 a.link-button {
@@ -198,6 +198,8 @@ code {
 p code {
     border-radius: 4px;
     padding: 2px;
+    border: 1px solid var(--accent);
+    background: var(--accent-background);
 }
 
 @font-face {
@@ -364,9 +366,9 @@ pre code {
 }
 
 main blockquote {
-    border-left: 4px solid var(--dark-background-color);
-    background-color: var(--light-background-color);
-    margin-top: 12px;
+    border-left: 4px solid var(--accent);
+    background-color: var(--accent-background);
+    margin-top: 16px;
     padding: 8px;
 }
 
@@ -442,6 +444,31 @@ main li {
     align-items: start;
     padding: 0 100px;
     padding-bottom: 32px;
+}
+
+table {
+    border-radius: 8px;
+    border: 1px solid var(--accent);
+    width: 100%;
+    background: linear-gradient(135deg, #000, var(--accent-background));
+    box-shadow: 0px 7px 41px 30px rgba(200, 200, 230, 0.2);
+    margin-top: 24px !important;
+}
+
+table tr:nth-child(2n) {
+    background: var(--accent-background);
+    border: none;
+}
+
+table th {
+    font-size: 1.1rem;
+    border: none;
+    padding: 8px;
+}
+
+table td {
+    padding: 8px;
+    border: none;
 }
 
 .scrollport > div {

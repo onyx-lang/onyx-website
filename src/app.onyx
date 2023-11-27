@@ -50,6 +50,24 @@ reg: otmp.TemplateRegistry;
 @route.{.GET, "/docs/getting_started"}
 (req: &Req, res: &Res) => res->render("pages/docs/getting_started", null);
 
+@route.{.GET, "/docs/guides"}
+(req: &Req, res: &Res) => res->render("pages/docs/guides", null);
+
+@route.{.GET, "/docs/guides/http-server"}
+(req: &Req, res: &Res) => res->render("pages/docs/guide_http_server", null);
+
+@route.{.GET, "/docs/packages"}
+(req: &Req, res: &Res) => res->render("pages/docs/package", null);
+
+@route.{.GET, "/docs/packages/list"}
+(req: &Req, res: &Res) {
+    res->render("pages/docs/package_list", &.{
+        core_packages = core_packages,
+        third_party_packages = third_party_packages
+    });
+}
+
+
 @route.{.GET, "/robots.txt"}
 (req: &Req, res: &Res) {
     res->file("./www/static/robots.txt");
@@ -99,6 +117,7 @@ news_articles: Cached_Resource([] Article);
 
 main :: () {
     default_log_level(.Error);
+    load_library_list();
     
     reg = otmp.registry();
     reg->load_directory("./www/templates", ".html");
@@ -158,7 +177,7 @@ main :: () {
         logger := http.server.logger(style=.V2);
         pipes->pipe(&logger);
 
-        app := http.server.tcp(pipes, .{ thread_count = 8 });
+        app := http.server.tcp(pipes, .{ thread_count = 4 });
 
         port := conv.parse_int(os.env("SERVER_PORT") ?? "8000");
 
@@ -168,3 +187,23 @@ main :: () {
 }
 
 
+Package :: struct {
+    url, name, description: str;
+}
+
+#local {
+    core_packages: [] Package;
+    third_party_packages: [] Package;
+}
+
+load_library_list :: () {
+    os.get_contents("www/packages/core_packages.json")
+    |> json.decode_into(&core_packages);
+
+    slice.sort(core_packages, (a, b) => string.compare(a.name, b.name));
+
+    os.get_contents("www/packages/third_party_packages.json")
+    |> json.decode_into(&third_party_packages);
+
+    slice.sort(third_party_packages, (a, b) => string.compare(a.name, b.name));
+}

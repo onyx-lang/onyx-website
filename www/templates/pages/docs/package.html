@@ -1,0 +1,194 @@
+{{block "title"}}Onyx Package Manager{{endblock}}
+
+{{ let navbar_page = "docs" }}
+
+{{ block "page_content" }}
+
+<div class="container header">
+    <h1>Onyx Package Manager</h1>
+    <div>⇦ <a href="/docs">Back to the docs</a></div>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Philosophy</h2>
+    </div>
+
+    <p>
+        The Onyx package manager is intentionally very simple.
+        Onyx does not have a central package repository like NPM, PyPI, or Cargo.
+        Instead Onyx uses a <em>decentralized</em> approach, that follows this simple rule.
+    </p>
+
+    <blockquote>
+        Every package is a Git repository, with a file called <code>module.onyx</code> that is responsible for
+        including all other files in the package.
+    </blockquote>
+
+    <p>
+        The job of the package manager is to simply clone each of these Git repositories into a known structure,
+        and build a file for you to include in your project that loads all of your packages.
+    </p>
+
+    <p>
+        The package manager uses Git's tags feature to store version numbers.
+        This way the package manager can clone exactly one tag, at one commit, to avoid downloading all history of the package,
+        when all you want is a single version.
+    </p>
+
+    <p>
+        When you publish a package, using <code>onyx package publish</code> it simply increments the version number in the package file,
+        commits that change, creates a new tag at that commit, and pushes all changes and tags to the Git server.
+        When someone else runs <code>onyx package update</code>, the new version will be found and updated to.
+    </p>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Basic Usage</h2>
+    </div>
+
+    <p>
+        To use Onyx's package manager, you must be in an Onyx project.
+        An Onyx project is simply a directory with a file named <code>onyx-pkg.kdl</code>.
+    </p>
+
+    <p>
+        To create a new project in a directory, you can use the following command, and answer the prompts (or leave any them blank).
+    </p>
+    <pre class="hljs"><code class="language-sh">$ onyx package init
+Creating new project manifest in ./onyx-pkg.kdl.
+
+Package name: example-project
+Package description: A simple example project
+Package url: https://github.com/...
+Package author: Brendan Hansen
+Package version (0.0.1):</code></pre>
+
+    <p>Once your project is created, you can add packages by running <code>onyx package add ...</code>
+    <pre class="hljs"><code class="language-sh">$ onyx package add http-server
+$ # Or
+$ onyx package add https://github.com/onyx-lang/pkg-http-server</code></pre>
+
+    <p>
+        If you want to specify a particular version of a package, you can add the version number as another argument to the command.
+    </p>
+    <pre class="hljs"><code class="language-sh">$ # Specify version 0.1.2
+$ onyx package add http-server 0.1.2 </code></pre>
+
+    <p>
+        For the sake of convience, the package manager maintains a list of string templates to try to resolve where your package comes from.
+        Currently by default, there is only one, <code>https://github.com/onyx-lang/pkg-X</code>.
+        This means that when you try to add <code>http-server</code>, it will actually end up using <code>https://github.com/onyx-lang/pkg-http-server</code>.
+        If you want, you can change this list of string templates at the top of <code>ONYX_PATH/tools/onyx-pkg.onyx</code>.
+    </p>
+
+    <p>
+        You will notice that no files were downloaded and nothing has change in your directory.
+        This is because adding a package simply adds it to the list of dependencies in your <code>onyx-pkg.kdl</code>
+        It <strong>does not</strong> synchronize all of your packages.
+    </p>
+
+    <p>
+        To do that, simply run <code>onyx package sync</code>.
+    </p>
+    <pre class="hljs"><code class="language-sh">$ onyx package sync
+        Fetch  http://github.com/onyx-lang/pkg-http-server  0.2.24</code></pre>
+
+    <p>
+        This downloads all new packages, upgrades exist packages, builds <a href="#">native libraries</a>, and creates a new
+        package file to include.
+    </p>
+
+    <p>
+    Once all packages are synchroized, you can use them in your project but simplying including the <code>package.onyx</code>
+    file automatically created. By default this file lives at <code>lib/packages.onyx</code> in your project.
+    </p>
+
+    <p>
+        Here is a simple example of using the <code>http-server</code> package in a project.
+    </p>
+    <pre class="hljs"><code class="language-onyx">// main.onyx
+
+#load "./lib/packages" // <--- Have to include the packages file!
+
+use core
+use http
+
+main :: () {
+    router := http.server.router();
+    router->get("/", (req, res) => {
+        res->html("<h1>Simple server is working!</h1>");
+        res->status(200);
+        res->end();
+    });
+
+    app := http.server.tcp(&router);
+    app->serve(8000);
+}</code></pre>
+
+    <p>
+    Once all of this is setup, your workflow will likely just look like <code>onyx pacakge update</code>, then <code> onyx package sync</code>,
+    with a bit of <code>onyx package add ...</code> sprinkled in there.
+    </p>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Creating a Package</h2>
+    </div>
+
+    <p>
+        Creating a new package for Onyx is incredibly simple.
+        There just three things a project needs to become a package.
+        <ol>
+            <li>Be a public Git repository</li>
+            <li>Have an <code>onyx-pkg.kdl</code> file</li>
+            <li>Have a <code>module.onyx</code> file</li>
+        </ol>
+    </p>
+
+    <p>
+        Hosting a package on GitHub, GitLab, or any Git server is very simple if you are familiar with Git.
+        Just make sure everyone that needs to access the package has pull access to the repository.
+    </p>
+
+    <p>
+        Every Onyx project already has an <code>onyx-pkg.kdl</code> file.
+        Ensure the package section has correct information about your package, and you should be good to go there.
+        See the <a href="#">guide</a> on creating a native library for how to set that up in your project.
+    </p>
+
+    <p>
+        Finally, you need a <code>module.onyx</code> file.
+        This file simply needs to include all other source files for the package.
+        In a particularly small package, all of the code might go <em>right inside</em> of <code>module.onyx</code>.
+    </p>
+
+    <p>
+        A typical <code>module.onyx</code> looks like this.
+    </p>
+    <pre class="hljs"><code class="language-onyx">// module.onyx
+
+package package_name_here
+
+#load_all "./src"</code></pre>
+
+    <p>
+        This file simply includes everything inside of the <code>src</code> folder.
+        If needed you can conditionally load source files, depending on your package's needs.
+    </p>
+
+    <p>
+        When your package is ready for a release, you can simply run <code>onyx package publish</code>.
+        This bumps the version in <code>onyx-pkg.kdl</code>, creates a new commit, tags that commit with the new version,
+        then pushes all of the changes to the Git server, assuming you have push access.
+    </p>
+    <pre class="hljs"><code class="language-shell">$ onyx package publish
+  Publishing  Creating new published version
+   Published  Successfully published new version.
+</div>
+
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}

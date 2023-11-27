@@ -23,7 +23,7 @@ build {
         source "build.onyx" 
     }
     wasmer {
-        target "wasmer.wasm" 
+        target "site.wasm" 
         runtime "wasi" 
         source "build.onyx" 
         define "WASIX" "CGI_MODE" 

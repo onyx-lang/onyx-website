@@ -1,0 +1,87 @@
+[
+    {
+        "name": "http-server",
+        "url": "https://github.com/onyx-lang/pkg-http-server",
+        "description": ""
+    },
+    {
+        "name": "raylib",
+        "url": "https://github.com/onyx-lang/pkg-raylib",
+        "description": ""
+    },
+    {
+        "name": "stb_image",
+        "url": "https://github.com/onyx-lang/pkg-stb_image",
+        "description": ""
+    },
+    {
+        "name": "stb_truetype",
+        "url": "https://github.com/onyx-lang/pkg-stb_truetype",
+        "description": ""
+    },
+    {
+        "name": "perlin",
+        "url": "https://github.com/onyx-lang/pkg-perlin",
+        "description": ""
+    },
+    {
+        "name": "postgres",
+        "url": "https://github.com/onyx-lang/pkg-postgres",
+        "description": ""
+    },
+    {
+        "name": "postgres-orm",
+        "url": "https://github.com/onyx-lang/pkg-postgres-orm",
+        "description": ""
+    },
+    {
+        "name": "qoi",
+        "url": "https://github.com/onyx-lang/pkg-qoi",
+        "description": ""
+    },
+    {
+        "name": "http-client",
+        "url": "https://github.com/onyx-lang/pkg-http-client",
+        "description": ""
+    },
+    {
+        "name": "openssl",
+        "url": "https://github.com/onyx-lang/pkg-openssl",
+        "description": ""
+    },
+    {
+        "name": "glfw3",
+        "url": "https://github.com/onyx-lang/pkg-glfw3",
+        "description": ""
+    },
+    {
+        "name": "openal",
+        "url": "https://github.com/onyx-lang/pkg-openal",
+        "description": ""
+    },
+    {
+        "name": "opengles",
+        "url": "https://github.com/onyx-lang/pkg-opengles",
+        "description": ""
+    },
+    {
+        "name": "opencl",
+        "url": "https://github.com/onyx-lang/pkg-opencl",
+        "description": ""
+    },
+    {
+        "name": "ncurses",
+        "url": "https://github.com/onyx-lang/pkg-ncurses",
+        "description": ""
+    },
+    {
+        "name": "json-rpc",
+        "url": "https://github.com/onyx-lang/pkg-json-rpc",
+        "description": ""
+    },
+    {
+        "name": "otmp",
+        "url": "https://github.com/onyx-lang/pkg-otmp",
+        "description": ""
+    }
+]

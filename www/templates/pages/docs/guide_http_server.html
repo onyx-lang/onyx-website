@@ -1,0 +1,295 @@
+{{block "title"}}HTTP Server in Onyx{{endblock}}
+
+{{ let navbar_page = "docs" }}
+
+{{ block "page_content" }}
+
+<div class="container header">
+    <h1>Guide - HTTP Server</h1>
+    <div>⇦ <a href="/docs">Back to the docs</a></div>
+
+    <p>
+        This guide walks you through all steps of setting up an HTTP server Onyx,
+        writing some routes on it, and then deploying it to Wasmer Edge or Spin
+        using WCGI.
+    </p>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Setting up the Project</h2>
+    </div>
+
+    <p>
+        First, you need create a new folder for this project, and initialize that folder as an Onyx project.
+        See the <a href="/docs/packages">package manager</a> explainer for more details.
+    </p>
+
+    <pre class="hljs"><code class="language-sh">mkdir my-http-server
+cd my-http-server
+onyx package init</code></pre>
+
+    <p>
+        Then you need to add the <a href="https://github.com/onyx-lang/pkg-http-server">HTTP server</a> package to this project, and synchronize
+        changes to install the package.
+    </p>
+    <pre class="hljs"><code class="language-sh"># Add the package
+onyx package add http-server
+# Synchronize changes
+onyx package sync</code></pre>
+
+    <p>
+        Once the package is successfully fetched, you can start writing some code!
+    </p>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Writing the code</h2>
+    </div>
+    
+    <p>
+        You can now write the code for your server.
+        Begin by creating a <code>main.onyx</code> file that will house your code.
+        In this file, you first need to load your packages and use <code>http</code> package.
+    </p>
+
+    <pre class="hljs"><code class="language-onyx">#load "./lib/packages"
+
+// Include everything from the core library.
+use core {*}
+
+// Include the http package, and specifically use some common symbols.
+use http
+use http.server { Request, Response, route }</code></pre>
+
+    <p>
+        Now you write a simple <code>main</code> function that will create a TCP HTTP server,
+        with one route for the getting <code>"/"</code> endpoint.
+    </p>
+
+    <pre class="hljs"><code class="language-onyx">main :: () {
+    // Create a router that will route the traffic.
+    router := http.server.router();
+
+    // Register a handler for 'GET /'.
+    router->get("/", (req: &Request, res: &Response) {
+        // Respond with HTML
+        res->html("<h1>HTTP Server in Onyx!</h1>");
+        
+        // Set status to 200
+        res->status(200);
+
+        // Mark the response as completed
+        res->end();
+    });
+
+
+    // Create a TCP server out of your router.
+    app := http.server.tcp(&router);
+
+    // Serve on port 8000.
+    app->serve(8000);
+}</code></pre>
+
+    <p>
+        That is everything you need to create a simple HTTP server that will respond to a <code>GET</code>
+        request on <code>/</code> with <code>"&lt;h1&gt;HTTP Server in Onyx!&lt;h1&gt;"</code>.
+    </p>
+
+    <p>
+        You could define more routes in this way, using <code>router->get</code> or <code>router->post</code>,
+        but there is a better way described shortly.
+    </p>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Running your server</h2>
+    </div>
+
+    <p>
+        To run your server, you can either use the builtin Onyx runtime, or Wasmer with WASIX support.
+        These are the only two options for now, as there no other runtimes with fully networking support.
+    </p>
+
+    <p>
+        In a later section, you can make this web server use WCGI, so it can be deployed anywhere.
+    </p>
+
+    <p>
+        To run using the Onyx runtime (if it is installed), simply run the following command.
+    </p>
+    <pre class="hljs"><code class="language-sh">$ onyx run main.onyx
+[Info][Http-Server] Serving on port 8000</code></pre>
+
+    <p>
+        To run using Wasmer and WASIX, you need to compile your server to a WASM binary, then
+        run it with <code>wasmer</code>.
+    </p>
+    <pre class="hljs"><code class="language-sh">$ # Adding '-r wasi' to target WASI, and '-DWASIX' to add WASIX extensions.
+$ onyx build main.onyx -r wasi -DWASIX
+$ wasmer run --net out.wasm
+[Info][Http-Server] Serving on port 8000</code></pre>
+
+    <p>
+        To test your server, you can visit <a href="http://localhost:8000">localhost:8000</a> in your browser.
+        Or, make a request using cURL.
+    </p>
+    <pre class="hljs"><code class="language-sh">$ curl http://localhost:8000
+&lt;h1&gt;HTTP Server in Onyx!&lt;h1&gt;
+</code></pre>
+
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Rewriting our code</h2>
+    </div>
+    
+    <p>
+        The server you have is perfectly functional, and you could keep adding more routes to it
+        in the same way as above. However, with all of this code in <code>main</code>, it doesn't
+        scale terribly well.
+    </p>
+
+    <p>
+        An alternative way to register routes is to use Onyx's <em>procedure tags</em> feature
+        to label certain procedures as request handlers. Then, the router can automatically find
+        them and register them!
+    </p>
+
+    <p>
+        Here is how this works. First, you move the request handler from before into a new
+        global procedure, and add a <code>#tag</code> to it.
+    </p>
+
+    <pre class="hljs"><code class="language-onyx">// Tag the procedure with a `route` structure, so it can be found by the router.
+#tag route.{ .GET, "/" }
+index :: (req: &Request, res: &Response) {
+    // Respond with HTML
+    res->html("<h1>HTTP Server in Onyx!</h1>");
+    
+    // Set status to 200
+    res->status(200);
+
+    // Mark the response as completed
+    res->end();
+}</code></pre>
+    
+    <p>
+    Now in <code>main</code>, you can remove the <code>router->get()</code> call and replace it with <code>router->collect_routes()</code>.
+    This procedure will find all <code>route</code> tags in all packages in the code base.
+    </p>
+
+    <pre class="hljs"><code class="language-onyx">main :: () {
+    // Create a router that will route the traffic.
+    router := http.server.router();
+
+    // Collect routes from all packages.
+    router->collect_routes();
+
+    // Create a TCP server out of our router.
+    app := http.server.tcp(&router);
+
+    // Serve on port 8000.
+    app->serve(8000);
+}</code></pre>
+
+    <p>
+        You can test the server in the same way as before.
+    </p>
+    <pre class="hljs"><code class="language-sh">$ onyx run main.onyx
+[Info][Http-Server] Serving on port 8000</code></pre>
+    <pre class="hljs"><code class="language-sh">$ curl http://localhost:8000
+&lt;h1&gt;HTTP Server in Onyx!&lt;h1&gt;</code></pre>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Deploying to Wasmer Edge</h2>
+    </div>
+
+    <p>
+        To deploy to Wasmer Edge, you need to first convert the code to use
+        the Common Gateway Interface (CGI) protocol instead of being a TCP server.
+    </p>
+    
+    <p>
+        Simply, replace the <code>http.server.tcp</code> call with <code>http.server.cgi</code>.
+    </p>
+    <pre class="hljs"><code class="language-onyx">main :: () {
+    // Create a router that will route the traffic.
+    router := http.server.router();
+
+    // Collect routes from all packages.
+    router->collect_routes();
+
+    // Respond using the CGI protocol
+    http.server.cgi(&router);
+}</code></pre>
+
+    <p>
+        Then compile the code to a WebAssembly module targeting the WASI runtime.
+    </p>
+    <pre class="hljs"><code class="language-sh">$ onyx build main.onyx -r wasi -o my-http-server.wasm </code></pre>
+
+    <p>
+        To deploy to <strong>Wasmer Edge</strong>, create a <code>wasmer.toml</code> file that contains the following.
+        Replace <code>&lt;your-namespace&gt;</code> and <code>&lt;your-package-name&gt;</code> with your details.
+    </p>
+    <pre class="hljs"><code>[package]
+name = "&lt;your-namespace&gt;/&lt;your-package-name&gt;"
+version = "0.1.0"
+description = "My first HTTP server"
+license = "MIT"
+ 
+[[module]]
+name = "server"
+source = "my-http-server.wasm"
+abi = "wasi"
+ 
+[[command]]
+name = "server"
+module = "server"
+runner = "https://webc.org/runner/wcgi"
+ 
+[command.annotations.wasi]
+env = ["SCRIPT_NAME=rust_wcgi"]
+ 
+[command.annotations.wcgi]
+dialect = "rfc-3875"</code></pre>
+
+    <p>
+    Also, create an <code>app.yaml</code> file with the following contents.
+    </p>
+    <pre class="hljs"><code>---
+kind: wasmer.io/App.v0
+name: &lt;your-app-name&gt;
+package: &lt;your-namespace&gt;/&lt;your-package-name&gt;</code></pre>
+
+    <p>
+        Then use Wasmer CLI to deploy it.
+    </p>
+    
+    <pre class="hljs"><code class="language-sh">$ wasmer deploy</code></pre>
+
+    <p>
+        Follow the instructions from the Wasmer to test your deployment.
+    </p>
+</div>
+    
+<div class="container">
+    <div class="title">
+        <h2>Next Steps</h2>
+    </div>
+    
+    <p>
+        If you want to keep building up your HTTP server, you can look at more examples in <a href="https://onyxlang.io/onyx-lang/pkg-http-server">the HTTP Server package</a>.
+    </p>
+</div>
+
+    
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}

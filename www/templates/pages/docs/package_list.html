@@ -1,0 +1,82 @@
+{{block "title"}}Onyx Package Manager{{endblock}}
+
+{{ let navbar_page = "docs" }}
+
+{{ block "page_content" }}
+
+<div class="container header">
+    <h1>Package Listing</h1>
+    <div>⇦ <a href="/docs">Back to the docs</a></div>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>First-Party Packages</h2>
+    </div>
+
+    <p>
+        These are official packages hosted on the <a href="https://github.com/onyx-lang">onyx-lang</a> GitHub account.
+    </p>
+
+    <table cellspacing=0 cellpadding=0>
+        <colgroup>
+            <col style="width: 30%">
+            <col style="width: 70%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Package</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{ foreach $p in core_packages }}
+            <tr>
+                <td style="text-align: center"><a href="{% p.url %}">{% p.name %}</a></td>
+                <td>{% p.description %}</td>
+            </tr>
+        {{ endforeach }}
+        </tbody>
+    </table>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Third-Party Packages</h2>
+    </div>
+
+    <table cellspacing=0 cellpadding=0>
+        <colgroup>
+            <col style="width: 30%">
+            <col style="width: 70%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Package</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{ let had_packages = 0 }}
+        {{ foreach $p in third_party_packages }}
+            <tr>
+                <td style="text-align: center"><a href="{% p.url %}">{% p.name %}</a></td>
+                <td>{% p.description %}</td>
+            </tr>
+            {{ let had_packages = 1 }}
+        {{ endforeach }}
+        {{ if had_packages == 0 }}
+            <tr>
+                <td colspan="2" style="text-align: center"><em>There are currently no third-party packages.</em></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center"><em>Create your own package and email <a href="mailto:me@brendanfh.com">me@brendanfh.com</a> to have it added.</em></td>
+            </tr>
+        {{ endif }}
+        </tbody>
+    </table>
+</div>
+
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}

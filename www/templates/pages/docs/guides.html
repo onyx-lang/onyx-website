@@ -1,0 +1,39 @@
+{{block "title"}}Onyx Guides{{endblock}}
+
+{{ let navbar_page = "docs" }}
+
+{{ block "page_content" }}
+
+<div class="container header">
+    <h1>Guides</h1>
+    <div>⇦ <a href="/docs">Back to the docs</a></div>
+
+    <p>
+        Here is a small list of guides for getting started with common types of Onyx projects.
+    </p>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2><a href="/docs/guides/http-server">Setting Up an HTTP Server</a></h2>
+    </div>
+
+    <p>
+        Get started making an HTTP Server, entirely in Onyx.
+        This guide also descibes how to deploy your server to Wasmer Edge.
+    </p>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2><a href="/docs/guides/raylib">Using Raylib</a></h2>
+    </div>
+
+    <p>
+        Get started making games and graphical applications using the popular open source <a href="https://raylib.com">Raylib</a> library.
+    </p>
+</div>
+
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}
