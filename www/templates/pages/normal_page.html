@@ -1,7 +1,10 @@
 {{ block "content" }}
 
 <main>
+{{ if navbar_hidden == true }}
+{{ else }}
 {% partial "partials/navbar" %}
+{{ endif }}
 <div>
     {% block "page_content" %}
 </div>

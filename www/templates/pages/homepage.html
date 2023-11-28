@@ -4,39 +4,49 @@
 
 {{ let navbar_page = "home" }}
 {{ let navbar_logo_hidden = true }}
+{{ let navbar_hidden = true }}
 
 {{ block "page_content" }}
 
-<div class="container header">
-    <div style="height: 20rem; display: flex; flex-direction: column; place-content: center;">
-        <svg viewBox="0 0 16 16" version="1.1" alt="Onyx Logo">
-            {% partial "partials/logo_svg" %}
-        </svg>
+<div style="position: relative">
+    <canvas id="animation"></canvas>
 
-        <div style="text-align: center;">
-            <h1>The <b>Onyx</b> Programming Language</h1>
-        </div>
-        <div style="font-size: 20pt; text-align: center; margin-top: 8px">
-            <p>A data-oriented, safe, and modern programming language</p>
-        </div>
+    <div class="homepage-quicklinks">
+        <a target="_blank" href="https://try.onyxlang.io"><span>Try Onyx</span></a>
+        <a href="/docs"><span {{ if navbar_page == "docs" }} class="active" {{ endif }}>Docs</span></a>
+        <a href="/news"><span {{ if navbar_page == "news" }} class="active" {{ endif }}>News</span></a>
+        <a href="https://github.com/onyx-lang/onyx" target="_blank"><span>GitHub</span></a>
     </div>
 
-    <div class="container card" id="install-card">
-        <div style="font-size: 14pt; font-family: fira; padding: 20px;">
-            <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Install Onyx in one command</span></div>
-            <div id="install-command">
-                <span style="color: #444;">$</span> <span style="color: var(--accent)">sh</span>&nbsp;&lt;(curl&nbsp;https://get.onyxlang.io&nbsp;-sSfL)
-                <span class="copy-button">Copy</span>
+    <div class="container header" style="z-index: 100; background: none">
+        <div style="height: 20rem; display: flex; flex-direction: column; place-content: center;">
+            <svg viewBox="0 0 16 16" version="1.1" alt="Onyx Logo">
+                {% partial "partials/logo_svg" %}
+            </svg>
+
+            <div style="text-align: center;">
+                <h1>The <b>Onyx</b> Programming Language</h1>
             </div>
-            <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Read the docs</span></div>
-            <div><span style="color: #444;">$</span> <span style="color: var(--accent)">curl</span> <a style="text-decoration: underline" href="/docs">onyxlang.io/docs</a></div>
-            <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Try Onyx in your browser</span></div>
-            <div><span style="color: #444;">$</span> <span style="color: var(--accent)">curl</span> <a style="text-decoration: underline" href="https://try.onyxlang.io/">try.onyxlang.io</a></div>
+            <div style="font-size: 20pt; text-align: center; margin-top: 8px">
+                <p>A data-oriented, safe, and modern programming language</p>
+            </div>
+        </div>
+
+        <div class="container card" id="install-card">
+            <div style="font-size: 14pt; font-family: fira; padding: 20px;">
+                <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Install Onyx in one command</span></div>
+                <div id="install-command">
+                    <span style="color: #444;">$</span> <span style="color: var(--accent)">sh</span>&nbsp;&lt;(curl&nbsp;https://get.onyxlang.io&nbsp;-sSfL)
+                    <span class="copy-button">Copy</span>
+                </div>
+                <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Read the docs</span></div>
+                <div><span style="color: #444;">$</span> <span style="color: var(--accent)">curl</span> <a style="text-decoration: underline" href="/docs">onyxlang.io/docs</a></div>
+                <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Try Onyx in your browser</span></div>
+                <div><span style="color: #444;">$</span> <span style="color: var(--accent)">curl</span> <a style="text-decoration: underline" href="https://try.onyxlang.io/">try.onyxlang.io</a></div>
+            </div>
         </div>
     </div>
 </div>
-
-
 
 
 <div class="container">
@@ -196,5 +206,68 @@ rotator.addEventListener("scrollend", (e) => {
 </script>
 
 {{endblock}}
+
+{{ block "scripts" }}
+<script>
+for(var PERLIN_YWRAPB=4,PERLIN_YWRAP=1<<PERLIN_YWRAPB,PERLIN_ZWRAPB=8,PERLIN_ZWRAP=1<<PERLIN_ZWRAPB,PERLIN_SIZE=4095,SINCOS_PRECISION=.5,SINCOS_LENGTH=Math.floor(360/SINCOS_PRECISION),sinLUT=new Array(SINCOS_LENGTH),cosLUT=new Array(SINCOS_LENGTH),DEG_TO_RAD=Math.PI/180,i=0;i<SINCOS_LENGTH;i++)sinLUT[i]=Math.sin(i*DEG_TO_RAD*SINCOS_PRECISION),cosLUT[i]=Math.cos(i*DEG_TO_RAD*SINCOS_PRECISION);var perlin_PI=SINCOS_LENGTH;perlin_PI>>=1;var Noise=function(){this.perlin_octaves=4,this.perlin_amp_falloff=.5,this.perlin=null};Noise.prototype={noiseSeed:function(r){var i=function(){var r,i,I=4294967296;return{setSeed:function(n){i=r=(null==n?Math.random()*I:n)>>>0},getSeed:function(){return r},rand:function(){return(i=(1664525*i+1013904223)%I)/I}}}();i.setSeed(r),this.perlin=new Array(PERLIN_SIZE+1);for(var I=0;I<PERLIN_SIZE+1;I++)this.perlin[I]=i.rand();return this},get:function(r,i,I){if(i=i||0,I=I||0,null==this.perlin){this.perlin=new Array(PERLIN_SIZE+1);for(var n=0;n<PERLIN_SIZE+1;n++)this.perlin[n]=Math.random()}r<0&&(r=-r),i<0&&(i=-i),I<0&&(I=-I);for(var E,t,_,e,N,P=Math.floor(r),R=Math.floor(i),S=Math.floor(I),o=r-P,L=i-R,l=I-S,a=0,s=.5,h=function(r){return.5*(1-cosLUT[Math.floor(r*perlin_PI)%SINCOS_LENGTH])},p=0;p<this.perlin_octaves;p++){var f=P+(R<<PERLIN_YWRAPB)+(S<<PERLIN_ZWRAPB);E=h(o),t=h(L),_=this.perlin[f&PERLIN_SIZE],_+=E*(this.perlin[f+1&PERLIN_SIZE]-_),e=this.perlin[f+PERLIN_YWRAP&PERLIN_SIZE],_+=t*((e+=E*(this.perlin[f+PERLIN_YWRAP+1&PERLIN_SIZE]-e))-_),f+=PERLIN_ZWRAP,e=this.perlin[f&PERLIN_SIZE],e+=E*(this.perlin[f+1&PERLIN_SIZE]-e),N=this.perlin[f+PERLIN_YWRAP&PERLIN_SIZE],e+=t*((N+=E*(this.perlin[f+PERLIN_YWRAP+1&PERLIN_SIZE]-N))-e),a+=(_+=h(l)*(e-_))*s,s*=this.perlin_amp_falloff,P<<=1,R<<=1,S<<=1,(o*=2)>=1&&(P++,o--),(L*=2)>=1&&(R++,L--),(l*=2)>=1&&(S++,l--)}return a}};
+</script>
+
+<script>
+    let canvas = document.getElementById("animation");
+    let ctx = canvas.getContext("2d", {alpha: false});
+    ctx.imageSmoothingEnabled = false;
+
+    function resize() {
+        let rect = canvas.getBoundingClientRect();
+
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        ctx.fillStyle = '#060609';
+        ctx.fillRect(0, 0, rect.width, rect.height);
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    function drawHex(x, y, color) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            let xx = Math.floor(x * 47 + 24 * Math.cos(i * Math.PI / 3 + Math.PI / 6));
+            let yy = Math.floor(y * 42 + 24 * Math.sin(i * Math.PI / 3 + Math.PI / 6));
+
+            if (y % 2 == 0) {
+                xx += 24;
+            }
+
+            if (i == 0) ctx.moveTo(xx, yy);
+            else        ctx.lineTo(xx, yy);
+        }
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    let noise = new Noise();
+
+    let even = true;
+    function draw() {
+        even = !even;
+        for (let y = 0; y < 18; y++) {
+            for (let x = 0; x < 100; x++) {
+                if (even == ((x + y) % 2 == 0)) continue;
+
+                if (y > 10 && (y + x % 11 + x % 3) - 16 > x % 6) continue;
+                let v = noise.get(x / 10, y / 10, Date.now() / 2500) * 3 - 1.5;
+                let r = 6 * (1 - v) + 56 * v;
+                drawHex(x, y, `rgba(${r}, ${r}, ${r * 1.5}, 1)`);
+            }
+        }
+
+        window.requestAnimationFrame(draw);
+    }
+    window.requestAnimationFrame(draw);
+
+</script>
+{{ endblock }}
 
 {{extends "pages/normal_page"}}
