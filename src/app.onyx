@@ -56,6 +56,9 @@ reg: otmp.TemplateRegistry;
 @route.{.GET, "/docs/guides/http-server"}
 (req: &Req, res: &Res) => res->render("pages/docs/guide_http_server", null);
 
+@route.{.GET, "/docs/guides/raylib"}
+(req: &Req, res: &Res) => res->render("pages/docs/guide_raylib", null);
+
 @route.{.GET, "/docs/packages"}
 (req: &Req, res: &Res) => res->render("pages/docs/package", null);
 
