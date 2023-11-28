@@ -117,7 +117,7 @@ a.cta-button:hover {
 
 .container.card > * {
     background: linear-gradient(135deg, #000, var(--accent-background));
-    box-shadow: 0px 7px 41px 30px rgba(200, 200, 230, 0.2);
+    box-shadow: 0px 5px 24px 12px rgba(150, 150, 230, 0.2);
     border-radius: 8px;
     border: 1px solid var(--primary);
     padding: 8px;
@@ -135,7 +135,7 @@ a.cta-button:hover {
 
 .container.header {
     position: relative;
-    background: var(--header-color);
+    /* background: var(--header-color); */
     color: var(--header-text);
 }
 
@@ -325,9 +325,9 @@ navbar a {
 
 
 /* Footer */
-.container:has(.footer-container) {
+/* .container:has(.footer-container) {
     background: var(--footer-color);
-}
+} */
 
 .footer-container {
     display: flex;
@@ -355,7 +355,7 @@ main pre {
     background: linear-gradient(135deg, #000, var(--accent-background));
     border: 1px solid var(--primary);
     border-radius: 6px;
-    box-shadow: 0px 7px 41px 30px rgba(200, 200, 230, 0.2);
+    box-shadow: 0px 5px 24px 12px rgba(150, 150, 230, 0.2);
     padding: 8px;
     display: block;
     overflow-y: auto;
@@ -399,6 +399,21 @@ main li {
     #desktop_logo path { transition: all 1s ease-in-out; }
 }
 
+#homepage-logo path { transition: all 1s ease-in-out; }
+#homepage-logo:hover path {fill: white !important;}
+#homepage-logo #path31   { transform: translate(24px, 0); }
+#homepage-logo #path1180 { transform: translate(24px, 0); }
+#homepage-logo #path537  { transform: translate(24px, 0); }
+#homepage-logo #path1062 { transform: translate(24px, 0); }
+#homepage-logo #path274  { transform: matrix(0.307405,0,0,0.303728,47.782897,16.545361); }
+#homepage-logo #path67   { transform: matrix(0.14795386,0,0,0.14795386,29.382719,1.6710591); }
+#homepage-logo:hover #path31   { transform: translate(33.5px, -2.5px) rotate(60deg); }
+#homepage-logo:hover #path1180 { transform: translate(46.25px, 7px) rotate(120deg); }
+#homepage-logo:hover #path537  { transform-origin: center; transform: rotate(150deg) translate(6.7px, -10.1px); }
+#homepage-logo:hover #path1062 { transform: translate(48px, 2px) rotate(90deg); }
+#homepage-logo:hover #path274  { transform: matrix(0.307405,0,0,0.303728,34.782897,16.545361); }
+#homepage-logo:hover #path67   { opacity: 0; }
+
 @media (max-width: 799px) {
     #mobile_logo {
         position: relative;
@@ -441,17 +456,13 @@ main li {
     max-width: 1200px;
     margin: 0 auto;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    text-align: right;
 }
 
 .homepage-quicklinks a {
     flex: 1;
-    display: block;
+    display: inline;
     text-align: center;
-    font-size: 1.3rem;
 }
 
 .homepage-quicklinks a span {
@@ -459,13 +470,12 @@ main li {
     margin: 4px;
     padding: 8px 20px;
     transition: all 0.3s;
-    border-radius: 8px;
 }
 
 .homepage-quicklinks a span:hover {
     cursor: pointer;
     background-color: var(--header-accent);
-    box-shadow: 0 6px 15px 8px rgba(200, 200, 230, 0.2);
+    /* box-shadow: 0 6px 15px 8px rgba(200, 200, 230, 0.2); */
 }
 
 .scrollport {
@@ -487,7 +497,7 @@ table {
     border: 1px solid var(--accent);
     width: 100%;
     background: linear-gradient(135deg, #000, var(--accent-background));
-    box-shadow: 0px 7px 41px 30px rgba(200, 200, 230, 0.2);
+    box-shadow: 0px 5px 24px 12px rgba(150, 150, 230, 0.2);
     margin-top: 24px !important;
 }
 
