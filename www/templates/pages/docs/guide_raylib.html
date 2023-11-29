@@ -70,6 +70,9 @@ main :: () {
     // Create a new window
     raylib.InitWindow(1200, 900, "Raylib Example");
 
+    // Limit FPS to 60
+    raylib.SetTargetFPS(60);
+
     while !raylib.WindowShouldClose() {
         // Start drawing
         raylib.BeginDrawing();
@@ -107,7 +110,7 @@ main :: () {
 
     <p>
         Let's expand your simple window testing program by making a (very simple) game.
-        In this game, you will control a character, and your job is to run to a checkpoint,
+        In this game, you will control a character, and your job is to go to a checkpoint,
         but in your way will be random mines that you need to avoid.
     </p>
 
@@ -143,8 +146,7 @@ mines: [..] Mine;
 score: i32;</code></pre>
 
     <p>
-        Next, you can add some code to reset the game state in <code>resetGame</code>, generate new mines
-        and move the checkpoint in <code>moveCheckpointAndSpawnMines</code>.
+        Next, you can add some code to reset the game state in <code>resetGame</code>, and spawn new mines and move the checkpoint in <code>moveCheckpointAndSpawnMines</code>.
     </p>
 
     <pre class="hljs"><code class="language-onyx">resetGame :: () {
@@ -183,7 +185,7 @@ moveCheckpointAndSpawnMines :: () {
 
     <p>
         The above uses a couple of utility functions that you need to write.
-        The first one checks if a mine that is going to be place collides with
+        The first one checks if a mine that is going to be placed collides with
         the checkpoint or the player.
     </p>
 
@@ -193,7 +195,7 @@ moveCheckpointAndSpawnMines :: () {
         This iterator never ends, and will infinitely produce random mines.
         When combined with <code>iter.skip_while</code>, you can easily
         find the first mine that meets a constraint.
-        In this case, the first mine thatis infinite does not collide with the checkpoint
+        In this case, the first mine that does not collide with the checkpoint
         or the player.
     </p>
 
@@ -234,6 +236,9 @@ mineGenerator :: () -> Iterator(Mine) {
 
     // Create a new window
     raylib.InitWindow(1200, 900, "Raylib Example");
+
+    // Limit FPS to 60
+    raylib.SetTargetFPS(60);
 
     while !raylib.WindowShouldClose() {
         // Update player based on keys pressed

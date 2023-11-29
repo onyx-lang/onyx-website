@@ -1,0 +1,96 @@
+<h2>MacOS Support</h2>
+<p>
+Onyx finally has first class support for MacOS!
+Onyx ships with natively compiled AMD64 and ARM64 binaries, which can be
+easily installed on your system (see below).
+</p>
+
+<p>
+Some of the native libraries may not be working just yet, as the were not
+originally designed for MacOS. This should be easy to fix, by changing how 
+these libraries are built and linked on the host system on a per library basis.
+</p>
+
+<h2>Single install script</h2>
+<p>
+Onyx is now very easy to install. Simply run this command on your Linux or
+MacOS machine, and let the install do its magic.
+</p>
+
+<pre class="hljs"><code class="language-sh">sh <(curl https://get.onyxlang.io -sSfL)</code></pre>
+
+<p>
+Onyx will be installed in your HOME directory, at <code>~/.onyx</code>.
+You will be prompted add Onyx to your path, and to define the <code>ONYX_PATH</code> environment variable, which is how Onyx knows where it is installed on your system. If you want to move it somewhere else, make sure you change your <code>ONYX_PATH</code>.
+</p>
+
+<h2>Package manager changes</h2>
+<p>
+Onyx's package manager saw a big renovation in this release.
+The most noticeable fact is that it now use <code>.kdl</code> instead of <code>.ini</code> files.
+<a href="https://kdl.dev">KDL</a> files offer more flexibility and future proofing compared to the old format. Not to mention, they look a lot better.
+</p>
+
+<p>
+To migrate existing projects using the old format, simply run this command.
+</p>
+
+<pre class="hljs"><code class="language-sh">onyx package migrate</code></pre>
+
+<p>
+Because this conversion is a lossless transition, there should be no problems do the migration on any project.
+</p>
+
+<h2>Minor library changes</h2>
+<p>
+Because this release mostly focused on things outside of the core libraries of Onyx, there is not much to say for new things in the core library. However, there is one thing: the start of a <strong>Memory Debugger</strong>!
+</p>
+
+<p>
+While in its early phases, this memory debugger can let you receive information about every allocation, reallocation, or free in your code base.
+You can use this information to figure out places that leaking memory, or potentially using memory after its been freed.
+</p>
+
+<p>
+There is development on a memory debugger tool for this purpose that should be available soon. However, I didn't want to withhold memory debugger allocator in case someone else can make something cool with.
+</p>
+
+<h2>Full Changelog</h2>
+<pre>
+Additions:
+- MacOS compatibility
+    - Using Wasmer runtime, MacOS on ARM and AMD64 are supported.
+- Memory debugger
+    - A custom allocator that intercepts allocations and frees and reports them
+      to a client for visualizations and debugging.
+- New installation script
+    - sh <(curl https://get.onyxlang.io -sSfL)
+    - Works on Linux and MacOS
+- KDL document parsing support
+    - Used as the new format for the package manager.
+    - See https://kdl.dev for details
+- `os.chdir` for changing the current directory
+    - Supported on WASIX and Onyx runtime
+- `os.getcwd` for getting the current directory
+    - Supported on WASIX and Onyx runtime
+- Basic build configurations into package manager.
+    - Configure sources files, runtime, target file,
+      included files, and CLI arguments
+    - Multiple configurations per project.
+    - Build with 'onyx package build &lt;config_name&gt;'
+
+Removals:
+
+Changes:
+- Simplified using union variants of type `void`.
+    - Now instead of `.{ Foo = .{} }`, use `.Foo` instead.
+- Renamed `--no-std` flag to `--no-core`, since Onyx does not call its standard
+  library "std", the name did not make any sense.
+- `net.make_ipv4_address` now has a reasonable definition using a string for the IP,
+  instead of an integer.
+
+Bugfixes:
+- Formatting of days and months were incorrect `time.strftime`.
+- Infinite loop in TCP server when a client disconnects.
+</pre>
+

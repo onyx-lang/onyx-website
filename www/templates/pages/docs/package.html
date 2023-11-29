@@ -39,8 +39,15 @@
     <p>
         When you publish a package using <code>onyx package publish</code>, it simply increments the version number in the package file,
         commits that change, creates a new tag at that commit, and pushes all changes and tags to the Git server.
-        When someone else runs <code>onyx package update</code>, the new version will be found and updated to.
     </p>
+
+    <p>
+        When someone else runs <code>onyx package update</code>, all packages will be updated to their newest compatible version.
+    </p>
+
+    <blockquote style="margin-top: 8px">
+        Do note that, in order to use Onyx's package manager, you <strong>MUST</strong> have Git installed and it must be in the PATH.
+    </blockquote>
 </div>
 
 <div class="container">

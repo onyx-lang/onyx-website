@@ -1,8 +1,11 @@
+{{ let homepage = false }}
+{{ if navbar_logo_hidden == true }}
+    {{ let homepage = true }}
+{{ endif }}
 
 <div class="navbar-container">
     <navbar>
-        {{ if navbar_logo_hidden == true }}
-        {{ else }}
+        {{ if homepage == false }}
         <a href="/" aria-label="Go to the homepage">
             <svg viewBox="0 0 64 16" version="1.1" id="desktop_logo" alt="Onyx Logo">
                 {% partial "partials/logo_svg" %}

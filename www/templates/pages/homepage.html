@@ -4,22 +4,14 @@
 
 {{ let navbar_page = "home" }}
 {{ let navbar_logo_hidden = true }}
-{{ let navbar_hidden = true }}
 
 {{ block "page_content" }}
 
-<div style="position: relative">
+<div id="homepage-header">
     <canvas id="animation"></canvas>
 
-    <div class="homepage-quicklinks">
-        <a target="_blank" href="https://try.onyxlang.io"><span>Try Onyx</span></a>
-        <a href="/docs"><span {{ if navbar_page == "docs" }} class="active" {{ endif }}>Docs</span></a>
-        <a href="/news"><span {{ if navbar_page == "news" }} class="active" {{ endif }}>News</span></a>
-        <a href="https://github.com/onyx-lang/onyx" target="_blank"><span>GitHub</span></a>
-    </div>
-
-    <div class="container header" style="z-index: 100; background: none">
-        <div style="height: 20rem; display: flex; flex-direction: column; place-content: center;">
+    <div class="container header" style="z-index: 100; background: none; position: relative">
+        <div style="display: flex; flex-direction: column; place-content: center;">
             <svg viewBox="0 0 64 16" version="1.1" alt="Onyx Logo" id="homepage-logo">
                 {% partial "partials/logo_svg" %}
             </svg>
@@ -28,7 +20,7 @@
                 <h1>The <b>Onyx</b> Programming Language</h1>
             </div>
             <div style="font-size: 20pt; text-align: center; margin-top: 8px">
-                <p>A data-oriented, safe, and modern programming language</p>
+                <p>A data-oriented, expressive, and modern programming language</p>
             </div>
         </div>
 
@@ -36,7 +28,7 @@
             <div style="font-size: 14pt; font-family: fira; padding: 20px;">
                 <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Install Onyx in one command</span></div>
                 <div id="install-command">
-                    <span style="color: #444;">$</span> <span style="color: var(--accent)">sh</span>&nbsp;&lt;(curl&nbsp;https://get.onyxlang.io&nbsp;-sSfL)
+                    <span style="color: #444;">$</span> <span style="color: var(--accent)">sh</span> &lt;(curl https://get.onyxlang.io -sSfL)
                     <span class="copy-button">Copy</span>
                 </div>
                 <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Read the docs</span></div>
@@ -106,24 +98,25 @@ main :: () {
     <div>
         <h2>Fast Compilation</h2>
         <br />
-        <p>Onyx's compiler is written entirely in C and features incredibly fast compilation. The web-server for this website was compiled in <b>49 milliseconds</b>.</p>
+        <p>Onyx's compiler is written entirely in C and features incredibly fast compilation. The web-server for this website was compiled in <b>47 milliseconds</b>.</p>
     </div>
 
-    <pre class="hljs"><code>$ onyx build -V ./src/app.onyx
+    <pre class="hljs"><code class="language-sh">$ onyx build -V -r wasi -DWASIX -o site.wasm build.onyx
 File search path:
-        /usr/share/onyx
-        .
+	/home/brendan/.onyx
+	.
 
-Type table size: 131244 bytes.
+Type table size: 151092 bytes.
 Foreign blocks size: 8 bytes.
-Tagged procedure size: 504 bytes.
+Tagged procedure size: 840 bytes.
 Tagged global size: 8 bytes.
 
 Statistics:
-    Time taken: 49.000000 ms
-    Processed 20607 lines (420551.031250 lines/second).
-    Processed 107338 tokens (2190571.500000 tokens/second)
-</code></pre>
+    Time taken: 47.000000 ms
+    Processed 22144 lines (471148.937500 lines/second).
+    Processed 115240 tokens (2451915.000000 tokens/second).
+
+Outputting to WASM file:   site.wasm</code></pre>
 </div>
 
 <div>
@@ -217,8 +210,14 @@ for(var PERLIN_YWRAPB=4,PERLIN_YWRAP=1<<PERLIN_YWRAPB,PERLIN_ZWRAPB=8,PERLIN_ZWR
     let ctx = canvas.getContext("2d", {alpha: false});
     ctx.imageSmoothingEnabled = false;
 
+    let columns = 0;
+    let rows = 0;
+
     function resize() {
         let rect = canvas.getBoundingClientRect();
+
+        columns = Math.ceil(rect.width / 24);
+        rows = 19 - (canvas.width > 800 ? 0 : 2);
 
         canvas.width = rect.width;
         canvas.height = rect.height;
@@ -252,11 +251,11 @@ for(var PERLIN_YWRAPB=4,PERLIN_YWRAP=1<<PERLIN_YWRAPB,PERLIN_ZWRAPB=8,PERLIN_ZWR
     let even = true;
     function draw() {
         even = !even;
-        for (let y = 0; y < 18; y++) {
-            for (let x = 0; x < 100; x++) {
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < columns; x++) {
                 if (even == ((x + y) % 2 == 0)) continue;
 
-                if (y > 10 && (y + x % 11 + x % 3) - 16 > x % 6) continue;
+                if (y > 11 && (y + x % 11 + x % 3) - 16 > x % 6) continue;
                 let v = noise.get(x / 10, y / 10, Date.now() / 2500) * 3 - 1.5;
                 let r = 6 * (1 - v) + 56 * v;
                 drawHex(x, y, `rgba(${r}, ${r}, ${r * 1.5}, 1)`);

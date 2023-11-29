@@ -30,7 +30,7 @@
 @media (max-width: 799px) {
     :root {
         --default-flex-direction: column;
-        font-size: 12pt;
+        font-size: 10pt;
     }
 }
 
@@ -43,13 +43,15 @@ body {
 
 a {
     color: var(--text);
-    text-decoration: underline;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 a.link-button {
     padding: 8px;
     border-radius: 4px;
     text-decoration: none;
+    border-bottom: none;
     background-color: var(--primary);
     transition: all 300ms;
     position: relative;
@@ -57,7 +59,7 @@ a.link-button {
 }
 
 a.link-button:hover {
-    top: -6px;
+    /* top: -6px; */
     box-shadow: 0 6px 15px 8px rgba(200, 200, 230, 0.2);
     cursor: pointer;
 }
@@ -80,7 +82,7 @@ a.cta-button {
 }
 
 a.cta-button:hover {
-    top: -6px;
+    /* top: -6px; */
     box-shadow: 0 6px 15px 8px rgba(200, 200, 230, 0.2);
     cursor: pointer;
 }
@@ -134,9 +136,12 @@ a.cta-button:hover {
 }
 
 .container.header {
+    top: -80px;
+    padding-top: 160px;
     position: relative;
-    /* background: var(--header-color); */
     color: var(--header-text);
+    background: url(/static/images/header-background.png);
+    background-position: bottom;
 }
 
 @media screen and (min-width: 800px) {
@@ -213,11 +218,11 @@ p code {
 /* Navigation */
 @media screen and (min-width: 800px) {
     .navbar-container {
-        position: sticky;
+        position: relative;
+        background: none;
+        color: var(--text);
         top: 0;
         z-index: 1000;
-        background-color: var(--accent-background);
-        color: var(--text);
 
         width: 100%;
     }
@@ -230,11 +235,14 @@ p code {
 
 @media screen and (max-width: 799px) {
     .navbar-container {
-        background-color: var(--accent-background);
+        position: relative;
+        background: none;
         color: var(--header-text);
 
         width: 100%;
         margin: 0 auto;
+        top: 0;
+        z-index: 1000;
     }
 }
 
@@ -279,6 +287,7 @@ navbar a:visited {
 navbar a {
     color: var(--header-text);
     text-decoration: none;
+    border-bottom: none;
 }
 
 @media (min-width: 800px) {
@@ -342,6 +351,7 @@ navbar a {
     display: block;
     padding: 2px 0;
     text-decoration: none;
+    border-bottom: none;
     color: var(--accent);
 }
 
@@ -406,13 +416,13 @@ main li {
 #homepage-logo #path537  { transform: translate(24px, 0); }
 #homepage-logo #path1062 { transform: translate(24px, 0); }
 #homepage-logo #path274  { transform: matrix(0.307405,0,0,0.303728,47.782897,16.545361); }
-#homepage-logo #path67   { transform: matrix(0.14795386,0,0,0.14795386,29.382719,1.6710591); }
+#homepage-logo #path67   { transition: opacity 0s, transform 1s; transform: matrix(0.14795386,0,0,0.14795386,29.382719,1.6710591); }
 #homepage-logo:hover #path31   { transform: translate(33.5px, -2.5px) rotate(60deg); }
 #homepage-logo:hover #path1180 { transform: translate(46.25px, 7px) rotate(120deg); }
 #homepage-logo:hover #path537  { transform-origin: center; transform: rotate(150deg) translate(6.7px, -10.1px); }
 #homepage-logo:hover #path1062 { transform: translate(48px, 2px) rotate(90deg); }
 #homepage-logo:hover #path274  { transform: matrix(0.307405,0,0,0.303728,34.782897,16.545361); }
-#homepage-logo:hover #path67   { opacity: 0; }
+#homepage-logo:hover #path67   { opacity: 0; transform: matrix(0.14795386,0,0,0.14795386,100.382719,-1000.6710591);  }
 
 @media (max-width: 799px) {
     #mobile_logo {
@@ -423,6 +433,10 @@ main li {
     }
 
     #desktop_logo {
+        display: none;
+    }
+
+    .copy-button {
         display: none;
     }
 }
@@ -448,48 +462,34 @@ main li {
     #install-card {
         width: 800px;
     }
+
+    #homepage-header {
+        top: -50px;
+    }
 }
 
-.homepage-quicklinks {
-    z-index: 10000;
+#homepage-header {
     position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
-
-    text-align: right;
 }
 
-.homepage-quicklinks a {
-    flex: 1;
-    display: inline;
-    text-align: center;
-}
+@media screen and (min-width: 800px) {
+    .scrollport {
+        mask-image: linear-gradient(to right, #0000 0, #000 10%, #000 90%, #0000 100%);
+        -webkit-mask-image: linear-gradient(to right, #0000 0, #000 10%, #000 90%, #0000 100%);
 
-.homepage-quicklinks a span {
-    display: inline-block;
-    margin: 4px;
-    padding: 8px 20px;
-    transition: all 0.3s;
-}
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
 
-.homepage-quicklinks a span:hover {
-    cursor: pointer;
-    background-color: var(--header-accent);
-    /* box-shadow: 0 6px 15px 8px rgba(200, 200, 230, 0.2); */
-}
+        display: flex;
+        gap: 100px;
+        align-items: start;
+        padding: 0 100px;
+        padding-bottom: 32px;
+    }
 
-.scrollport {
-    mask-image: linear-gradient(to right, #0000 0, #000 10%, #000 90%, #0000 100%);
-    -webkit-mask-image: linear-gradient(to right, #0000 0, #000 10%, #000 90%, #0000 100%);
-
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-
-    display: flex;
-    gap: 100px;
-    align-items: start;
-    padding: 0 100px;
-    padding-bottom: 32px;
+    .scrollport > div {
+        min-width: 1000px;
+    }
 }
 
 table {
@@ -529,10 +529,6 @@ canvas#animation {
 
     mask-image: var(--header-color);
     -webkit-mask-image: var(--header-color);
-}
-
-.scrollport > div {
-    min-width: 1000px;
 }
 
 ::-webkit-scrollbar{

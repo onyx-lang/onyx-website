@@ -1,5 +1,11 @@
 [
     {
+        "name": "Beta Release 0.1.8",
+        "path": "release-0.1.8",
+        "date": "28th November 2023",
+        "description": "This is an exciting release for Onyx! It is the first release to ship with MacOS support and an automated installer. It also brings many improvements to package management and the general ergonomics of the language."
+    },
+    {
         "name": "Beta Release 0.1.7",
         "path": "release-0.1.7",
         "date": "25th October 2023",
