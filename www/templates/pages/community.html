@@ -1,0 +1,46 @@
+{{ block "title" }}
+Onyx Community
+{{ endblock }}
+
+{{ let navbar_page = "community" }}
+
+{{ block "page_content" }}
+
+<div class="container header">
+    <h1>Onyx Community</h1>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Discord</h2>
+    </div>
+
+    <p>
+    The Onyx programming language has an official Discord for questions, problem solving,
+    feature requests, and showing off your projects.
+    </p>
+    <div style="margin-top: 12px">
+        <a href="https://discord.gg/GVFamnQq" class="link-button">Join Discord</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>GitHub</h2>
+    </div>
+
+    <p>
+    Onyx is an open source project you can find on GitHub.
+    Pull requests and contributions from the community are more than welcome!
+    Onyx may have started as a personal project for one person, but that 
+    does not mean its future cannot be shaped by everyone.
+    </p>
+    <div style="margin-top: 12px">
+        <a href="https://github.com/onyx-lang/onyx" class="link-button">Go to GitHub</a>
+    </div>
+</div>
+
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}
+

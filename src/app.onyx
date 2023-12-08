@@ -70,6 +70,16 @@ reg: otmp.TemplateRegistry;
     });
 }
 
+@route.{.GET, "/playground"}
+(req: &Req, res: &Res) {
+    res->body("text/html", "This has been moved to <a href=\"https://try.onyxlang.io\">try.onyxlang.io</a>.");
+    res->status(200);
+    res->end();
+}
+
+@route.{.GET, "/community"}
+(req: &Req, res: &Res) => res->render("pages/community", null);
+
 
 @route.{.GET, "/robots.txt"}
 (req: &Req, res: &Res) {

@@ -164,6 +164,26 @@ main :: () {
 
 <div class="container">
     <div class="title">
+        <h2 style="margin-bottom: 8px">Onyx Community</h2>
+    </div>
+
+    <p>
+        The Onyx programming language is on Discord! It is the place to chat about language
+        features, discuss problems you are having, and showcase your projects.
+    </p>
+    <p>
+        Onyx is an open source project so contributions from the community are welcome and encouraged!
+        The <code>onyx-lang/onyx</code> GitHub repository is the official source of Onyx.
+    </p>
+
+    <div style="margin-top: 12px">
+        <a href="https://discord.gg/GVFamnQq" class="link-button">Join Discord</a>
+        <a href="https://github.com/onyx-lang/onyx" class="link-button">Go to GitHub</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="title">
         <h2 style="margin-bottom: 8px">Recent News</h2>
     </div>
 </div>
@@ -180,6 +200,7 @@ document.querySelector("#install-command .copy-button").addEventListener("click"
     });
 })
 
+/*
 let rotator = document.querySelector(".scrollport");
 let rotatorIndex = 0;
 let ignoreNextScroll = false;
@@ -196,6 +217,7 @@ rotator.addEventListener("scrollend", (e) => {
     if (ignoreNextScroll) ignoreNextScroll = false;
     else                  clearInterval(rotatorInterval);
 });
+*/
 </script>
 
 {{endblock}}

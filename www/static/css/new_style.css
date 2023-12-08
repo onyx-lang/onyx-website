@@ -472,6 +472,7 @@ main li {
     position: relative;
 }
 
+/*
 @media screen and (min-width: 800px) {
     .scrollport {
         mask-image: linear-gradient(to right, #0000 0, #000 10%, #000 90%, #0000 100%);
@@ -491,6 +492,7 @@ main li {
         min-width: 1000px;
     }
 }
+*/
 
 table {
     border-radius: 8px;
