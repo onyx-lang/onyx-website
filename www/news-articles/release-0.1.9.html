@@ -1,0 +1,270 @@
+<h2>Major Syntax Changes</h2>
+<h3>New Keywords</h3>
+<p>
+    In this version of Onyx there are two new keywords: <code>in</code> and <code>as</code>.
+    They both exist to clean up the syntax of existing constructs in Onyx.
+</p>
+
+<h3>For Loops</h3>
+<p>
+    For <code>for</code> loops, Onyx now uses the following syntax to avoid the confusion of the <code>:</code>.
+</p>
+
+<pre class="hljs"><code class="language-onyx">for value in iterable {
+    // body
+}</code></pre>
+
+<p>
+    This is a small change, but it is much more readable and beginner-friendly.
+    It also enables a very useful feature of for-loop that is new in this version: <em>indexed for-loops</em>.
+</p>
+<p>
+    For-loop can now have an optional second variable that is the <em>index</em> of the loop.
+    This variable is an <code>i32</code> by default, but that can be changed using <code>: TYPE</code> after the variable.
+    Note that only integer types are currently supported.
+    Also worthy of note, is that you can now <em>explicitly</em> type the loop iterator, and you will get a compile error if it is typed wrong.
+</p>
+
+<pre class="hljs"><code class="language-onyx">arr := .["A", "list", "of", "strings"];
+
+for value: str, index: i32 in arr {
+    // body
+}
+
+// Or more succinctly
+
+for value, index in arr {
+    // body
+}
+</code></pre>
+
+
+<h3>Case Statement Captures</h3>
+<p>
+    For <code>case</code> statements with captures, Onyx now uses the following syntax. The old syntax was meant to parallel the for-loop syntax, and since that changed, I felt this needed to change as well.
+</p>
+
+<pre class="hljs"><code class="language-onyx">switch some_union {
+    case .SomeVariant as some_value {
+        // body
+    }
+
+    // Capture by pointer
+    case .AnotherVariant as &another_value {
+        // body
+    }
+}</code></pre>
+
+<h3>Interfaces</h3>
+<p>
+    Interfaces also got some touch ups this version.
+    Interface parameters now look like normal procedure or structure parameters, and can be of any type, so long as their value is compile-time known.
+    To specify that you want a value of a certain type in an interface body, simply use the <code>as</code> keyword.
+</p>
+
+<pre class="hljs"><code class="language-onyx">CanAdd :: interface (T: type_expr) {
+    t as T;
+
+    { t + t } -> T;
+}
+
+add :: (x, y: $T) -> T where CanAdd(T) {
+    return x + y;
+}
+</code></pre>
+
+<h3>Optional Semicolons</h3>
+<p>
+    As an experimental feature, you can now opt in to optional-semicolons.
+    To do so, simply pass the <code>--feature optional-semicolons</code> flag to enable optional-semicolons across an entire project.
+    Or, simply place the following line at the top of any Onyx file to enable optional-semicolons in that file.
+    This line must be the <em>first</em> line of code.
+</p>
+<pre class="hljs"><code class="language-onyx">//+optional-semicolons</code></pre>
+
+<p>
+    Optional semicolons are implemented in a very straight forward way.
+    Whenever the lexical analyzer encounters a newline, it looks at the last token it procedure and if it is one of the following, it implicitly inserts a semicolon.
+</p>
+<table>
+    <tbody>
+        <tr>
+            <td>A symbol (foo, __bar)</td>
+            <td><code>break</code></td>
+            <td><code>continue</code></td>
+            <td><code>fallthrough</code></td>
+            <td><code>return</code></td>
+        </tr>
+        <tr>
+            <td>A string literal</td>
+            <td>A character literal</td>
+            <td>A boolean literal</td>
+            <td>An integer literal</td>
+            <td>A float literal</td>
+        </tr>
+        <tr>
+            <td><code>---</code></td>
+            <td><code>?</code></td>
+            <td><code>)</code></td>
+            <td><code>}</code></td>
+            <td><code>]</code></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    There are some rough cases that I have come across with some of the code I have written that make for a slightly rough transition, but largely I am enjoying writing Onyx without semicolons.
+    I believe this will be the default in a future release.
+</p>
+
+<h3>Converting Old Code</h3>
+<p>
+    If you have old Onyx code that you want to convert to the new syntax, you can use these two POSIX shell commands to convert all for loops and case statements. It is a good idea to make a backup of all Onyx files in your project before running these commands. I personal used these commands on all Onyx projects I am currently working on and they worked flawlessly, but your mileage may vary.
+</p>
+
+<pre class="hljs"><code class="language-sh">$ find -name '*.onyx' -exec sed -ri 's/(\s+)for([^a-zA-Z0-9_][^:]*)\s*:/\1for\2 in/g' {} \;
+$ find -name '*.onyx' -exec sed -ri 's/(\s+)case\s*([^:]*)\s*:\s*\.([a-zA-Z0-9_]+)/\1case .\3 as \2/g' {} \;
+</code></pre>
+
+<p>
+    There is not a conversion for interfaces, but those are much less common so they should not take too long to migrate.
+</p>
+
+
+<h2>OVM-WASM support on MacOS</h2>
+<p>
+    Thanks to community contributions, Onyx's custom WebAssembly runtime called OVM-WASM now has support on MacOS.
+    OVM-WASM was created to allow for debugging of Onyx programs, which is now possible on MacOS.
+    Simply install the newest version of Onyx, and use the newest version of the Visual Studio Code extension for Onyx to enable debugging support.
+</p>
+
+<h2>Array Programming</h2>
+<p>
+    Thanks to more community contributions, Onyx now has support for basic array programming.
+    This means that small arrays of 4 elements or less have special operator overloads for <code>+</code>, <code>-</code>, and <code>*</code>, as well as special accessors for their elements.
+</p>
+<p>
+    To see how potentially useful this is, consider this code snippet.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// Vector2 is just an alias for an array of 2 integers
+Vector2 :: [2] i32
+
+main :: () {
+    v: Vector2;
+    v.x = 10; // Here you can use `.x` and `.y` to
+    v.y = 20; // directly set the first and second elements
+
+    w := v * 2;
+
+    println(w);
+}</code></pre>
+
+<h2>Miscellaneous Improvements</h2>
+<h3>Tree-shaking</h3>
+<p>
+    Onyx now performs a simple tree-shaking algorithm to reduce the output binary size substantially.
+    It does this by removing code and data that is proven to be impossible to reach.
+    This was rather simple to do in the Onyx compiler, since there is no partial compilation.
+    Everything that could end up in the binary must pass through all stages of the compiler.
+</p>
+<p>
+    There is one caveat to note though. In order to make this as effective as possible, the <code>methods</code> field in the <code>Type_Info_Union</code> and <code>Type_Info_Struct</code> structures is now left empty by default. This is because there are many cases where including it would mean that you <em>could</em> access a procedure dynamically through the type information. This hurt the performance of the tree-shaking algorithm and meant that very little was removed. To fix this, a flag was added to the compiler that you can pass if you want method information for your type. Simply pass <code>--generate-method-info</code> when running or building.
+</p>
+
+<h3><code>while defer</code></h3>
+<p>
+    Another small syntax change that I am experimenting with is an alternative way to do bottom-test loops (<code>do {} while (...)</code> in C). The old-syntax was <code>while #bottom_test condition { ... }</code>, but in this version you can also use the following.
+</p>
+
+<pre class="hljs"><code class="language-onyx">i := 10;
+while defer i < 10 {
+    println(i);
+}
+</code></pre>
+
+<p>
+    This code would print "10", because the actual condition (<code>i < 10</code>) is not checked until after the body of the loop, hence the <code>defer</code> keyword.
+</p>
+
+<h2>Updating</h2>
+<p>
+    To update to the newest version of Onyx simply use the same install script found on the homepage.
+    It will automatically detect your previous install and will override it with the new version.
+</p>
+<pre class="hljs"><code class="language-sh">$ sh <(curl https://get.onyxlang.io -sSfL)
+</code></pre>
+
+
+<h2>Full Changelog</h2>
+<h3>Additions</h3>
+<ul>
+    <li>OVM-Wasm support on MacOS (thanks to @judah-caruso).
+    <ul>
+        <li>This enables debugging support when on MacOS.</li>
+        <li>Available from installer.</li>
+    </ul>
+    </li>
+    <li><code>.*</code> as a postfix alternative to <code>*</code>.</li>
+    <li><code>where</code> clauses can contain arbitrary boolean expressions (thanks to @judah-caruso).</li>
+    <li>Small arrays (4 or fewer elements) have special accessors for their components.</li>
+    <li>Tree-shaking is performed prior to code generation, reducing binary size drastically in some cases.</li>
+    <li>Operation overloads for <code>+</code>, <code>-</code> and <code>*</code> for small arrays.</li>
+    <li><code>where defer</code> as a cleaner alternative to <code>where #bottom_test</code></li>
+    <li>
+        Added procedures to core library
+        <ul>
+            <li><code>core.intrinsics.wasm.memory_equal</code></li>
+            <li><code>core.iter.counter</code></li>
+            <li><code>core.iter.sum</code></li>
+            <li><code>core.iter.fold1</code></li>
+            <li><code>make(List(T))</code></li>
+            <li><code>core.list.from_array</code></li>
+            <li><code>core.list.pop_begin_opt</code></li>
+            <li><code>core.list.pop_end_opt</code></li>
+            <li><code>core.list.empty</code></li>
+            <li><code>core.conv.parse</code></li>
+            <li><code>core.conv.parse_with_allocator</code></li>
+            <li><code>core.encoding.json.encode_string_opt</code></li>
+            <li><code>core.encoding.json.as_any</code> overload</li>
+        </ul>
+    </li>
+</ul>
+
+<h3>Removals</h3>
+<ul>
+    <li>Compiler test cases are no longer shipped with tool-chain.</li>
+</ul>
+
+<h3>Changes</h3>
+<ul>
+    <li>
+        Due to tree shaking, the <code>methods</code> member of <code>Type_Info_Struct</code> and <code>Type_Info_Union</code> is not populated by default anymore.
+        <ul>
+            <li>Use the <code>--generate-method-info</code> CLI flag to add this information back in.</li>
+        </ul>
+    </li>
+    <li>Due to <code>as</code> being a keyword now, <code>cptr.as</code> was renamed to <code>cptr.as_unsafe</code>.</li>
+</ul>
+
+<h3>Bugfixes</h3>
+<ul>
+    <li>
+        Error reporting in many cases saw a lot of improvements.
+        <ul>
+            <li>Especially with polymorphic procedures, l-values, and code blocks.</li>
+        </ul>
+    </li>
+    <li>Implementation of <code>core.array.remove</code>.</li>
+</ul>
+
+<h3>Contributors</h3>
+<ul>
+    <li>@judah-caruso (10 pull requests)</li>
+    <li>@stagas (2 pull requests)</li>
+    <li>@magnetenstad (1 pull request)</li>
+    <li>@jtakakura (1 pull request)</li>
+    <li>@hatappo (1 pull request)</li>
+    <li>@Syuparn (1 pull request)</li>
+    <li>@benstt (1 pull request)</li>
+</ul>
+

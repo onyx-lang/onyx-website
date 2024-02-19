@@ -1,5 +1,11 @@
 [
     {
+        "name": "Beta Release 0.1.9",
+        "path": "release-0.1.9",
+        "date": "19th February 2024",
+        "description": "This release brings major syntax changes, optional semicolons, OVM-WASM support for MacOS, and a host of bugfixes in the compiler and the standard library."
+    },
+    {
         "name": "Beta Release 0.1.8",
         "path": "release-0.1.8",
         "date": "28th November 2023",
