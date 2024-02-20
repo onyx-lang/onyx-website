@@ -260,7 +260,7 @@ mineGenerator :: () -> Iterator(Mine) {
         }
 
         // Check collision with mines
-        for mine: mines {
+        for mine in mines {
             if raylib.CheckCollisionCircles(
                 .{ player.x, player.y }, player.size,
                 .{ mine.x, mine.y }, mine.size,
@@ -276,7 +276,7 @@ mineGenerator :: () -> Iterator(Mine) {
         raylib.ClearBackground(.{20, 20, 20, 255});
 
         // Draw mines
-        for mine: mines {
+        for mine in mines {
             raylib.DrawCircle(~~mine.x, ~~mine.y, mine.size, .{100, 0, 0, 255});
         }
 
