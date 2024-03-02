@@ -1,17 +1,8 @@
-{{block "title"}}Onyx - Page not found{{endblock}}
+<html>
+    <body>
+        <div style="color: red">
+            <h1>404 - Page not found</h1>
+        </div>
+    </body>
+</html>
 
-{{block "content"}}
-
-<main>
-    {% partial "partials/navbar" %}
-
-    <div class="container">
-        <h1>404 - Page not found</h1>
-    </div>
-
-    {% partial "partials/footer" %}
-</main>
-
-{{endblock}}
-
-{{extends "pages/base"}}

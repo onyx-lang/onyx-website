@@ -129,7 +129,7 @@ configs.onyx = {
         root_dir = function(filename)
             local utils = require "lspconfig.util"
             return utils.search_ancestors(filename, function(path)
-                if utils.path.is_file(utils.path.join(path, "onyx-lsp.ini")) then
+                if utils.path.is_file(utils.path.join(path, "onyx-lsp.kdl")) then
                     return path
                 end
             end)

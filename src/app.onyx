@@ -23,7 +23,7 @@ reg: otmp.TemplateRegistry;
             log(.Warning, "Template Renderer", tprintf("{}", s));
         }
 
-        r.headers["content-type"] = "text/html";
+        r.headers["Content-Type"] = "text/html";
         r->status(200 if s == .None else 400);
         r->end();
     }
@@ -97,8 +97,8 @@ news_articles: Cached_Resource([] Article);
     article_path := req.url_params["article"] ?? "";
     article := array.first(news_articles->get() ?? .[], [n](n.path == article_path));
     if !article {
-        res->status(404);
         res->render("pages/404", null);
+        res->status(404);
         return;
     }
 
@@ -113,8 +113,8 @@ news_articles: Cached_Resource([] Article);
         });
 
     } else {
-        res->status(404);
         res->render("pages/404", null);
+        res->status(404);
         return;
     }
 }
@@ -179,6 +179,8 @@ main :: () {
     pipes->pipe((req, res) => {
         if !res.completed {
             res->render("pages/404", null);
+            res->status(404);
+            res->end();
         }
     });
 
@@ -190,9 +192,13 @@ main :: () {
         logger := http.server.logger(style=.V2);
         pipes->pipe(&logger);
 
-        app := http.server.tcp(pipes, .{ thread_count = 4 });
+        app := http.server.tcp(pipes, .{
+            thread_count = 8,
+            max_clients = 256
+        });
 
         port := conv.parse_int(os.env("SERVER_PORT") ?? "8000");
+        logf(.Info, "Listening on {}", port);
 
         app->serve(~~port);
         println("Server stopping...");
