@@ -1,0 +1,44 @@
+{{ block "title" }}
+Onyx Examples
+{{ endblock }}
+
+{{ let navbar_page = "examples" }}
+
+{{ block "page_content" }}
+
+<div class="container header">
+    <h1>Onyx Examples</h1>
+    <p>This page provides several simple examples of Onyx code, showing how to do common things with the standard library.</p>
+</div>
+
+{{ foreach ex in examples }}
+<div class="container">
+    <div class="title">
+        <h2>{% ex.name %}</h2>
+    </div>
+
+    <div>
+        {% ex.html %}
+    </div>
+
+    <pre class="hljs"><code class="language-onyx">{% ex.code %}</code></pre>
+</div>
+{{ endforeach }}
+
+<div class="container">
+    <div class="title">
+        <h2>Want to learn more?</h2>
+    </div>
+    <p>
+        <a class="link-button" href="/docs">Visit the docs!</a>
+    </p>
+    <p>
+        You can learn more details about Onyx by visiting the docs!
+        There is more examples, a reference manual for the language, and documentation for the standard library.
+    </p>
+</div>
+
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}
+

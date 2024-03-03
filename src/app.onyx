@@ -128,6 +128,15 @@ news_articles: Cached_Resource([] Article);
     });
 }
 
+@route.{.GET, "/examples"}
+(req: &Req, res: &Res) {
+    exs := examples->get() ?? .[];
+
+    res->render("pages/examples", &.{
+        examples = exs
+    });
+}
+
 main :: () {
     default_log_level(.Error);
     load_library_list();
@@ -157,6 +166,13 @@ main :: () {
         release_resource = (articles: &[] Article) {
             delete(articles, allocator=alloc.heap_allocator);
         }
+    };
+
+    examples = .{
+        resource = .{},
+        max_age = 60 * 60 * 24, // 1 day
+        fetch_resource = load_examples,
+        release_resource = delete_examples,
     };
 
     http.server.set_mime_type("svg", "image/svg+xml");
@@ -210,9 +226,15 @@ Package :: struct {
     url, name, description: str;
 }
 
+Example :: struct {
+    name, code, html: str;
+}
+
 #local {
     core_packages: [] Package;
     third_party_packages: [] Package;
+
+    examples: Cached_Resource([] Example);
 }
 
 load_library_list :: () {
@@ -226,3 +248,36 @@ load_library_list :: () {
 
     slice.sort(third_party_packages, (a, b) => string.compare(a.name, b.name));
 }
+
+load_examples :: () -> ? [] Example {
+    #context_scope {
+        context.allocator = alloc.heap_allocator;
+
+        examples: [] Example;
+
+        os.get_contents("www/examples/index.json")
+        |> json.decode_into(&examples);
+
+        for &example in examples {
+            code_path := os.path_join("www/examples", example.code);
+            html_path := os.path_join("www/examples", example.html);
+
+            example.code = os.get_contents(code_path);
+            example.html = os.get_contents(html_path);
+        }
+
+        return examples;
+    }
+}
+
+delete_examples :: (exs: &[] Example) do #context_scope {
+    context.allocator = alloc.heap_allocator;
+
+    for &ex in *exs {
+        delete(&ex.code);
+        delete(&ex.html);
+    }
+
+    delete(exs);
+}
+

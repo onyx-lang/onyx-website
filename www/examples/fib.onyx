@@ -1,0 +1,113 @@
+use core.iter
+use core { printf }
+
+//
+// Way number 1: A simple for-loop
+// This method simply uses a for-loop like you would in C to generate
+// the Fibonacci numbers. No tricks to it.
+//
+fib_for_loop :: (n: i32) -> u64 {
+    a: u64 = 0;
+    b: u64 = 1;
+
+    for 0 .. n {
+        tmp := a;
+        a = b;
+        b = tmp + b;
+    }
+
+    return a;
+}
+
+//
+// Way number 2: Functional folding
+// This way creates an iterator that will yield n integers, thats the
+// iter.counter piped to iter.take(n). Then, for each one of those numbers
+// it steps the state, computing the Fibonacci numbers in the process.
+// The final result is the "a" member of the final state.
+
+FibState :: struct { a, b: u64 }
+
+fib_by_fold :: (n: i32) => {
+    end_state := 
+        // This creates an infinite iterator that simply counts up from 0.
+        iter.counter()
+
+        // This limits only taking the first n values.
+        |> iter.take(n)
+
+        // This performs a "fold" or "reduce" operation.
+        |> iter.fold(
+            // This defines the initial accumulator state.
+            FibState.{ a = 0, b = 1 },
+
+            // This defines the "folding" function. It takes the next value
+            // from the iterator, which we simply ignore because we do not
+            // need it, and the previous value of the accumulator. It then
+            // computes and returns the next value for the accumulator.
+            // iter.fold returns the final value of the accumulator.
+            (_, state) => FibState.{
+                a = state.b,
+                b = state.a + state.b
+            }
+        );
+
+    return end_state.a;
+}
+
+
+//
+// Way number 3: A custom iterator
+// This way produces an iterator that yields consecutive Fibonacci numbers.
+// This is slightly faster than the previous methods because it does not have
+// to redo all the work for every query.
+//
+
+fib_iterator :: (n: i32) => 
+    // This is implemented using a generator, which is a custom iterator
+    // that yields values according to the "next" function defined below.
+    iter.generator(
+        // The initial state of the generator.
+        &.{ a = cast(u64) 0, b = cast(u64) 1, counter = n },
+
+        // The generation function. This takes in a pointer to the state
+        // and must return 2 things: the next value and a boolean of whether
+        // to continue or not.
+        // 
+        // Notice that the parameter's type is a polymorphic here; notice the $.
+        // This is because the above structure literal is entirely type infered;
+        // no explicit type was given to it. Therefore, there is no type we can
+        // write here that would be correct. We could make a structure for it,
+        // but in this case it is fine to let the compiler do a little magic.
+        (state: & $Ctx) -> (u64, bool) {
+            if state.counter <= 0 {
+                return 0, false;
+            }
+
+            tmp := state.a;
+            state.a = state.b;
+            state.b = state.b + tmp;
+
+            state.counter -= 1;
+            return tmp, true;
+        }
+    );
+
+
+main :: () {
+    // Print the results from fib_for_loop
+    for i in 0 .. 90 {
+        printf("{}: {}\n", i, fib_for_loop(i));
+    }
+
+    // Print the results from fib_by_fold
+    for i in 0 .. 90 {
+        printf("{}: {}\n", i, fib_by_fold(i));
+    }
+
+    // Print the results from fib_iterator
+    for value, index in fib_iterator(90) {
+        printf("{}: {}\n", index, value);
+    }
+}
+

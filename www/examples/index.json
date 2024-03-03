@@ -1,0 +1,19 @@
+[
+    {
+        "name": "Reading from standard input",
+        "code": "stdin.onyx",
+        "html": "stdin.html"
+    },
+    {
+        "name": "Interact with files",
+        "code": "files.onyx",
+        "html": "files.html"
+    },
+    {
+        "name": "Fibonacci printer",
+        "code": "fib.onyx",
+        "html": "fib.html"
+    }
+]
+    
+

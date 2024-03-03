@@ -20,14 +20,14 @@
     --accent-text: #000000;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 900px) {
     :root {
         --default-flex-direction: row;
         font-size: 14pt;
     }
 }
 
-@media (max-width: 799px) {
+@media (max-width: 899px) {
     :root {
         --default-flex-direction: column;
         font-size: 10pt;
@@ -144,7 +144,7 @@ a.cta-button:hover {
     background-position: bottom;
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 900px) {
     .container .split {
         display: flex;
         flex-direction: row;
@@ -157,7 +157,7 @@ a.cta-button:hover {
     }
 }
 
-@media screen and (max-width: 799px) {
+@media screen and (max-width: 899px) {
     .container .split {
         display: flex;
         flex-direction: column;
@@ -216,7 +216,7 @@ p code {
 
 
 /* Navigation */
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 900px) {
     .navbar-container {
         position: relative;
         background: none;
@@ -233,7 +233,7 @@ p code {
     }
 }
 
-@media screen and (max-width: 799px) {
+@media screen and (max-width: 899px) {
     .navbar-container {
         position: relative;
         background: none;
@@ -290,13 +290,13 @@ navbar a {
     border-bottom: none;
 }
 
-@media (min-width: 800px) {
-    #mobile-hamburger, .hamburger-piece {
+@media (min-width: 900px) {
+    #mobile-hamburger, span.hamburger {
         display: none;
     }
 }
 
-@media (max-width: 799px) {
+@media (max-width: 899px) {
     navbar div {
         display: none;
     }
@@ -389,7 +389,7 @@ main li {
     margin-top: 24px;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 900px) {
     #desktop_logo {
         position: relative;
         top: 6px;
@@ -424,7 +424,7 @@ main li {
 #homepage-logo:hover #path274  { transform: matrix(0.307405,0,0,0.303728,34.782897,16.545361); }
 #homepage-logo:hover #path67   { opacity: 0; transform: matrix(0.14795386,0,0,0.14795386,100.382719,-1000.6710591);  }
 
-@media (max-width: 799px) {
+@media (max-width: 899px) {
     #mobile_logo {
         position: relative;
         top: 6px;
@@ -458,7 +458,7 @@ main li {
     opacity: 1;
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 900px) {
     #install-card {
         width: 800px;
     }
@@ -470,6 +470,10 @@ main li {
 
 #homepage-header {
     position: relative;
+}
+
+.scrollport > * {
+    margin-top: 6em;
 }
 
 /*
