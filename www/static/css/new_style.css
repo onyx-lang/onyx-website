@@ -38,7 +38,7 @@ body {
     background: var(--background);
     color: var(--text);
     
-    font-family: 'Oxanium', sans-serif;
+    font-family: sans-serif;
 }
 
 a {
@@ -554,3 +554,31 @@ canvas#animation {
 	background-color: var(--primary);
 }
 
+.example-container {
+    margin: 0 auto;
+    max-width: 1200px;
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.example-container > div {
+    padding: 8px;
+}
+
+.example-container > div > div {
+    padding: 8px;
+}
+
+.example-container > div > div > a {
+    border-bottom: none;
+}
+
+.example-container .example-tag {
+    padding: 2px;
+    background-color: var(--primary);
+    border-radius: 4px;
+}
+
+.example > .author { display: none; }

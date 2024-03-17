@@ -1,1 +1,39 @@
-This example reads a single line of input from <a href="https://en.wikipedia.org/wiki/Standard_streams">standard input</a>, splits it in half on the first space using <a href="https://docs.onyxlang.io/packages/core.string.html#bisect">string.bisect</a>, converts both parts to integers using <a href="https://docs.onyxlang.io/packages/core.conv.html#parse">conv.parse</a>, then prints the results using <a href="https://docs.onyxlang.io/packages/core.html#printf">printf</a> for formatted printing.
+<h1 class='title'>Standard Input</h1>
+<p class='author'>Brendan Hansen</p>
+<div class='description'>This example reads a single line of input from <a href="https://en.wikipedia.org/wiki/Standard_streams">standard input</a>, splits it in half on the first space using <a href="https://docs.onyxlang.io/packages/core.string.html#bisect">string.bisect</a>, converts both parts to integers using <a href="https://docs.onyxlang.io/packages/core.conv.html#parse">conv.parse</a>, then prints the results using <a href="https://docs.onyxlang.io/packages/core.html#printf">printf</a> for formatted printing.</div>
+<pre class='hljs'><code class='language-onyx'>// Use the necessary core libraries
+use core.io
+use core.string
+use core.conv
+
+// Use the printf function that lives in the core package.
+// This cannot be `use core.printf`, because that will look
+// for a package called `printf` in `core`.
+use core {
+    printf
+}
+
+main :: () {
+    // Create a io.Reader over the stdio.stream to be able scan
+    // the input in parts. Also, defer freeing the reader until
+    // the end of `main`.
+    stdin_reader := io.reader_make(&stdio.stream);
+    defer io.reader_free(&stdin_reader);
+
+    // Read a single line of input.
+    line := io.read_line(&stdin_reader);
+
+    // Split the line on the first space.
+    a_str, b_str := string.bisect(line, " ");
+
+    // Parse and convert both parts to i32s, with a default value
+    // of 0 if it fails to parse as an i32.
+    a_value := conv.parse(i32, a_str)->value_or(0);
+    b_value := conv.parse(i32, b_str)->value_or(0);
+
+    // Compute our result.
+    result := a_value + b_value;
+
+    // Output our result using formatted printing.
+    printf("{} + {} = {}\n", a_value, b_value, result);
+}</code></pre>

@@ -83,5 +83,10 @@
         "name": "otmp",
         "url": "https://github.com/onyx-lang/pkg-otmp",
         "description": "A string templating language, similar to Jinja or Mustache."
+    },
+    {
+        "name": "webgl2",
+        "url": "https://github.com/onyx-lang/pkg-webgl2",
+        "description": "Bindings to WebGL 2. Accessible when targetting JS runtime."
     }
 ]

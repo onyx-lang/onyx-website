@@ -1,4 +1,78 @@
-<p>
-    This example shows various ways of reading and writing to a file.
-    The core idea behind files in Onyx is that they extend the <code>io.Stream</code> structure, so you can use the <code>core.io</code> package to interact with them.
-</p>
+<h1 class='title'>File Operations</h1>
+<p class='author'>Brendan Hansen</p>
+<div class='description'>This example shows various ways of reading and writing to a file. The core idea behind files in Onyx is that they extend the <code>io.Stream</code> structure, so you can use the <code>core.io</code> package to interact with them.</div>
+<pre class='hljs'><code class='language-onyx'>use core.os
+use core.io
+use core.string
+use core {
+    printf
+}
+
+#doc "Writes example text into a file."
+write_data_into_file :: (filename: str) {
+    // This is one way of opening a file: call os.open and then os.close later.
+    // os.open returns a Result(os.File, os.FileError), so it must be handled
+    // to use the os.File. This program opts to unwrap the result.
+    file := os.open(filename, .Write)->unwrap();
+    defer os.close(&file);
+
+    // Create an io.Writer over the file stream using io.writer_make.
+    // Also, free it later by defering io.writer_free. This also flushes
+    // the internal buffer of io.Writer to make sure everything is written
+    // to the file.
+    file_writer := io.writer_make(&file);
+    defer io.writer_free(&file_writer);
+
+    // The simplest way of writing a string to the file.
+    io.write(&file_writer, "This is the first line of text.\n");
+
+    // io.write_format can be used to "printf" into a file.
+    // printf can be thought of as io.write_format(&stdio.stream, ...).
+    io.write_format(&file_writer, "This is a {} line of text.\n", "formatted");
+
+    for i in 0 .. 5 {
+        io.write_format(&file_writer, "Another line numbered {}.\n", i);
+    }
+}
+
+#doc "Reads example text from a file."
+read_data_from_file :: (filename: str) {
+    // This is another way of opening a file. Because of the semantics
+    // of `for` loops over Iterators, they can behave like `with`
+    // statements in Python or `using` statements in C#.
+    for file in os.with_file(filename, .Read) {
+        // Create a io.Reader over the file stream.
+        file_reader := io.reader_make(file);
+        defer io.reader_free(&file_reader);
+
+        // Read a single line.
+        first_line := io.read_line(&file_reader);
+        printf("First line: {}\n", first_line);
+
+        // Use io.lines to create an iterator over the remaining
+        // lines in the file.
+        printf("Remaining lines:\n");
+        for line, index in io.lines(&file_reader) {
+            printf("{}: {}\n", index, line);
+        }
+    }
+}
+
+#doc "Reads example text from a file."
+read_whole_file :: (filename: str) {
+    // This is the simplest way to get the entire content of a file
+    // into a string ([] u8). Also, defer "deleting" the string, which
+    // will free the memory allocated for the string.
+    contents := os.get_contents(filename);
+    defer delete(&contents);
+
+    printf("Whole contents:\n{}\n", contents);
+}
+
+main :: () {
+    filename := "test.txt";
+
+    write_data_into_file(filename);
+    read_data_from_file(filename);
+    read_whole_file(filename);
+}</code></pre>

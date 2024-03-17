@@ -29,114 +29,6 @@ reg: otmp.TemplateRegistry;
     }
 }
 
-@route.{.GET, "/"}
-(req: &Req, res: &Res) {
-    articles := iter.as_iter(news_articles->get() ?? .[])->take(2)->collect();
-    res->render("pages/homepage", &.{ articles = articles });
-}
-
-@route.{.GET, "/ovmwasm"}
-(req: &Req, res: &Res) => res->render("pages/ovmwasm", null);
-
-@route.{.GET, "/docs"}
-(req: &Req, res: &Res) => res->render("pages/docs", null);
-
-@route.{.GET, "/docs/install"}
-(req: &Req, res: &Res) => res->render("pages/docs/install", null);
-
-@route.{.GET, "/docs/setup"}
-(req: &Req, res: &Res) => res->render("pages/docs/env_setup", null);
-
-@route.{.GET, "/docs/getting_started"}
-(req: &Req, res: &Res) => res->render("pages/docs/getting_started", null);
-
-@route.{.GET, "/docs/guides"}
-(req: &Req, res: &Res) => res->render("pages/docs/guides", null);
-
-@route.{.GET, "/docs/guides/http-server"}
-(req: &Req, res: &Res) => res->render("pages/docs/guide_http_server", null);
-
-@route.{.GET, "/docs/guides/raylib"}
-(req: &Req, res: &Res) => res->render("pages/docs/guide_raylib", null);
-
-@route.{.GET, "/docs/packages"}
-(req: &Req, res: &Res) => res->render("pages/docs/package", null);
-
-@route.{.GET, "/docs/packages/list"}
-(req: &Req, res: &Res) {
-    res->render("pages/docs/package_list", &.{
-        core_packages = core_packages,
-        third_party_packages = third_party_packages
-    });
-}
-
-@route.{.GET, "/playground"}
-(req: &Req, res: &Res) {
-    res->body("text/html", "This has been moved to <a href=\"https://try.onyxlang.io\">try.onyxlang.io</a>.");
-    res->status(200);
-    res->end();
-}
-
-@route.{.GET, "/community"}
-(req: &Req, res: &Res) => res->render("pages/community", null);
-
-
-@route.{.GET, "/robots.txt"}
-(req: &Req, res: &Res) {
-    res->file("./www/static/robots.txt");
-    res->status(200);
-    res->end();
-}
-
-
-Article :: struct { name, description, path, date: str }
-news_articles: Cached_Resource([] Article);
-
-@route.{.GET, "/news/:article"}
-(req: &Req, res: &Res) {
-    article_path := req.url_params["article"] ?? "";
-    article := array.first(news_articles->get() ?? .[], [n](n.path == article_path));
-    if !article {
-        res->render("pages/404", null);
-        res->status(404);
-        return;
-    }
-
-    filename := tprintf("www/news-articles/{}.html", article.path);
-
-    if os.file_exists(filename) {
-        contents := os.get_contents(filename);
-        defer delete(&contents);
-
-        res->render("pages/news_article", &.{
-            article = .{ contents = contents, name = article.name, description = article.description }
-        });
-
-    } else {
-        res->render("pages/404", null);
-        res->status(404);
-        return;
-    }
-}
-
-@route.{.GET, "/news"}
-(req: &Req, res: &Res) {
-    articles := news_articles->get() ?? .[];
-
-    res->render("pages/news", &.{
-        articles = articles
-    });
-}
-
-@route.{.GET, "/examples"}
-(req: &Req, res: &Res) {
-    exs := examples->get() ?? .[];
-
-    res->render("pages/examples", &.{
-        examples = exs
-    });
-}
-
 main :: () {
     default_log_level(.Error);
     load_library_list();
@@ -148,24 +40,8 @@ main :: () {
         resource = .{},
         max_age = 60 * 60, // 1 hour
 
-        fetch_resource = () -> ? [] Article {
-            article_file := os.get_contents("www/news-articles/index.json");
-            article_index, json_err := json.decode_with_error(article_file);
-            if json_err->has_error() {
-                return .{};
-            }
-
-            articles: [] Article;
-            #context_scope {
-                context.allocator = alloc.heap_allocator;
-                json.as_any(article_index.root, &articles);
-            }
-            return articles;
-        },
-
-        release_resource = (articles: &[] Article) {
-            delete(articles, allocator=alloc.heap_allocator);
-        }
+        fetch_resource = fetch_articles,
+        release_resource = release_articles
     };
 
     examples = .{
@@ -219,65 +95,5 @@ main :: () {
         app->serve(~~port);
         println("Server stopping...");
     }
-}
-
-
-Package :: struct {
-    url, name, description: str;
-}
-
-Example :: struct {
-    name, code, html: str;
-}
-
-#local {
-    core_packages: [] Package;
-    third_party_packages: [] Package;
-
-    examples: Cached_Resource([] Example);
-}
-
-load_library_list :: () {
-    os.get_contents("www/packages/core_packages.json")
-    |> json.decode_into(&core_packages);
-
-    slice.sort(core_packages, (a, b) => string.compare(a.name, b.name));
-
-    os.get_contents("www/packages/third_party_packages.json")
-    |> json.decode_into(&third_party_packages);
-
-    slice.sort(third_party_packages, (a, b) => string.compare(a.name, b.name));
-}
-
-load_examples :: () -> ? [] Example {
-    #context_scope {
-        context.allocator = alloc.heap_allocator;
-
-        examples: [] Example;
-
-        os.get_contents("www/examples/index.json")
-        |> json.decode_into(&examples);
-
-        for &example in examples {
-            code_path := os.path_join("www/examples", example.code);
-            html_path := os.path_join("www/examples", example.html);
-
-            example.code = os.get_contents(code_path);
-            example.html = os.get_contents(html_path);
-        }
-
-        return examples;
-    }
-}
-
-delete_examples :: (exs: &[] Example) do #context_scope {
-    context.allocator = alloc.heap_allocator;
-
-    for &ex in *exs {
-        delete(&ex.code);
-        delete(&ex.html);
-    }
-
-    delete(exs);
 }
 

@@ -11,19 +11,26 @@ Onyx Examples
     <p>This page provides several simple examples of Onyx code, showing how to do common things with the standard library.</p>
 </div>
 
-{{ foreach ex in examples }}
-<div class="container">
-    <div class="title">
-        <h2>{% ex.name %}</h2>
-    </div>
+<div class="example-container">
+    {{ foreach ex in examples }}
+    <div class="container card">
+        <div style="position: relative">
+            <a href="/examples/{% ex.name %}" style="position: absolute; inset: 0">
+            </a>
 
-    <div>
-        {% ex.html %}
-    </div>
+            <h3>{% ex.title %}</h3>
+            
+            <div>
+                {{ foreach tag in ex.tags }}
+                <span class="example-tag">{% tag %}</span>
+                {{ endforeach }}
+            </div>
 
-    <pre class="hljs"><code class="language-onyx">{% ex.code %}</code></pre>
+            <div style="margin: 8px 0;">{% ex.description %}</div>
+        </div>
+    </div>
+    {{ endforeach }}
 </div>
-{{ endforeach }}
 
 <div class="container">
     <div class="title">
