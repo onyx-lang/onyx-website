@@ -490,7 +490,7 @@ main li {
 }
 
 .scrollport > * > * {
-    min-width: 500px;
+    min-width: 380px;
     flex: 1;
 }
 
