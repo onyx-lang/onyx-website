@@ -20,7 +20,7 @@
                 <h1>The <b>Onyx</b> Programming Language</h1>
             </div>
             <div style="font-size: 20pt; text-align: center; margin-top: 8px">
-                <p>A data-oriented, expressive, and modern programming language</p>
+                <p>A type-safe, expressive, and data-oriented programming language</p>
             </div>
         </div>
 
@@ -76,12 +76,6 @@ factorial :: (n: i32) -> i32 {
 </div>
 
 <div>
-    <div>
-        <h2>Type Safety</h2>
-        <br />
-        <p>Onyx is <b>strictly</b> type-checked. However, the type-inference systems in Onyx usually allow you to omit types.</p>
-    </div>
-
     <pre class="hljs"><code class="language-onyx">use core { printf }
 
 main :: () {
@@ -91,10 +85,17 @@ main :: () {
     // Function with entirely inferred types.
     change_value :: x => x + 10;
 
-    // Onyx figures out the types of `change_value` when you call it.
+    // Onyx figures out the types of
+    // `change_value` when you call it.
     printf("The value is {}.\n", change_value(x));
 }
 </code></pre>
+
+    <div>
+        <h2>Type Safety</h2>
+        <br />
+        <p>Onyx is <b>strictly</b> type-checked. However, the type-inference systems in Onyx usually allow you to omit types.</p>
+    </div>
 
 </div>
 
@@ -105,7 +106,8 @@ main :: () {
         <p>Onyx's compiler is written entirely in C and features incredibly fast compilation. The web-server for this website was compiled in <b>47 milliseconds</b>.</p>
     </div>
 
-    <pre class="hljs"><code class="language-sh">$ onyx build -V -r wasi -DWASIX -o site.wasm build.onyx
+    <pre class="hljs"><code class="language-sh">$ onyx build -V build.onyx
+
 File search path:
 	/home/brendan/.onyx
 	.
@@ -117,19 +119,13 @@ Tagged global size: 8 bytes.
 
 Statistics:
     Time taken: 47.000000 ms
-    Processed 22144 lines (471148.937500 lines/second).
-    Processed 115240 tokens (2451915.000000 tokens/second).
+    Processed 22144 lines
+    Processed 115240 tokens 
 
 Outputting to WASM file:   site.wasm</code></pre>
 </div>
 
 <div>
-    <div>
-        <h2>WebAssembly</h2>
-        <br />
-        <p>Onyx compiles solely to <a href="https://webassembly.org">WebAssembly</a>. You can use a builtin WebAssembly runtime using <code>onyx run</code>, or compile to WASM and run using a WebAssembly runner, like Wasmer or Wasmtime.</p>
-    </div>
-
     <pre class="hljs"><code># Compile and run directly.
 $ onyx run hello.onyx
 Hello, World!
@@ -141,36 +137,43 @@ $ onyx build -r wasi -o hello.wasm hello.onyx
 $ wasmer run hello.wasm
 Hello, World!
 </code></pre>
+
+    <div>
+        <h2>WebAssembly</h2>
+        <br />
+        <p>Onyx compiles solely to <a href="https://webassembly.org">WebAssembly</a>. You can use a builtin WebAssembly runtime using <code>onyx run</code>, or compile to WASM and run using a WebAssembly runner, like Wasmer or Wasmtime.</p>
+    </div>
+
 </div>
 
 <div>
     <div>
         <h2>C-FFI</h2>
         <br />
-        <p>Onyx features built-in support for linking to native C-libraries.</p>
+        <p>Onyx features built-in support for linking to native C-libraries on Linux and MacOS.</p>
     </div>
 
     <pre class="hljs"><code class="language-onyx">use core {*}
 
-// Using #dyncall dynamically loads the library at runtime.
+// Using #dyncall dynamically loads
+// the library at runtime using dlopen().
 #foreign #dyncall "libc.so" {
-    write :: (fd: i32, data: [&] u8, count: i32) -> i32 ---
+    write :: (fd: i32, msg: [] u8) -> i32 ---
 }
 
 main :: () {
     msg: [] u8 = "Hello, libc!";
 
-    write(1, msg.data, msg.length);
+    write(1, msg);
 }</code></pre>
 </div>
-
-<div>
-    <div>
-        <h2>More examples</h2>
-        <br />
-        <p>See more complete examples on the <a href="/examples">Examples</a> page.</p>
-    </div>
 </div>
+
+<div class="container">
+    <div class="title">
+        <h2>Examples</h2>
+    </div>
+    <p>Learn more from complete examples on the <a href="/examples">Examples</a> page.</p>
 </div>
 
 <div class="container">
@@ -254,7 +257,7 @@ for(var PERLIN_YWRAPB=4,PERLIN_YWRAP=1<<PERLIN_YWRAPB,PERLIN_ZWRAPB=8,PERLIN_ZWR
 
         canvas.width = rect.width;
         canvas.height = rect.height;
-        ctx.fillStyle = '#060609';
+        ctx.fillStyle = '#0b0b12';
         ctx.fillRect(0, 0, rect.width, rect.height);
     }
 
@@ -290,7 +293,8 @@ for(var PERLIN_YWRAPB=4,PERLIN_YWRAP=1<<PERLIN_YWRAPB,PERLIN_ZWRAPB=8,PERLIN_ZWR
 
                 if (y > 11 && (y + x % 11 + x % 3) - 16 > x % 6) continue;
                 let v = noise.get(x / 10, y / 10, Date.now() / 2500) * 3 - 1.5;
-                let r = 6 * (1 - v) + 56 * v;
+                let r = 12 * (1 - v) + 60 * v;
+                r = Math.max(12, Math.min(60, r));
                 drawHex(x, y, `rgba(${r}, ${r}, ${r * 1.5}, 1)`);
             }
         }
