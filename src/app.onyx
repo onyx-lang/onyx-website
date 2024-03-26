@@ -30,7 +30,6 @@ reg: otmp.TemplateRegistry;
 }
 
 main :: () {
-    default_log_level(.Error);
     load_library_list();
     
     reg = otmp.registry();
@@ -93,7 +92,7 @@ main :: () {
         logf(.Info, "Listening on {}", port);
 
         app->serve(~~port);
-        println("Server stopping...");
+        logf(.Info, "Server stopping...");
     }
 }
 
