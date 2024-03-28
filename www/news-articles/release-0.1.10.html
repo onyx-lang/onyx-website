@@ -1,0 +1,102 @@
+<h2>JavaScript Interop</h2>
+<p>
+</p>
+
+<h2>Deprecation of <code>#inject</code></h2>
+<p>
+</p>
+
+<h2><code>Array</code> and <code>Slice</code> structures</h2>
+<p>
+</p>
+
+<h2>Minor syntax additions</h2>
+<p>
+</p>
+
+<h3>Inclusive Range (<code>..=</code>)</h3>
+<p>
+</p>
+
+<h3><code>range64</code></h3>
+<p>
+</p>
+
+<h2>Revamped CLI</h2>
+<p>
+</p>
+
+<pre class="hljs"><code class="language-onyx">
+</code></pre>
+
+
+<h2>Full Changelog</h2>
+<h3>Additions</h3>
+<ul>
+<li>JavaScript interop<ul>
+<li><code>core.js</code> package for JS FFI.</li>
+<li><code>#js</code> directive to build a JavaScript file during compilation.</li>
+</ul>
+</li>
+<li>Implicit injections<ul>
+<li><code>#inject</code> is no longer required in some cases</li>
+</ul>
+</li>
+<li>Named return values</li>
+<li>Official builds for Linux AARCH64</li>
+<li><code>Slice</code> and <code>Array</code> structures for placing methods on slices and dynamic arrays.</li>
+<li>Range type improvements<ul>
+<li><code>range64</code> type</li>
+<li><code>..=</code> operator that is a range, with an inclusive upper end.</li>
+</ul>
+</li>
+<li>New alternate error format that may become the default in the future.<ul>
+<li>Use <code>--error-format v2</code> or set environment variable <code>ONYX_ERROR_FORMAT</code> to be <code>v2</code>.</li>
+</ul>
+</li>
+<li>Auto-disposing locals (experimental)<ul>
+<li><code>use x := ...</code></li>
+</ul>
+</li>
+<li>Core library functions<ul>
+<li>New process spawning API with builder pattern (<code>os.command</code>)</li>
+<li><code>sync.MutexGuard</code></li>
+<li><code>sync.Channel</code></li>
+<li><code>hash.sha1</code></li>
+<li><code>net.dial</code></li>
+<li><code>net.resolve</code></li>
+<li>integer constants <code>i8.MIN</code>, <code>i64.MAX</code>, etc.</li>
+</ul>
+</li>
+</ul>
+
+<h3>Removals</h3>
+<p><em>Nothing to mention here!</em></p>
+
+<h3>Changes</h3>
+<ul>
+<li>Revamped CLI<ul>
+<li>Shorthand commands (r for run, b for build, etc.)</li>
+<li>Improved appearance</li>
+<li>Better help pages</li>
+<li>Note: flags must now appear before all files</li>
+</ul>
+</li>
+<li>Better error messages for common issues</li>
+<li><code>Array</code> should be preferred over <code>core.array</code></li>
+<li><code>Slice</code> should be preferred over <code>core.slice</code></li>
+<li><code>str</code> should be preferred over <code>core.string</code></li>
+</ul>
+
+<h3>Bugfixes</h3>
+<ul>
+<li>Fixed compiler crash when trying to iterate over something that is not iterable.</li>
+<li>Fixed wrong implementation of futexes on MacOS.</li>
+<li>Fixed implementation of <code>platform.__time()</code></li>
+</ul>
+
+<h3>Contributors</h3>
+<ul>
+    <li>@Syuparn (1 pull request)</li>
+</ul>
+
