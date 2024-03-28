@@ -12,21 +12,18 @@ use core.encoding.json
 }
 
 reg: otmp.TemplateRegistry;
-#inject Res {
-    render :: (r: &Res, template: str, vars: any) {
-        m := misc.any_to_map(vars) ?? make(Map(str, any));
-        defer delete(&m);
+Res.render :: (r: &Res, template: str, vars: any) {
+    use m := misc.any_to_map(vars) ?? make(Map(str, any));
 
-        s := reg->render_template(template, &r.writer, &m);
+    s := reg->render_template(template, &r.writer, &m);
 
-        if s != .None {
-            log(.Warning, "Template Renderer", tprintf("{}", s));
-        }
-
-        r.headers["Content-Type"] = "text/html";
-        r->status(200 if s == .None else 400);
-        r->end();
+    if s != .None {
+        log(.Warning, "Template Renderer", tprintf("{}", s));
     }
+
+    r.headers->put("Content-Type", "text/html");
+    r->status(200 if s == .None else 400);
+    r->end();
 }
 
 main :: () {

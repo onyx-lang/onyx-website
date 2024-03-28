@@ -20,41 +20,18 @@ write_data_into_file :: (filename: str) {
     // Also, free it later by defering io.writer_free. This also flushes
     // the internal buffer of io.Writer to make sure everything is written
     // to the file.
-    file_writer := io.writer_make(&file);
-    defer io.writer_free(&file_writer);
+    file_writer := io.Writer.make(&file);
+    defer io.Writer.free(&file_writer);
 
     // The simplest way of writing a string to the file.
-    io.write(&file_writer, "This is the first line of text.\n");
+    file_writer->write("This is the first line of text.\n");
 
     // io.write_format can be used to "printf" into a file.
     // printf can be thought of as io.write_format(&stdio.stream, ...).
-    io.write_format(&file_writer, "This is a {} line of text.\n", "formatted");
+    file_writer->write_format("This is a {} line of text.\n", "formatted");
 
     for i in 0 .. 5 {
-        io.write_format(&file_writer, "Another line numbered {}.\n", i);
-    }
-}
-
-#doc "Reads example text from a file."
-read_data_from_file :: (filename: str) {
-    // This is another way of opening a file. Because of the semantics
-    // of `for` loops over Iterators, they can behave like `with`
-    // statements in Python or `using` statements in C#.
-    for file in os.with_file(filename, .Read) {
-        // Create a io.Reader over the file stream.
-        file_reader := io.reader_make(file);
-        defer io.reader_free(&file_reader);
-
-        // Read a single line.
-        first_line := io.read_line(&file_reader);
-        printf("First line: {}\n", first_line);
-
-        // Use io.lines to create an iterator over the remaining
-        // lines in the file.
-        printf("Remaining lines:\n");
-        for line, index in io.lines(&file_reader) {
-            printf("{}: {}\n", index, line);
-        }
+        file_writer->write_format("Another line numbered {}.\n", i);
     }
 }
 
@@ -73,6 +50,5 @@ main :: () {
     filename := "test.txt";
 
     write_data_into_file(filename);
-    read_data_from_file(filename);
     read_whole_file(filename);
 }</code></pre>

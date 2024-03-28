@@ -2,29 +2,28 @@
 <p class='author'>Brendan Hansen</p>
 <div class='description'>This example reads a single line of input from <a href="https://en.wikipedia.org/wiki/Standard_streams">standard input</a>, splits it in half on the first space using <a href="https://docs.onyxlang.io/packages/core.string.html#bisect">string.bisect</a>, converts both parts to integers using <a href="https://docs.onyxlang.io/packages/core.conv.html#parse">conv.parse</a>, then prints the results using <a href="https://docs.onyxlang.io/packages/core.html#printf">printf</a> for formatted printing.</div>
 <pre class='hljs'><code class='language-onyx'>// Use the necessary core libraries
-use core.io
-use core.string
+use core.io { Reader }
 use core.conv
 
 // Use the printf function that lives in the core package.
 // This cannot be `use core.printf`, because that will look
 // for a package called `printf` in `core`.
 use core {
-    printf
+    printf, stdio
 }
 
 main :: () {
     // Create a io.Reader over the stdio.stream to be able scan
     // the input in parts. Also, defer freeing the reader until
     // the end of `main`.
-    stdin_reader := io.reader_make(&stdio.stream);
-    defer io.reader_free(&stdin_reader);
+    stdin_reader := Reader.make(&stdio.stream);
+    defer Reader.free(&stdin_reader);
 
     // Read a single line of input.
-    line := io.read_line(&stdin_reader);
+    line := stdin_reader->read_line();
 
     // Split the line on the first space.
-    a_str, b_str := string.bisect(line, " ");
+    a_str, b_str := line->bisect(" ");
 
     // Parse and convert both parts to i32s, with a default value
     // of 0 if it fails to parse as an i32.

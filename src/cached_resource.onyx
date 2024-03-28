@@ -12,18 +12,16 @@ Cached_Resource :: struct (Res: type_expr) {
     release_resource: (res: &Res) -> void;
 }
 
-#inject Cached_Resource {
-    get :: (use self: &#Self) -> ? self.Res {
-        if !resource {
-            update_resource(self);
-        }
-
-        if time.duration(time.now(), last_retrieved) > max_age {
-            update_resource(self);
-        }
-
-        return self.resource;
+Cached_Resource.get :: (use self: &#Self) -> ? self.Res {
+    if !resource {
+        update_resource(self);
     }
+
+    if time.duration(time.now(), last_retrieved) > max_age {
+        update_resource(self);
+    }
+
+    return self.resource;
 }
 
 #local
@@ -39,11 +37,9 @@ update_resource :: (self: &Cached_Resource($T)) {
 
 
 
-#inject time {
-    duration :: (t2, t1: time.Timestamp) -> i32 {
-        t1_ := t1;
-        t2_ := t2;
-        return ~~(t2_->to_epoch() - t1_->to_epoch());
-    }
+time.duration :: (t2, t1: time.Timestamp) -> i32 {
+    t1_ := t1;
+    t2_ := t2;
+    return ~~(t2_->to_epoch() - t1_->to_epoch());
 }
 
