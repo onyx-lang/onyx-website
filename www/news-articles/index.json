@@ -3,7 +3,7 @@
         "name": "Beta Release 0.1.10",
         "path": "release-0.1.10",
         "date": "31st March 2024",
-        "description": "TODO"
+        "description": "This release brings standard library uniformity, minor syntax changes, and JavaScript interop! You can now easily interface with the DOM and other JS APIs from directly within Onyx."
     },
     {
         "name": "Beta Release 0.1.9",

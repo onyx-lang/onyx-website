@@ -45,7 +45,7 @@ main :: () {
 
     button := document->call("createElement", "button");
     button->set("innerHTML", "Click me!");
-    button->call("addEventListener", js.func((this, args) => {
+    button->call("addEventListener", "click", js.func((this, args) => {
         js.Global->call("alert", "Hello from Onyx!");
 
         return js.Undefined;

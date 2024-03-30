@@ -2,7 +2,6 @@ use core.alloc
 use core.string
 use core.encoding.json
 use core.os
-use core.slice
 use core {
     tprintf
 }
@@ -27,12 +26,12 @@ load_library_list :: () {
     os.get_contents("www/packages/core_packages.json")
     |> json.decode_into(&core_packages);
 
-    slice.sort(core_packages, (a, b) => string.compare(a.name, b.name));
+    Slice.sort(core_packages, (a, b) => string.compare(a.name, b.name));
 
     os.get_contents("www/packages/third_party_packages.json")
     |> json.decode_into(&third_party_packages);
 
-    slice.sort(third_party_packages, (a, b) => string.compare(a.name, b.name));
+    Slice.sort(third_party_packages, (a, b) => string.compare(a.name, b.name));
 }
 
 load_examples :: () -> ? [] Example {
