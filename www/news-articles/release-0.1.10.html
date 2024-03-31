@@ -1,7 +1,7 @@
 <h2>JavaScript Interop</h2>
 <p>
     Onyx now has a proper JavaScript interop layer, which makes using Onyx from JavaScript easier than ever.
-    This interop comes in two parts: the <code>#js</code> directive and the <code>code.js</code> package.
+    This interop comes in two parts: the <code>#js</code> directive and the <code>core.js</code> package.
 </p>
 <p>
     The <code>#js</code> directive is used to include JS source code in the project.
@@ -21,7 +21,7 @@
 
 // Specify order of JS partial with an int literal
 // Lower numbers are inserted first
-#js 100 #file "./source.js"
+#js #order 100 #file "./source.js"
 </code></pre>
 
 <p>
@@ -77,8 +77,8 @@ main :: () {
 
 <p>
     While this is a very low-level interface to JavaScript, it does enable Onyx
-    to be used in a whole new class of applications on the web. More auxillary packages
-    can be developed to provide specialized APIs for comming things such as the DOM, WebSockets,
+    to be used in a whole new class of applications on the web. More auxiliary packages
+    can be developed to provide specialized APIs for coming things such as the DOM, WebSockets,
     or <a href="https://github.com/onyx-lang/pkg-webgl2">WebGL</a>.
 </p>
 
