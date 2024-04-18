@@ -4,20 +4,40 @@
     box-sizing: border-box;
 }
 
-.ui-theme {
-    --header-color: linear-gradient(var(--accent-background) 0, var(--background) 70%);
-    --header-text: #ffffff;
-    --header-accent: #606080;
+@media (prefers-color-scheme: light) {
+    .ui-theme {
+        --header-color: linear-gradient(var(--accent-background) 0, var(--background) 70%);
+        --header-text: #000000;
+        --header-accent: #606080;
 
-    --footer-color: linear-gradient(var(--background), var(--accent-background));
+        --footer-color: linear-gradient(var(--background), var(--accent-background));
 
-    --text: #ffffff;
-    --background: #0b0b12;
-    --accent-background: #181824;
-    --primary: #45476e;
-    --secondary: #494957;
-    --accent: #00fffb;
-    --accent-text: #000000;
+        --text: #000000;
+        --background: #f3f3fa;
+        --accent-background: #e0e0f5;
+        --primary: #7074be;
+        --secondary: #494957;
+        --accent: #00fffb;
+        --accent-text: #000000;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .ui-theme {
+        --header-color: linear-gradient(var(--accent-background) 0, var(--background) 70%);
+        --header-text: #ffffff;
+        --header-accent: #606080;
+
+        --footer-color: linear-gradient(var(--background), var(--accent-background));
+
+        --text: #ffffff;
+        --background: #0b0b12;
+        --accent-background: #181824;
+        --primary: #45476e;
+        --secondary: #494957;
+        --accent: #00fffb;
+        --accent-text: #000000;
+    }
 }
 
 @media (min-width: 900px) {
@@ -44,7 +64,7 @@ body {
 a {
     color: var(--text);
     text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+     border-bottom: 1px solid var(--text);
 }
 
 a.link-button {
@@ -141,8 +161,8 @@ a.cta-button:hover {
     padding-top: 160px;
     position: relative;
     color: var(--header-text);
-    background: url(/static/images/header-background.png);
-    background-position: bottom;
+    /* background: url(/static/images/header-background.png); */
+    /* background-position: bottom; */
 }
 
 @media screen and (min-width: 900px) {
@@ -181,7 +201,7 @@ h2 {
 
 h3 {
     font-size: 1.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    /* border-bottom: 1px solid rgba(0, 0, 0, 0.2); */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -363,6 +383,11 @@ navbar a {
     color: var(--accent);
 }
 
+.footer-container h2 {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
 
 
 main {
@@ -413,12 +438,20 @@ main li {
     #desktop_logo:hover #path1180    { transform: translate(34.25px, 7px) rotate(120deg); }
     #desktop_logo:hover #path537     { transform-origin: center; transform: rotate(150deg) translate(17px, -4.3px); }
     #desktop_logo:hover #path1062    { transform: translate(36px, 2px) rotate(90deg); }
-    #desktop_logo:hover path {fill: white !important;}
     #desktop_logo path { transition: all 1s ease-in-out; }
 }
 
+@media (prefers-color-scheme: light) {
+    #desktop_logo:hover path {fill: black !important;}
+    #homepage-logo:hover path {fill: black !important;}
+}
+
+@media (prefers-color-scheme: dark) {
+    #desktop_logo:hover path {fill: white !important;}
+    #homepage-logo:hover path {fill: white !important;}
+}
+
 #homepage-logo path { transition: all 1s ease-in-out; }
-#homepage-logo:hover path {fill: white !important;}
 #homepage-logo #path31   { transform: translate(24px, 0); }
 #homepage-logo #path1180 { transform: translate(24px, 0); }
 #homepage-logo #path537  { transform: translate(24px, 0); }
@@ -500,7 +533,7 @@ table {
     border-radius: 8px;
     border: 1px solid var(--accent);
     width: 100%;
-    background: linear-gradient(135deg, #000, var(--accent-background));
+    background: linear-gradient(135deg, var(--background), var(--accent-background));
     /* box-shadow: 0px 3px 16px 8px rgba(150, 150, 230, 0.2); */
     margin-top: 24px !important;
 }
@@ -533,6 +566,12 @@ canvas#animation {
 
     mask-image: var(--header-color);
     -webkit-mask-image: var(--header-color);
+}
+
+@media (prefers-color-scheme: light) {
+    canvas#animation {
+        filter: invert(1) hue-rotate(180deg);
+    }
 }
 
 ::-webkit-scrollbar{
