@@ -12,29 +12,7 @@
     </p>
 
     <p>
-        The design of Onyx today can be summarized in three words: <em>pragmatic, efficient, and procedural.</em>
-    </p>
-</div>
-
-<div class="container">
-    <h2 class="title">
-        Pragmatic
-    </h2>
-
-    <p>
-        Onyx is not a small language.
-        There are several big topics to learn to understand everything about the language.
-        This fact may be a turn-off to some, especially in today's golden age of minimalist languages like Gleam, Roc, Odin, and Zig.
-        While these languages are fabulous, Onyx has a different design goal: <em>to provide a language capable of expressing many programming styles</em>.
-    </p>
-
-    <p>
-        Different problems require different solutions.
-        For this reason, Onyx has support for multiple styles of programming.
-        Everything from Elixir-inspired functional syntax using the <a href="https://docs.onyxlang.io/book/operators/pipe.html">pipe operator</a> to an object-oriented <a href="https://docs.onyxlang.io/book/operators/methods.html">method call syntax</a> is possible.
-        Sometimes, a functional pipeline style conveys the meaning of a computation better than an explicit for-loop.
-        Sometimes, defining methods on a type reads better than a collection of related procedures.
-        Onyx trusts the programmer to make good decisions on what works well for their problem and tries its best to get out of the way.
+        The design of Onyx today can be summarized in three words: <em>efficient, procedural, and pragmatic.</em>
     </p>
 </div>
 
@@ -103,6 +81,28 @@ Connection.send :: (self: &#Self, data: [] u8) -> Result(u32, Error) {
 
     <p>
         The consumer of this abstraction may choose to use the method call syntax (<code>connection->send("...")</code>), or call the procedures explicitly (<code>Connection.send(&connection, "...")</code>).
+    </p>
+</div>
+
+<div class="container">
+    <h2 class="title">
+        Pragmatic
+    </h2>
+
+    <p>
+        Onyx is not a small language.
+        There are several big topics to learn to understand everything about the language.
+        This fact may be a turn-off to some, especially in today's golden age of minimalist languages like Gleam, Roc, Odin, and Zig.
+        While these languages are fabulous, Onyx has a different design goal: <em>to provide a language capable of expressing many programming styles</em>.
+    </p>
+
+    <p>
+        Different problems require different solutions.
+        For this reason, Onyx has support for multiple styles of programming.
+        Everything from Elixir-inspired functional syntax using the <a href="https://docs.onyxlang.io/book/operators/pipe.html">pipe operator</a> to an object-oriented <a href="https://docs.onyxlang.io/book/operators/methods.html">method call syntax</a> is possible.
+        Sometimes, a functional pipeline style conveys the meaning of a computation better than an explicit for-loop.
+        Sometimes, defining methods on a type reads better than a collection of related procedures.
+        Onyx trusts the programmer to make good decisions on what works well for their problem and tries its best to get out of the way.
     </p>
 </div>
 
