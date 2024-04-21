@@ -1,0 +1,121 @@
+{{block "title"}}Onyx Design Philosophy{{endblock}}
+
+{{ let navbar_page = "docs" }}
+
+{{ block "page_content" }}
+
+<div class="container">
+    <h1>The Design of Onyx</h1>
+
+    <p>
+        Onyx started as a personal project during the 2020 Coronavirus Pandemic, inspired from languages like Jai, Odin and Zig. Over the course of several years, Onyx developed to fit the needs of many personal programming projects. The design of Onyx was not driven by simplicity or even an interesting academic principle. It was driven by solving real problems. For that reason, Onyx is <em>not</em> the simplest language. It is a language that has many useful features to make common programming tasks easier.
+    </p>
+
+    <p>
+        The design of Onyx today can be summarized in three words: <em>pragmatic, efficient, and procedural.</em>
+    </p>
+</div>
+
+<div class="container">
+    <h2 class="title">
+        Pragmatic
+    </h2>
+
+    <p>
+        Onyx is not a small language.
+        There are several big topics to learn to understand everything about the language.
+        This fact may be a turn-off to some, especially in today's golden age of minimalist languages like Gleam, Roc, Odin, and Zig.
+        While these languages are fabulous, Onyx has a different design goal: <em>to provide a language capable of expressing many programming styles</em>.
+    </p>
+
+    <p>
+        Different problems require different solutions.
+        For this reason, Onyx has support for multiple styles of programming.
+        Everything from Elixir-inspired functional syntax using the <a href="https://docs.onyxlang.io/book/operators/pipe.html">pipe operator</a> to an object-oriented <a href="https://docs.onyxlang.io/book/operators/methods.html">method call syntax</a> is possible.
+        Sometimes, a functional pipeline style conveys the meaning of a computation better than an explicit for-loop.
+        Sometimes, defining methods on a type reads better than a collection of related procedures.
+        Onyx trusts the programmer to make good decisions on what works well for their problem and tries its best to get out of the way.
+    </p>
+</div>
+
+<div class="container">
+    <h2 class="title">
+        Efficient
+    </h2>
+
+    <p>
+        Performance is a cornerstone in all aspects of Onyx, from the compilation speed to the runtime of the end product.
+    </p>
+
+    <p>
+        Your development tools should not slow you down.
+        If your build tools take over 5 seconds to compile your code, your brain has a chance to "context switch" to something else, which breaks your programming flow and concentration.
+        For Onyx, under one second compile times are a <em>requirement</em> for projects less than quarter million lines of code.
+        Onyx will never regress to a point where this is not true.
+        Note, there are currently no codebases in Onyx that are at this scale, and likely never will be due to Onyx's compact syntax, but the guarantee stands regardless.
+    </p>
+
+    <p>
+        Onyx programs are very fast, due mostly to compiling to small WebAssembly modules.
+        By leveraging its architecture independent yet low-level bytecode, WebAssembly engines are able to compile to native machine code ahead of time and achieve near-native performance.
+        Onyx ships with either the Wasmer engine, or a custom WebAssembly engine written specifically for Onyx called OVM.
+        Though OVM is noticeably slower than Wasmer, it has numerous benefits including debugging support and a minuscule binary size (under 1MB for the compiler and the engine).
+    </p>
+</div>
+
+<div class="container">
+    <h2 class="title">
+        Procedural
+    </h2>
+
+    <p>
+        The Onyx programming model at its core is <a href="https://en.wikipedia.org/wiki/Procedural_programming">procedural</a>.
+        This paradigm is familiar to most programmers, so Onyx should not feel foreign to anyone with programming experience. 
+    </p>
+
+    <p>
+        Building up complexity and reusable code in Onyx is done by creating procedures and types.
+        Onyx has a rich type system that is able to model the state of any program.
+    </p>
+        
+    <p>
+        Procedures are generally attached to types as "methods".
+        A typical Onyx abstraction may look like this.
+    </p>
+
+    <pre class="hljs"><code class="language-onyx">Connection :: struct {
+    // ...
+}
+
+Connection.make :: () -> Connection {
+    // ...
+}
+
+Connection.destroy :: (self: &#Self) {
+    // ...
+}
+
+Connection.send :: (self: &#Self, data: [] u8) -> Result(u32, Error) {
+    // ...
+}
+
+// ...</code></pre>
+
+    <p>
+        The consumer of this abstraction may choose to use the method call syntax,
+    </p>
+</div>
+
+<div class="container">
+    <h2 class="title">
+        Learn more!
+    </h2>
+
+    <p>If any of this sounds interesting to you, learn more about Onyx <a href="/docs">from the docs</a>!
+</div>
+
+
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}
+

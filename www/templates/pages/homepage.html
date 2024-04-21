@@ -20,25 +20,51 @@
                 <h1>The <b>Onyx</b> Programming Language</h1>
             </div>
             <div style="font-size: 20pt; text-align: center; margin-top: 8px">
-                <p>A pragmatic, fast, and flexible programming language</p>
+                <p>A pragmatic, efficient, and procedural programming language</p>
             </div>
         </div>
 
-        <div class="container card" id="install-card">
-            <div style="font-size: 14pt; font-family: fira; padding: 20px;">
-                <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Install Onyx in one command</span></div>
-                <div id="install-command">
-                    <span style="color: #444;">$</span> <span style="color: var(--accent)">sh</span> &lt;(curl https://get.onyxlang.io -sSfL)
-                    <span class="copy-button">Copy</span>
-                </div>
-                <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Read the docs</span></div>
-                <div><span style="color: #444;">$</span> <span style="color: var(--accent)">curl</span> <a href="/docs">onyxlang.io/docs</a></div>
-                <div><span style="color: #444;">$</span> <span style="font-style: italic; color: #99a;"># Try Onyx in your browser</span></div>
-                <div><span style="color: #444;">$</span> <span style="color: var(--accent)">curl</span> <a href="https://try.onyxlang.io/">try.onyxlang.io</a></div>
+        <div class="homepage-card-container">
+            <div>
+                <h2>Pragmatic</h2>
+                <br />
+                <p>Onyx exists to solve real problems. It provides a wide-range of orthogonal language features to fit any task.</p>
+            </div>
+            <div>
+                <h2>Efficient</h2>
+                <br />
+                <p>The Onyx compiler is <em>fast</em>. Turnaround time is non-existent using Onyx's custom WebAssembly code generator.</p>
+            </div>
+            <div>
+                <h2>Procedural</h2>
+                <br />
+                <p>Onyx uses a simple programming and memory model. It is familiar to anyone with any programming experience.</p>
+            </div>
+        </div>
+
+        <p style="text-align: center;">Read about <a href="/docs/design">design goals</a> of Onyx.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="title">
+        <h2>Install Onyx</h2>
+    </div>
+    
+    <p>Run the following command on your Linux or MacOS system to install the latest version of Onyx.</p>
+
+    <div class="container card" id="install-card">
+        <div style="font-size: 14pt; font-family: fira; padding: 20px;">
+            <div id="install-command">
+                <span style="color: #444;">$</span> <span style="color: var(--accent)">sh</span> &lt;(curl https://get.onyxlang.io -sSfL)
+                <span class="copy-button">Copy</span>
             </div>
         </div>
     </div>
+
+    <p>Read the <a href="/docs/install">Installation Guide</a> for more details.</p>
 </div>
+
 
 
 <div class="container">
@@ -53,7 +79,7 @@
 <div class="scrollport">
 <div>
     <div>
-        <h2>Syntax</h2>
+        <h2>Modern Syntax</h2>
         <br />
         <p>Onyx uses a modernized C-like syntax, similar to Jai or Odin. Onyx is a procedural language, but does allow for functional-inspired syntax using the pipe operator.
     </div>
@@ -62,48 +88,47 @@
 
 main :: () {
     for i in 1 .. 10 {
-        fact := factorial(i);
-        printf("{}! = {}\n", i, fact);
+        fact := factorial(i)
+        printf("{}! = {}\n", i, fact)
     }
 }
 
 factorial :: (n: i32) -> i32 {
     return iter.as_iter(1 .. n)
-        |> iter.fold(1, (x, y) => x * y);
+        |> iter.fold(1, (x, y) => x * y)
 }
 </code></pre>
 
 </div>
 
 <div>
+    <div>
+        <h2>Type Safety</h2>
+        <br />
+        <p>Onyx is <b>strictly</b> type-checked. The type-inference in Onyx allows for many types to be omitted with out sacrificing safety.</p>
+    </div>
+
     <pre class="hljs"><code class="language-onyx">use core { printf }
 
 main :: () {
     // Inferred variable type
-    x := 10;
+    x := 10
 
     // Function with entirely inferred types.
-    change_value :: x => x + 10;
+    change_value :: x => x + 10
 
     // Onyx figures out the types of
     // `change_value` when you call it.
-    printf("The value is {}.\n", change_value(x));
+    printf("Value: {}.\n", change_value(x))
 }
 </code></pre>
-
-    <div>
-        <h2>Type Safety</h2>
-        <br />
-        <p>Onyx is <b>strictly</b> type-checked. However, the type-inference systems in Onyx usually allow you to omit types.</p>
-    </div>
-
 </div>
 
 <div>
     <div>
         <h2>Fast Compilation</h2>
         <br />
-        <p>Onyx's compiler is written entirely in C and features incredibly fast compilation. The web-server for this website was compiled in <b>47 milliseconds</b>.</p>
+        <p>Onyx's compiler is written entirely in C and features a incredibly fast compilation. The server for this site was compiled in <b>just 47 milliseconds</b>.</p>
     </div>
 
     <pre class="hljs"><code class="language-sh">$ onyx build -V build.onyx
@@ -126,6 +151,13 @@ Outputting to WASM file:   site.wasm</code></pre>
 </div>
 
 <div>
+    <div>
+        <h2>WebAssembly</h2>
+        <br />
+        <p>Onyx compiles solely to <a href="https://webassembly.org">WebAssembly</a>. You can use a builtin WebAssembly runtime using <code>onyx run</code>, or compile to WASM and run using a WebAssembly runner, like Wasmer or Wasmtime.</p>
+    </div>
+
+
     <pre class="hljs"><code># Compile and run directly.
 $ onyx run hello.onyx
 Hello, World!
@@ -137,12 +169,6 @@ $ onyx build -r wasi -o hello.wasm hello.onyx
 $ wasmer run hello.wasm
 Hello, World!
 </code></pre>
-
-    <div>
-        <h2>WebAssembly</h2>
-        <br />
-        <p>Onyx compiles solely to <a href="https://webassembly.org">WebAssembly</a>. You can use a builtin WebAssembly runtime using <code>onyx run</code>, or compile to WASM and run using a WebAssembly runner, like Wasmer or Wasmtime.</p>
-    </div>
 
 </div>
 
@@ -162,9 +188,9 @@ Hello, World!
 }
 
 main :: () {
-    msg: [] u8 = "Hello, libc!";
+    msg: [] u8 = "Hello, libc!"
 
-    write(1, msg);
+    write(1, msg)
 }</code></pre>
 </div>
 </div>
@@ -213,25 +239,6 @@ document.querySelector("#install-command .copy-button").addEventListener("click"
         setTimeout(_ => { e.target.innerHTML="Copy" }, 5000);
     });
 })
-
-/*
-let rotator = document.querySelector(".scrollport");
-let rotatorIndex = 0;
-let ignoreNextScroll = false;
-let rotatorInterval = setInterval(_ => {
-    rotatorIndex += 1;
-    rotatorIndex %= rotator.children.length;
-    let f = 1.0 / (rotator.children.length - 1);
-
-    ignoreNextScroll = true; 
-    rotator.scrollTo({ top: 0, left: f * rotatorIndex * (rotator.scrollWidth - 1200), behavior: 'smooth'});
-}, 5000);
-
-rotator.addEventListener("scrollend", (e) => {
-    if (ignoreNextScroll) ignoreNextScroll = false;
-    else                  clearInterval(rotatorInterval);
-});
-*/
 </script>
 
 {{endblock}}

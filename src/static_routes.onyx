@@ -18,6 +18,9 @@ use core.encoding.json
 @route.{.GET, "/docs"}
 (req: &Req, res: &Res) => res->render("pages/docs", null);
 
+@route.{.GET, "/docs/design"}
+(req: &Req, res: &Res) => res->render("pages/docs/design", null);
+
 @route.{.GET, "/docs/install"}
 (req: &Req, res: &Res) => res->render("pages/docs/install", null);
 

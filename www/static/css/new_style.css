@@ -17,7 +17,7 @@
         --accent-background: #e0e0f5;
         --primary: #7074be;
         --secondary: #494957;
-        --accent: #00fffb;
+        --accent: #0090ab;
         --accent-text: #000000;
     }
 }
@@ -43,7 +43,7 @@
 @media (min-width: 900px) {
     :root {
         --default-flex-direction: row;
-        font-size: 14pt;
+        font-size: 16pt;
     }
 }
 
@@ -61,10 +61,14 @@ body {
     font-family: sans-serif;
 }
 
+p {
+    line-height: 1.5em;
+}
+
 a {
     color: var(--text);
     text-decoration: none;
-     border-bottom: 1px solid var(--text);
+    border-bottom: 1px solid var(--text);
 }
 
 a.link-button {
@@ -176,6 +180,10 @@ a.cta-button:hover {
     .container .split.right-40 > :last-child {
         width: 40%;
     }
+
+    .homepage-card-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media screen and (max-width: 899px) {
@@ -184,6 +192,24 @@ a.cta-button:hover {
         flex-direction: column;
         justify-content: center;
     }
+}
+
+.homepage-card-container {
+    display: grid;
+    gap: 16px;
+    margin-top: 64px;
+}
+
+.homepage-card-container > div {
+    background: linear-gradient(135deg, var(--background), var(--accent-background));
+    border-radius: 8px;
+    border: 1px solid var(--primary);
+    padding: 16px;
+    line-height: 1.4em;
+}
+
+.homepage-card-container h2 {
+    margin-top: 8px !important;
 }
 
 h1 {

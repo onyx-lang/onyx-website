@@ -5,91 +5,92 @@ use http
 use http.server {Req :: Request, Res :: Response, route}
 use core.encoding.json
 
-#inject runtime.vars {
-    Enable_Heap_Debug :: true
-    // Debug :: true
-    // CGI_MODE :: true
-}
+runtime.vars.Enable_Heap_Debug :: true
+runtime.vars.Debug :: true
+// runtime.vars.CGI_MODE :: true
 
-reg: otmp.TemplateRegistry;
-Res.render :: (r: &Res, template: str, vars: any) {
-    use m := misc.any_to_map(vars) ?? make(Map(str, any));
+reg: otmp.TemplateRegistry
+Res.render :: (r: &Res, template: str, vars: any) -> &Res {
+    use m := misc.any_to_map(vars) ?? make(Map(str, any))
 
-    s := reg->render_template(template, &r.writer, &m);
+    s := reg->render_template(template, &r.writer, &m)
 
-    if s != .None {
-        log(.Warning, "Template Renderer", tprintf("{}", s));
-    }
+    if s != .None { log(.Warning, "Template Renderer", tprintf("{}", s)) }
 
-    r.headers->put("Content-Type", "text/html");
-    r->status(200 if s == .None else 400);
-    r->end();
+    r.headers->put("Content-Type", "text/html")
+    r->status(200 if s == .None else 400)
+    r->end()
+
+    return r
 }
 
 main :: () {
-    load_library_list();
+    load_library_list()
     
-    reg = otmp.registry();
-    reg->load_directory("./www/templates", ".html");
+    reg = otmp.registry()
+    reg->load_directory("./www/templates", ".html")
 
     news_articles = .{
-        resource = .{},
-        max_age = 60 * 60, // 1 hour
+        resource = .{}
+        max_age = 60 * 60 // 1 hour
 
-        fetch_resource = fetch_articles,
+        fetch_resource = fetch_articles
         release_resource = release_articles
-    };
+    }
 
     examples = .{
-        resource = .{},
-        max_age = 60 * 60 * 24, // 1 day
-        fetch_resource = load_examples,
-        release_resource = delete_examples,
-    };
+        resource = .{}
+        max_age = 60 * 60 * 24 // 1 day
+        fetch_resource = load_examples
+        release_resource = delete_examples
+    }
 
-    http.server.set_mime_type("svg", "image/svg+xml");
+    http.server.set_mime_type("svg", "image/svg+xml")
 
-    pipes := http.server.pipeline();
+    pipes := http.server.pipeline()
 
-    files := http.server.static("/static/", "./www/static/");
-    pipes->pipe(&files);
+    files := http.server.static("/static/", "./www/static/")
+    pipes->pipe(&files)
 
     #if #defined(runtime.vars.Debug) {
         pipes->pipe((req, res) => {
-            reg->refresh_templates();
-        });
+            reg->refresh_templates()
+        })
     }
 
-    router := http.server.router();
-    router->collect_routes();
-    pipes->pipe(&router);
+    router := http.server.router()
+    router->collect_routes()
+    pipes->pipe(&router)
 
     pipes->pipe((req, res) => {
         if !res.completed {
-            res->render("pages/404", null);
-            res->status(404);
-            res->end();
+            res->render("pages/404", null)
+            res->status(404)
+            res->end()
         }
-    });
+    })
 
 
     #if #defined(runtime.vars.CGI_MODE) {
-        http.server.cgi(pipes);
+        http.server.cgi(pipes)
 
     } else {
-        logger := http.server.logger(style=.V2);
-        pipes->pipe(&logger);
+        logger := http.server.logger(style=.V2)
+        pipes->pipe(&logger)
 
         app := http.server.tcp(pipes, .{
             thread_count = 8,
             max_clients = 256
-        });
+        })
 
-        port := conv.parse_int(os.env("SERVER_PORT") ?? "8000");
-        logf(.Info, "Listening on {}", port);
+        port := os.env("SERVER_PORT")
+            |> Optional.value_or("8000")
+            |> conv.parse(u32, _)
+            |> Optional.unwrap()
+        logf(.Info, "Listening on {}", port)
 
-        app->serve(~~port);
-        logf(.Info, "Server stopping...");
+        app->serve(~~port)
+        logf(.Info, "Server stopping...")
     }
 }
 
