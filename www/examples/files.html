@@ -13,25 +13,25 @@ write_data_into_file :: (filename: str) {
     // This is one way of opening a file: call os.open and then os.close later.
     // os.open returns a Result(os.File, os.FileError), so it must be handled
     // to use the os.File. This program opts to unwrap the result.
-    file := os.open(filename, .Write)->unwrap();
-    defer os.close(&file);
+    file := os.open(filename, .Write)->unwrap()
+    defer os.close(&file)
 
     // Create an io.Writer over the file stream using io.writer_make.
     // Also, free it later by defering io.writer_free. This also flushes
     // the internal buffer of io.Writer to make sure everything is written
     // to the file.
-    file_writer := io.Writer.make(&file);
-    defer io.Writer.free(&file_writer);
+    file_writer := io.Writer.make(&file)
+    defer io.Writer.free(&file_writer)
 
     // The simplest way of writing a string to the file.
-    file_writer->write("This is the first line of text.\n");
+    file_writer->write("This is the first line of text.\n")
 
     // io.write_format can be used to "printf" into a file.
     // printf can be thought of as io.write_format(&stdio.stream, ...).
-    file_writer->write_format("This is a {} line of text.\n", "formatted");
+    file_writer->write_format("This is a {} line of text.\n", "formatted")
 
     for i in 0 .. 5 {
-        file_writer->write_format("Another line numbered {}.\n", i);
+        file_writer->write_format("Another line numbered {}.\n", i)
     }
 }
 
@@ -40,15 +40,15 @@ read_whole_file :: (filename: str) {
     // This is the simplest way to get the entire content of a file
     // into a string ([] u8). Also, defer "deleting" the string, which
     // will free the memory allocated for the string.
-    contents := os.get_contents(filename);
-    defer delete(&contents);
+    contents := os.get_contents(filename)
+    defer delete(&contents)
 
-    printf("Whole contents:\n{}\n", contents);
+    printf("Whole contents:\n{}\n", contents)
 }
 
 main :: () {
-    filename := "test.txt";
+    filename := "test.txt"
 
-    write_data_into_file(filename);
-    read_whole_file(filename);
+    write_data_into_file(filename)
+    read_whole_file(filename)
 }</code></pre>

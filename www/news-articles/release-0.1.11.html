@@ -1,0 +1,164 @@
+<h2>Syntactic Cleanup</h2>
+
+<p>
+    There are several areas of the language that got a bit of a facelift in this release.
+</p>
+
+<h3>Doc-strings</h3>
+
+<p>
+    Documentation strings were simplified in this release.
+    Instead of needing to use an ugly <code>#doc</code> directive with a string literal, you can now use one or more <code>///</code> comments before the procedure.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// Old way
+#doc """
+    This is a documentation string for this procedure.
+"""
+f :: () { }
+
+// New way
+
+/// This is a documentation string
+/// for another procedure, that can
+/// span multiple lines easily.
+g :: () { }
+</code></pre>
+
+
+<h3>Default cases</h3>
+
+<p>
+    Specifying the default case on a switch statement was always a little weird.
+    It used to use the <code>#default</code> directive that always looked out of place, but I struggled to think of a better syntax.
+    Now, you can simply use an underscore <code>_</code>.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// Old way
+switch value {
+    case 10 { ... }
+    case 20 { ... }
+    case #default { ... }
+}
+
+// New way
+
+switch value {
+    case 10 { ... }
+    case 20 { ... }
+    case _  { ... }
+}
+</code></pre>
+
+<h3>Piping Placeholder</h3>
+
+<p>
+    Previously when using the pipe operator, the left-hand side was always placed in the first argument slot.
+    That was sometimes a pain when the argument you wanted to pipe into was in the wrong spot.
+</p>
+
+<p>
+    Now you can use an underscore as a placeholder argument and the pipe operator will place the argument in that position.
+</p>
+
+<pre class="hljs"><code class="language-onyx">double :: x => x * 2
+
+main :: () {
+    x := 10
+
+    x
+    |> double()                       // Places in the first slot
+    |> printf("Double x is {}\n", _)  // Places in the second slot
+}
+</code></pre>
+
+<h3>Stabilized Optional Semicolons</h3>
+
+<p>
+    Optional semicolons have been an opt in feature for about two months now.
+    I have been using them for every one of my projects and I have had no issues.
+    For this reason, optional semicolons are now enabled by default!
+    Having <code>//+optional-semicolons</code> in your code does not hurt, but it is now just a comment with no meaning.
+</p>
+
+<p>
+    If you have any issues with the optional semicolons, feel compelled to open a <a href="https://github.com/onyx-lang/onyx/issues">GitHub issue</a> documenting your problem and I will work to find a solution.
+</p>
+
+
+<h2>Breaking Changes</h2>
+
+<p>
+    In order to make the provided core library functions more cohesive, sometimes breaking changes are necessary.
+    These changes should not affect many programs, but they are worth discussing.
+</p>
+
+<h3><code>Iterator</code> uses <code>?T</code></h3>
+
+<p>
+    Iterators are a core type used throughout many Onyx codebases.
+    Internally they are stored as a data pointer for internal state, and a <code>next</code> procedure that takes the state and produces a value, or signals that the iterator is complete.
+</p>
+
+<p>
+    The <code>next</code> procedure used to return <code>(T, bool)</code>.
+    When the boolean was false, it signaled that the iterator was complete and the returned value should be ignored.
+    This has some weird semantics, because you would have to create an empty <code>T</code>, even though it would never be used.
+</p>
+
+<p>
+    To fix this, <code>next</code> now returns <code>? T</code>.
+    When the value is <code>Some(T)</code>, the iterator is not done and the value can be used.
+    When the value is <code>None</code>, the iterator is done and there is no way a value can be used.
+</p>
+
+<p>
+    This is a breaking change because it affects the implementation of <em>every</em> Iterator.
+    While this is largely constrained to the core library, any custom iterators written will need to be updated.
+    Thankfully this change is rather easy to make.
+</p>
+
+<h3><code>io.Stream</code> uses <code>Result</code></h3>
+
+<p>
+    In the same vein, the procedures in <code>io.Stream</code> were updated to use the <code>Result</code> type instead of relying on multiple return values in a pattern similar to Go's error handling.
+    This change should not affect many if any Onyx programs or libraries, but it still worth noting.
+</p>
+
+<h3><code>case</code> using range is no longer inclusive</h3>
+
+<p>
+    This is the final breaking change, and has the potential for being quite impactful.
+    When all things were considered, it made sense to make the breaking change now.
+</p>
+
+<p>
+    When you switch over an integer-like type, you can use a range in the <code>case</code> to specify that any of the values in the range should match.
+    This range used to be inclusive, since it made intuitive sense when writing the following.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// Old way
+s := "TeSt"
+switch s[1] {
+    case 'a' .. 'z' do println("Is lowercase!")
+    case 'A' .. 'Z' do println("Is uppercase!")
+}
+</code></pre>
+
+<p>
+    The problem is that everywhere else in the language, a <code>..</code> range was not inclusive.
+    Since adding the <em>inclusive-range</em> operator last release, it makes sense to make a breaking change and change these <code>case</code> statements to use <code>..=</code> instead.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// New way
+s := "TeSt"
+switch s[1] {
+    case 'a' ..= 'z' do println("Is lowercase!")
+    case 'A' ..= 'Z' do println("Is uppercase!")
+}
+</code></pre>
+
+<p>
+    This is slightly tricky thing to update, and is probably best handled by manually searching for all instances of <code>switch</code>, since there is no compiler error if <code>..</code> is used. It will just be exclusive instead of inclusive.
+</p>
+

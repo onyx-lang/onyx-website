@@ -1,5 +1,11 @@
 [
     {
+        "name": "Beta Release 0.1.11",
+        "path": "release-0.1.11",
+        "date": "21st April 2024",
+        "description": "This is a placeholder description."
+    },
+    {
         "name": "Beta Release 0.1.10",
         "path": "release-0.1.10",
         "date": "31st March 2024",
