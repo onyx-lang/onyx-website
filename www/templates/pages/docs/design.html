@@ -102,7 +102,7 @@ Connection.send :: (self: &#Self, data: [] u8) -> Result(u32, Error) {
 // ...</code></pre>
 
     <p>
-        The consumer of this abstraction may choose to use the method call syntax,
+        The consumer of this abstraction may choose to use the method call syntax (<code>connection->send("...")</code>), or call the procedures explicitly (<code>Connection.send(&connection, "...")</code>).
     </p>
 </div>
 
