@@ -10,7 +10,7 @@ runtime.vars.Debug :: true
 // runtime.vars.CGI_MODE :: true
 
 reg: otmp.TemplateRegistry
-Res.render :: (r: &Res, template: str, vars: any) -> &Res {
+Res.render :: (r: &Res, template: str, vars: any) {
     use m := misc.any_to_map(vars) ?? make(Map(str, any))
 
     s := reg->render_template(template, &r.writer, &m)
@@ -20,8 +20,6 @@ Res.render :: (r: &Res, template: str, vars: any) -> &Res {
     r.headers->put("Content-Type", "text/html")
     r->status(200 if s == .None else 400)
     r->end()
-
-    return r
 }
 
 main :: () {
