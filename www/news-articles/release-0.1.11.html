@@ -12,6 +12,7 @@
 </p>
 
 <pre class="hljs"><code class="language-onyx">// Old way
+
 #doc """
     This is a documentation string for this procedure.
 """
@@ -162,3 +163,100 @@ switch s[1] {
     This is slightly tricky thing to update, and is probably best handled by manually searching for all instances of <code>switch</code>, since there is no compiler error if <code>..</code> is used. It will just be exclusive instead of inclusive.
 </p>
 
+<h2>Compiler Extensions</h2>
+
+<p>
+    An experimental feature debuting this release is <em>compiler extensions</em>.
+    Compiler extensions will allow user defined programs to interact with the compiler to generate auxiliary build files or supplement code generation.
+</p>
+
+<p>
+    The only use for compiler extensions at the moment is for <em>procedural macros</em>.
+    These macros are expanded by a compiler extension that can do anything to generate the necessary code.
+    More uses for compiler extensions will be added in the near future.
+</p>
+
+<p>
+    Take this theoretical example where the compiler extension generates bindings for an OpenAPI definition.
+</p>
+
+<pre class="hljs"><code class="language-onyx">use core {*}
+
+// Define the compiler extension by specifying the program to run.
+// In this case "openapi_gen.wasm".
+OpenAPIGenerator :: #compiler_extension "openapi_gen.wasm" {
+    generate_from_url
+}
+
+// Generate a structure for FooApi that contains methods
+// corresponding to the API endpoints specified by the definition.
+FooApi :: OpenAPIGenerator.generate_from_url!{"http://localhost:5000/api.json"}
+
+// The above could generate:
+//
+// FooApi :: struct {
+//     foo :: (name: str) -> str { ... }
+// } 
+
+main :: () {
+    // Invoke an endpoint as a function.
+    FooApi.foo("Hello")
+}
+</code></pre>
+
+<p>Read more about compiler extensions <a href="https://docs.onyxlang.io/book">on the docs</a>.</p>
+
+<h2>Updating</h2>
+<p>
+    To update to the newest version of Onyx simply use the same install script found on the homepage.
+    It will automatically detect your previous install and will override it with the new version.
+</p>
+<pre class="hljs"><code class="language-sh">$ sh <(curl https://get.onyxlang.io -sSfL)
+</code></pre>
+<p>
+    You can also run <code>onyx self-upgrade</code> if you are on MacOS or Linux!
+</p>
+<p>
+    Happy programming!
+</p>
+
+<h2>Full Changelog</h2>
+<div class="container">
+<h3>Additions</h3>
+<ul>
+    <li>Ability specify where piped arguments are placed using <code>_</code>.</li>
+    <ul>
+        <li><code>x |> foo(y, _) == foo(y, x)</code></li>
+    </ul>
+    <li>Alternative syntax for <code>case #default ...</code>. You can now just write <code>case _ ...</code>.</li>
+    <li>Alternative syntax for binding documentation using <code>///</code>.</li>
+    <li>**Experimental** compiler extensions feature, currently used to create procedural macros.</li>
+    <li><code>core.misc.any_deep_copy</code></li>
+    <li>Ability to explicitly specify tag value for tagged unions.</li>
+    <ul>
+        <li><code>Variant as value: type</code>, i.e. <code>Foo as 3: i32</code></li>
+    </ul>
+</ul>
+
+<h3>Removals</h3>
+<ul>
+    <li>Deprecated the use of <code>#default</code> in case statements. Use <code>_</code> instead.</li>
+</ul>
+
+<h3>Changes</h3>
+<p>There are several <strong>breaking</strong> changes in this release related to core library APIs.</p>
+<ul>
+    <li><code>Iterator.next</code> now returns <code>? T</code> instead of <code>(T, bool)</code></li>
+    <li><code>io.Stream</code> uses <code>Result(T, Error)</code> for return types instead of <code>(Error, T)</code></li>
+    <li><code>switch</code> over a <code>range</code> is no longer inclusive by default, since <code>..=</code> exists now.</li>
+    <li>Enabled optional semicolons by default.</li>
+    <ul>
+        <li><code>//+optional-semicolons</code> is no longer necessary.</li>
+    </ul>
+</ul>
+
+<p>There are also several non-breaking changes.</p>
+<ul>
+    <li>The internal memory layout is different. See pull request #133 for details.</li>
+</ul>
+</div>

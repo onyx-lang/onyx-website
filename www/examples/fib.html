@@ -74,17 +74,17 @@ fib_iterator :: (n: i32) =>
         &.{ a = cast(u64) 0, b = cast(u64) 1, counter = n },
 
         // The generation function. This takes in a pointer to the state
-        // and must return 2 things: the next value and a boolean of whether
-        // to continue or not.
+        // and must return an optional of the iteration type. If it is Some(u64)
+        // then the iteration continues. If it is None, then the iterations stop.
         // 
         // Notice that the parameter's type is a polymorphic here notice the $.
         // This is because the above structure literal is entirely type infered
         // no explicit type was given to it. Therefore, there is no type we can
         // write here that would be correct. We could make a structure for it,
         // but in this case it is fine to let the compiler do a little magic.
-        (state: & $Ctx) -> (u64, bool) {
+        (state: & $Ctx) -> ? u64 {
             if state.counter <= 0 {
-                return 0, false
+                return .None
             }
 
             tmp := state.a
@@ -92,7 +92,7 @@ fib_iterator :: (n: i32) =>
             state.b = state.b + tmp
 
             state.counter -= 1
-            return tmp, true
+            return tmp
         }
     )
 
