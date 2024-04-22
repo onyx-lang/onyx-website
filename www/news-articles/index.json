@@ -3,7 +3,7 @@
         "name": "Beta Release 0.1.11",
         "path": "release-0.1.11",
         "date": "21st April 2024",
-        "description": "This is a placeholder description."
+        "description": "This release brings even more core library uniformity though some breaking changes, some syntax refinements, and an exciting experimental feature: compiler extensions!"
     },
     {
         "name": "Beta Release 0.1.10",
