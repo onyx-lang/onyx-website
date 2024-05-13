@@ -77,6 +77,26 @@ foo :: () -> _ {
     Like many other things, <code>#auto</code> still works in 0.1.12, but will be removed in a future version.
 </p>
 
+<h2>Simplified <code>onyx.js</code></h2>
+
+<p>
+    The JavaScript file generated as a part of compiling with <code>-r js</code> is no longer an ES6 module.
+    While ES6 modules are generally the standard nowadays, there are still some cases where having an ES6 is a problem.
+    To make Onyx easier to use in a variety of JS environment, ES6 modules were ditched in this release.
+    You should be able to load the JS file in a normal <code>&lt;script&gt;</code> tag on the browser, or using <code>require</code> in something like Node JS.
+</p>
+
+<p>
+    This is now what you need to run Onyx in a browser, for example.
+</p>
+
+<pre class="hljs"><code class="language-html">&lt;script src="/out.wasm.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    Onyx.load("/out.wasm").then(program => program.start())
+&lt;/script&gt;
+</code></pre>
+
+
 <h2>WebAssmebly <code>name</code> section</h2>
 
 <p>
