@@ -1,0 +1,137 @@
+<h2>Pipe improvements</h2>
+
+<p>
+    The pipe operator (<code>|></code>) saw a number of semantic improvements in this release.
+</p>
+
+<p>
+    You can now pipe into a method call.
+    This has the semantics you would expect: the implicit argument from the method call becomes the first argument, and the piped argument becomes the second argument.
+    In other words, <br><code>x |> y->z() === y.z(&y, x)</code>.
+</p>
+
+<p>
+    Here is one example where this could be useful.
+</p>
+
+<pre class="hljs"><code class="language-onyx">main :: () {
+    my_arr := make([..] i32)
+
+    iter.counter()
+    |> iter.take(10)
+    |> iter.map(x => x * 2)
+    |> my_arr->concat()     // Piping directly into this method call
+
+    println(my_arr)
+}</code></pre>
+
+
+<p>
+    You can also now pipe into a try operator (<code>?</code>).
+    This also has the semantics you would expect: the try operator is left on the outside of the call and the piped argument is placed normally in the call.
+    In other words, <br><code>x |> y()? === y(x)?</code>.
+</p>
+
+<p>
+    This feature enables an interesting pattern of computation that allows for chaining of fallible operations, letting you focus on the "happy path" of your code.
+</p>
+
+<pre class="hljs"><code class="language-onyx">do_something :: x => {
+    return x
+        |> fallible_operation_1()?
+        |> fallible_operation_2()?
+        |> fallible_operation_3()
+}</code></pre>
+
+
+<h2>Phasing out of <code>#auto</code></h2>
+
+<p>
+    In the on-going effort to simply Onyx, the <code>#auto</code> directive is being phased out in favor of <code>_</code>.
+</p>
+
+<p>
+    As a reminder, <code>#auto</code> was used when you don't want to spell out the type explicitly, but have the type solved by the compiler.
+    This was allowed in two places: as a return type, and as a local variable type.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// Old way
+foo :: () -> #auto {
+    x: #auto
+    x = "test"
+    return x
+}</code></pre>
+
+<p>
+    Now, the (arguably) ugly <code>#auto</code> directive is no longer necessary.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// New way
+foo :: () -> _ {
+    x: _
+    x = "test"
+    return x
+}</code></pre>
+
+<p>
+    Like many other things, <code>#auto</code> still works in 0.1.12, but will be removed in a future version.
+</p>
+
+<h2>WebAssmebly <code>name</code> section</h2>
+
+<p>
+    When looking at a WebAssembly module, whether it be through a inspection tool like <code>wasm-tools</code> or <code>wasm-objdump</code>, or in the Developer Tools of your favorite browser, having names on functions can be very useful.
+    While there is not a great standard for debug information in WebAssembly as of today (though work is being done by the community), at least having function names can help you figure out from a stack trace where your program is currently executing.
+</p>
+
+<p>
+    Onyx now supports emitting the special <code>name</code> table that is understood by all WebAssembly tooling.
+    Currently, only function names are generated, as they are the most useful, but local names may be added in the future.
+    To actually generate the <code>name</code> table, you need to pass the <code>--generate-name-section</code> flag to <code>onyx build</code>.
+    This is not done by default, as it does inflate the binary size.
+</p>
+
+<h2>Full Changelog</h2>
+<div class="container">
+    <h3>Additions</h3>
+    <ul>
+        <li>Ability to pipe into a method call.</li>
+        <ul>
+            <li><code>x |> y->z() === y->z(x)</code></li>
+        </ul>
+        <li>Ability to pipe into a try operator.</li>
+        <ul>
+            <li><code>x |> y()? === y(x)?</code></li>
+        </ul>
+        <li>Ability to use <code>_</code> where <code>#auto</code> is used.</li>
+        <ul>
+            <li>This will be come the default soon and <code>#auto</code> will be removed.</li>
+        </ul>
+        <li><code>return #from_proc</code> to return all the way from the procedure.</li>
+        <li>Variant of <code>new</code> that accepts an r-value and places it in the heap.</li>
+        <li>Builtin <code>panic</code> procedure that is equivalent to <code>assert(false, ...)</code></li>
+        <li>Format parameter "a" that unpacks an <code>any</code> and formats its internal value.</li>
+        <li><code>--generate-name-section</code> CLI flag</li>
+    </ul>
+
+    <h3>Removals</h3>
+    <ul>
+        <li><code>Optional.try</code> as it is incompatible with new semantics of <code>?</code>.</li>
+    </ul>
+
+    <h3>Changes</h3>
+    <ul>
+        <li><code>str.as_str</code> is now preferred over <code>string.as_str</code></li>
+        <li><code>str.compare</code> is now preferred over <code>string.compare</code></li>
+        <li><code>str.to_cstr_on_stack</code> is now preferred over <code>string.to_cstr_on_stack</code></li>
+        <li><code>str.join</code> is now preferred over <code>string.join</code></li>
+        <li>Implementation of <code>?</code> for <code>Optional</code> and <code>Result</code> to return from the enclosing procedure.</li>
+    </ul>
+
+    <h3>Bugfixes</h3>
+    <ul>
+        <li>Fixed WASI compilation due to syntax issue.</li>
+        <li>Fixed WASI platform <code>__file_open</code> implementation for wasmtime.</li>
+        <li>Weird edge case when using multiple placeholder arguments in a quick procedure.</li>
+    </ul>
+</div>
