@@ -2,7 +2,7 @@
     {
         "name": "Beta Release 0.1.12",
         "path": "release-0.1.12",
-        "date": "12th May 2024",
+        "date": "19th May 2024",
         "description": "This intermediate release brings quality of life improvements to the pipe operator, small syntax refinements, and small improvements to WebAssembly module generation."
     },
     {

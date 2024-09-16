@@ -81,7 +81,7 @@ foo :: () -> _ {
 
 <p>
     The JavaScript file generated as a part of compiling with <code>-r js</code> is no longer an ES6 module.
-    While ES6 modules are generally the standard nowadays, there are still some cases where having an ES6 is a problem.
+    While ES6 modules are generally the standard nowadays, there are still some cases where having an ES6 module is a problem.
     To make Onyx easier to use in a variety of JS environment, ES6 modules were ditched in this release.
     You should be able to load the JS file in a normal <code>&lt;script&gt;</code> tag on the browser, or using <code>require</code> in something like Node JS.
 </p>
@@ -110,6 +110,21 @@ foo :: () -> _ {
     To actually generate the <code>name</code> table, you need to pass the <code>--generate-name-section</code> flag to <code>onyx build</code>.
     This is not done by default, as it does inflate the binary size.
 </p>
+
+<h2>Updating</h2>
+<p>
+    To update to the newest version of Onyx simply use the same install script found on the homepage.
+    It will automatically detect your previous install and will override it with the new version.
+</p>
+<pre class="hljs"><code class="language-sh">$ sh <(curl https://get.onyxlang.io -sSfL)
+</code></pre>
+<p>
+    You can also run <code>onyx self-upgrade</code> if you are on MacOS or Linux!
+</p>
+<p>
+    Happy programming!
+</p>
+
 
 <h2>Full Changelog</h2>
 <div class="container">
