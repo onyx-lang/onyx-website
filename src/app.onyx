@@ -1,8 +1,7 @@
 use core {package, *}
 use runtime
 use otmp
-use http
-use http.server {Req :: Request, Res :: Response, route}
+use nimbus {*}
 use core.encoding.json
 
 runtime.vars.Enable_Heap_Debug :: true
@@ -10,23 +9,22 @@ runtime.vars.Debug :: true
 // runtime.vars.CGI_MODE :: true
 
 reg: otmp.TemplateRegistry
-Res.render :: (r: &Res, template: str, vars: any) {
+Context.render :: (c: Context, template: str, vars: any, status := 200) {
     use m := misc.any_to_map(vars) ?? make(Map(str, any))
 
-    s := reg->render_template(template, &r.writer, &m)
+    c->set_header("Content-Type", "text/html")
+    c->write_headers(status)
+
+    s := reg->render_template(template, c->writer(), m)
 
     if s != .None { log(.Warning, "Template Renderer", tprintf("{}", s)) }
-
-    r.headers->put("Content-Type", "text/html")
-    r->status(200 if s == .None else 400)
-    r->end()
 }
 
 main :: () {
     load_library_list()
     
     reg = otmp.registry()
-    reg->load_directory("./www/templates", ".html")
+    reg->load_directory("www/templates", ".html")
 
     news_articles = .{
         resource = .{}
@@ -43,51 +41,45 @@ main :: () {
         release_resource = delete_examples
     }
 
-    http.server.set_mime_type("svg", "image/svg+xml")
+    n := Nimbus.new()
 
-    pipes := http.server.pipeline()
+    set_mime_type("svg", "image/svg+xml")
 
-    files := http.server.static("/static/", "./www/static/")
-    pipes->pipe(&files)
+    #if !#defined(runtime.vars.CGI_MODE) {
+        n->add(logger(style=.V2))
+    }
+
+    n->add(static("/static/", "./www/static/"))
 
     #if #defined(runtime.vars.Debug) {
-        pipes->pipe((req, res) => {
+        n->add(c => {
             reg->refresh_templates()
+            c->next()
         })
     }
 
-    router := http.server.router()
-    router->collect_routes()
-    pipes->pipe(&router)
+    n->add(c => {
+        c->next()
 
-    pipes->pipe((req, res) => {
-        if !res.completed {
-            res->render("pages/404", null)
-            res->status(404)
-            res->end()
+        if !c->_response().commited {
+            c->render("pages/404", &.{}, 404)
         }
     })
 
+    n->add_tagged_routes()
 
     #if #defined(runtime.vars.CGI_MODE) {
-        http.server.cgi(pipes)
+        n->cgi()
 
     } else {
-        logger := http.server.logger(style=.V2)
-        pipes->pipe(&logger)
-
-        app := http.server.tcp(pipes, .{
-            thread_count = 8,
-            max_clients = 256
-        })
 
         port := os.env("SERVER_PORT")
             |> Optional.value_or("8000")
             |> conv.parse(u32, _)
             |> Optional.unwrap()
-        logf(.Info, "Listening on {}", port)
 
-        app->serve(~~port)
+        n->serve(port, .{ thread_count = 8, max_clients = 256 })
+
         logf(.Info, "Server stopping...")
     }
 }

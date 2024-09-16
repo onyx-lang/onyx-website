@@ -1,6 +1,6 @@
-FROM onyx:latest
+FROM onyx:alpine
 
-RUN apt install --yes git
+# RUN apt install --yes git
 
 WORKDIR /app
 
@@ -14,8 +14,8 @@ RUN rm -r src
 
 COPY www www
 
-ENV SERVER_PORT 8080
+ENV SERVER_PORT=8080
 EXPOSE 8080
 
-CMD onyx run out.wasm
+CMD ["onyx", "run", "out.wasm"]
 

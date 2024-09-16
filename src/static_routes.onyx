@@ -1,130 +1,123 @@
 use core {package, *}
 use runtime
 use otmp
-use http
-use http.server {Req :: Request, Res :: Response, route}
+use nimbus {*}
 use core.encoding.json
 
 
 @route.{.GET, "/"}
-(req: &Req, res: &Res) {
-    articles := iter.as_iter(news_articles->get() ?? .[])->take(2)->collect();
-    res->render("pages/homepage", &.{ articles = articles });
+(c: Context) {
+    articles := iter.as_iter(news_articles->get() ?? .[])->take(2)->collect()
+    c->render("pages/homepage", &.{ articles = articles })
 }
 
 @route.{.GET, "/ovmwasm"}
-(req: &Req, res: &Res) => res->render("pages/ovmwasm", null);
+(c: Context) => c->render("pages/ovmwasm", null)
 
 @route.{.GET, "/docs"}
-(req: &Req, res: &Res) => res->render("pages/docs", null);
+(c: Context) => c->render("pages/docs", null)
 
 @route.{.GET, "/docs/design"}
-(req: &Req, res: &Res) => res->render("pages/docs/design", null);
+(c: Context) => c->render("pages/docs/design", null)
 
 @route.{.GET, "/docs/install"}
-(req: &Req, res: &Res) => res->render("pages/docs/install", null);
+(c: Context) => c->render("pages/docs/install", null)
 
 @route.{.GET, "/docs/setup"}
-(req: &Req, res: &Res) => res->render("pages/docs/env_setup", null);
+(c: Context) => c->render("pages/docs/env_setup", null)
 
 @route.{.GET, "/docs/getting_started"}
-(req: &Req, res: &Res) => res->render("pages/docs/getting_started", null);
+(c: Context) => c->render("pages/docs/getting_started", null)
 
 @route.{.GET, "/docs/guides"}
-(req: &Req, res: &Res) => res->render("pages/docs/guides", null);
+(c: Context) => c->render("pages/docs/guides", null)
 
 @route.{.GET, "/docs/guides/http-server"}
-(req: &Req, res: &Res) => res->render("pages/docs/guide_http_server", null);
+(c: Context) => c->render("pages/docs/guide_http_server", null)
 
 @route.{.GET, "/docs/guides/raylib"}
-(req: &Req, res: &Res) => res->render("pages/docs/guide_raylib", null);
+(c: Context) => c->render("pages/docs/guide_raylib", null)
 
 @route.{.GET, "/docs/packages"}
-(req: &Req, res: &Res) => res->render("pages/docs/package", null);
+(c: Context) => c->render("pages/docs/package", null)
 
 @route.{.GET, "/docs/packages/list"}
-(req: &Req, res: &Res) {
-    res->render("pages/docs/package_list", &.{
+(c: Context) {
+    c->render("pages/docs/package_list", &.{
         core_packages = core_packages,
         third_party_packages = third_party_packages
-    });
+    })
 }
 
 @route.{.GET, "/playground"}
-(req: &Req, res: &Res) {
-    res->body("text/html", "This has been moved to <a href=\"https://try.onyxlang.io\">try.onyxlang.io</a>.");
-    res->status(200);
-    res->end();
+(c: Context) {
+    c->html(200, "This has been moved to <a href=\"https://try.onyxlang.io\">try.onyxlang.io</a>.")
 }
 
 @route.{.GET, "/community"}
-(req: &Req, res: &Res) => res->render("pages/community", null);
+(c: Context) => c->render("pages/community", null)
 
 
 @route.{.GET, "/robots.txt"}
-(req: &Req, res: &Res) {
-    res->file("./www/static/robots.txt");
-    res->status(200);
-    res->end();
+(c: Context) {
+    c->file(200, "text/plain", "./www/static/robots.txt")
 }
 
 
 
 @route.{.GET, "/news/:article"}
-(req: &Req, res: &Res) {
-    article_path := req.url_params["article"] ?? "";
-    article := array.first(news_articles->get() ?? .[], [n](n.path == article_path));
+(c: Context) {
+    article_path := c->param("article") ?? ""
+    article := array.first(news_articles->get() ?? .[], [n](n.path == article_path))
     if !article {
-        res->render("pages/404", null);
-        res->status(404);
-        return;
+        c->render("pages/404", null, status=404)
+        return
     }
 
-    filename := tprintf("www/news-articles/{}.html", article.path);
+    filename := tprintf("www/news-articles/{}.html", article.path)
 
     if os.file_exists(filename) {
-        contents := os.get_contents(filename);
-        defer delete(&contents);
+        contents := os.get_contents(filename)
+        defer delete(&contents)
 
-        res->render("pages/news_article", &.{
+        c->render("pages/news_article", &.{
             article = .{ contents = contents, name = article.name, description = article.description }
-        });
+        })
 
     } else {
-        res->render("pages/404", null);
-        res->status(404);
-        return;
+        c->render("pages/404", null, status=404)
+        return
     }
 }
 
 @route.{.GET, "/news"}
-(req: &Req, res: &Res) {
-    articles := news_articles->get() ?? .[];
+(c: Context) {
+    articles := news_articles->get() ?? .[]
 
-    res->render("pages/news", &.{
+    c->render("pages/news", &.{
         articles = articles
-    });
+    })
 }
 
 @route.{.GET, "/examples"}
-(req: &Req, res: &Res) {
-    exs := examples->get() ?? .[];
+(c: Context) {
+    exs := examples->get() ?? .[]
 
-    res->render("pages/examples", &.{
+    c->render("pages/examples", &.{
         examples = exs
-    });
+    })
 }
 
 @route.{.GET, "/examples/:name"}
-(req: &Req, res: &Res) {
-    exs := examples->get() ?? .[];
-    name := req.url_params["name"] ?? "";
+(c: Context) {
+    exs := examples->get() ?? .[]
+    name := c->param("name") ?? ""
 
-    ex := slice.first(exs, [x](x.name == name));
+    ex := Slice.first(exs, [x](x.name == name))
 
-    res->render("pages/example", &.{
+    c->render("pages/example", &.{
         ex = ex
-    });
+    })
 }
 
 
