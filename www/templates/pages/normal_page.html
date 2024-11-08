@@ -2,7 +2,8 @@
 
 <main>
 {% partial "partials/navbar" %}
-<div>
+{% block "outer_page_content" %}
+<div class="page-content-wrapper">
     {% block "page_content" %}
 </div>
 {% partial "partials/footer" %}

@@ -116,7 +116,7 @@
 <h3>Basic JWT support</h3>
 <p>
     Onyx how has the beginnings of <code>core.crypto.keys</code>, with basic support for decoding and encoding HS256 JWTs.
-    Once Onyx has support for other crypto functionality, namely RSA and EC, other token signatures and be implemented.
+    Once Onyx has support for other crypto functionality, namely RSA and EC, other token signatures can be implemented.
 </p>
 
 <h3>XML decoding</h3>
@@ -126,6 +126,35 @@
 </p>
 
 <h2>Other items of note</h2>
+
+<h3>Changes to <code>#load</code> directive</h3>
+<p>
+    When loading more files into the current compilation, the <code>#load</code> directive used to behave in an
+    arguably strange way. It had a <em>global</em> search path, that you could append directories to using <code>#load_path</code>
+    or <code>-I dir</code>. Unless you explicitly prefixed the file path with <code>./</code>, it would search
+    through all known paths to find a match. When it did not find a match, it would default to loading the file
+    from the current directory of the running "onyx" process.
+</p>
+
+<p>
+    This behavior is quite non-standard amongst programming languages, and so it is revised in this release.
+    Now, <em>all</em> <code>#load</code> directives are relative to the path of the current file, <em>unless</em>
+    it is prefixed with a mapped folder name, followed by a colon, like so.
+</p>
+
+<pre class="hljs"><code class="language-onyx">#load "foo" // Will load `./foo.onyx`
+#load "core:foo" // Will load `$ONYX_PATH/core/foo.onyx`
+</code></pre>
+
+<p>
+    By default there is only one mapped directory, called <code>core</code>, that is set to <code>ONYX_PATH/core</code>.
+    You can map your own directories using <code>--map-dir NAME:DIR</code> on the command line.
+</p>
+
+<p>
+    Note, because of this change, the <code>-I</code> command-line argument has been removed, and the <code>#load_path</code>
+    directive has been deprecated and no longer does anything. Mapped directories can only be set at the command-line.
+</p>
 
 <h3>Short-circuiting logic operators</h3>
 <p>
@@ -151,7 +180,7 @@
     If you still want the pass by reference semantics, use a slice type instead (<code>[] T</code>).
 </p>
 
-<h3>Referencing branches in dependencies</h3>
+<h3>Referencing Git branches as dependencies</h3>
 <p>
     When specifying dependencies in <code>onyx-pkg.kdl</code>, you can now target a particular
     branch from a repository, instead of a version. This will re-clone the branch ever time you

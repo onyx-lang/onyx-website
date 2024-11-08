@@ -10,8 +10,6 @@
         --header-text: #000000;
         --header-accent: #606080;
 
-        --footer-color: linear-gradient(var(--background), var(--accent-background));
-
         --text: #000000;
         --background: #f3f3fa;
         --accent-background: #e0e0f5;
@@ -28,10 +26,9 @@
         --header-text: #ffffff;
         --header-accent: #606080;
 
-        --footer-color: linear-gradient(var(--background), var(--accent-background));
-
         --text: #ffffff;
         --background: #0b0b12;
+        --medium-background: #101018;
         --accent-background: #181824;
         --primary: #45476e;
         --secondary: #494957;
@@ -43,7 +40,7 @@
 @media (min-width: 900px) {
     :root {
         --default-flex-direction: row;
-        font-size: 16pt;
+        font-size: 18pt;
     }
 }
 
@@ -63,6 +60,15 @@ body {
 
 p {
     line-height: 1.5em;
+}
+
+.page-content-wrapper {
+    background: var(--medium-background);
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px 16px var(--accent-background);
+    padding: 0px 24px;
+    max-width: 1248px;
+    margin: 32px auto;
 }
 
 a {
@@ -115,12 +121,12 @@ a.cta-button:hover {
     padding: 48px 12px;
 }
 
-.container > .container.merge {
+.container > * {
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-.container > * {
-    max-width: 1200px;
+.container > .container.merge {
     margin: 0 auto;
 }
 
@@ -143,7 +149,8 @@ a.cta-button:hover {
 }
 
 .container.card > * {
-    background: linear-gradient(135deg, var(--background), var(--accent-background));
+    /* background: linear-gradient(135deg, var(--background), var(--accent-background)); */
+    background: var(--background);
     /* box-shadow: 0px 3px 16px 8px rgba(150, 150, 230, 0.2); */
     border-radius: 8px;
     border: 1px solid var(--primary);
@@ -153,7 +160,7 @@ a.cta-button:hover {
 .container .title:after {
     content: "";
     height: 2px;
-    background: linear-gradient(to right, var(--primary), var(--background));
+    background: linear-gradient(to right, var(--primary), var(--medium-background));
     display: block;
     max-width: 1200px;
     margin: 0 auto;
@@ -201,7 +208,8 @@ a.cta-button:hover {
 }
 
 .homepage-card-container > div {
-    background: linear-gradient(135deg, var(--background), var(--accent-background));
+    /* background: linear-gradient(135deg, var(--background), var(--accent-background)); */
+    background: var(--background);
     border-radius: 8px;
     border: 1px solid var(--primary);
     padding: 16px;
@@ -387,11 +395,6 @@ navbar a {
 }
 
 
-/* Footer */
-/* .container:has(.footer-container) {
-    background: var(--footer-color);
-} */
-
 .footer-container {
     display: flex;
     flex-direction: var(--default-flex-direction);
@@ -421,10 +424,12 @@ main {
 }
 
 main pre {
-    background: linear-gradient(135deg, var(--background), var(--accent-background));
+    /* background: linear-gradient(135deg, var(--background), var(--accent-background)); */
+    background: var(--background);
     border: 1px solid var(--primary);
     border-radius: 6px;
     /* box-shadow: 0px 3px 16px 8px rgba(150, 150, 230, 0.2); */
+    font-size: .9rem;
     padding: 8px;
     display: block;
     overflow-y: auto;
@@ -559,7 +564,7 @@ table {
     border-radius: 8px;
     border: 1px solid var(--accent);
     width: 100%;
-    background: linear-gradient(135deg, var(--background), var(--accent-background));
+    background: var(--background); /* linear-gradient(135deg, var(--background), var(--accent-background)); */
     /* box-shadow: 0px 3px 16px 8px rgba(150, 150, 230, 0.2); */
     margin-top: 24px !important;
 }

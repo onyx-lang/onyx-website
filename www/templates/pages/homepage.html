@@ -5,12 +5,12 @@
 {{ let navbar_page = "home" }}
 {{ let navbar_logo_hidden = true }}
 
-{{ block "page_content" }}
+{{ block "outer_page_content" }}
 
 <div id="homepage-header">
     <canvas id="animation"></canvas>
 
-    <div class="container header" style="z-index: 100; background: none; position: relative">
+    <div class="container header" style="margin: 0 auto; max-width: 1200px; z-index: 100; background: none; position: relative">
         <div style="display: flex; flex-direction: column; place-content: center;">
             <svg viewBox="0 0 64 16" version="1.1" alt="Onyx Logo" id="homepage-logo">
                 {% partial "partials/logo_svg" %}
@@ -46,6 +46,9 @@
     </div>
 </div>
 
+{{ endblock }}
+
+{{ block "page_content" }}
 <div class="container">
     <div class="title">
         <h2>Install Onyx</h2>
