@@ -88,5 +88,10 @@
         "name": "webgl2",
         "url": "https://github.com/onyx-lang/pkg-webgl2",
         "description": "Bindings to WebGL 2. Accessible when targetting JS runtime."
+    },
+    {
+        "name": "protobuf",
+        "url": "https://github.com/onyx-lang/pkg-protobuf",
+        "description": "Protobuf encoder and decoder."
     }
 ]

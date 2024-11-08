@@ -1,0 +1,248 @@
+<h2>Syntax Additions and Changes</h2>
+
+<h3>Closures</h3>
+<p>
+    Closures have existed in Onyx for several years, but the syntax was quite poor.
+    Here is what they <em>used to</em> look like.
+</p>
+<pre class="hljs"><code class="language-onyx">main :: () {
+    capture_me := "some string"
+
+    f := (x, [capture_me]) => {
+        printf("{}: {}", capture_me, x)
+    }
+
+    f(10) // "some string: 10"
+}</code></pre>
+
+<p>
+    This syntax was partially inspired by C++, but moving the capture group inside the parentheses.
+    I have never felt happy with this syntax, and using it always feels clunky to type and a pain to look at.
+</p>
+
+<p>
+    The new syntax is not as "concise", but is much easier to read and is already used by other programming languages, most notably PHP.
+    Simply place the <code>use</code> keyword after the close parentheses of the parameter list.
+</p>
+<pre class="hljs"><code class="language-onyx">main :: () {
+    capture_me := "some string"
+
+    f := (x) use (capture_me) => { // still need '=>' because this is a quick procedure
+        printf("{}: {}", capture_me, x)
+    }
+
+    g := (x: i32) use (capture_me) -> void { // can omit '-> void'
+        printf("{}: {}", capture_me, x)
+    }
+
+    f(10) // "some string: 10"
+    g(10) // "some string: 10"
+}</code></pre>
+
+<p>
+    Note, in the future, explicitly listing captured values <em>may not be necessary</em>.
+</p>
+
+<h3>Unwrap operator</h3>
+<p>
+    Onyx now has another post-fix unary operator called the <strong>unwrap operator</strong>, written <code>x!</code>.
+    It is used by the <code>Optional</code> and <code>Result</code> types as an shorthand for <code>x->unwrap()</code>.
+</p>
+
+<pre class="hljs"><code class="language-onyx">main :: () {
+    iterator := Iterator.from(1 .. 5)
+
+    value := Iterator.next(iterator)! // Unwrap here
+    printf("value: {}\n", value)      // Prints 'value: 1'
+
+    iterator
+        |> Iterator.map(x => x * 2)
+        |> Iterator.next()! // You can "pipe" into unwrap, just like try (?)
+        |> printf("another value: {}\n", _) // Prints 'another value: 4'
+}</code></pre>
+
+<p>
+    It can be overloaded using <code>#operator!</code>.
+</p>
+
+<pre class="hljs"><code class="language-onyx">MyType :: struct { /* ... */ }
+
+#operator! :: (mt: MyType) -> i32 {
+    // ...
+}</code></pre>
+
+<h2>Custom commands</h2>
+
+<p>
+    <strong>Custom commands</strong> allow the Onyx CLI to be extended to include new tooling for Onyx development.
+    These tools used to be only installable <em>globally</em>, and they were not indexed, so you had to know which
+    tools you had installed.
+</p>
+
+<p>
+    Now, these custom commands can be installed globally in the <code>ONYX_PATH/tools</code> directory, or per project
+    in the <code>./.onyx</code> directory. These commands always come in the form of <code>.wasm</code> files that
+    accepts the remaining command-line arguments. In other words,
+</p>
+
+<pre class="hljs"><code class="language-shell">$ onyx tool-name arg1 arg2
+</code></pre>
+
+<p>is equivalent to</p>
+
+<pre class="hljs"><code class="language-shell">$ onyx run resolved/path/to/tool-name.wasm -- arg1 arg2
+</code></pre>
+
+<p>
+    Custom commands get their description in <code>onyx help</code> by reading a custom section in the WASM binary
+    called <code>onyx-command-description</code>. If you are creating a custom command and would like to set this,
+    you can use the <code>#wasm_section</code> directive like so:
+</p>
+
+<pre class="hljs"><code class="language-onyx">#wasm_section "onyx-command-description" "A concise description here."
+</code></pre>
+
+<h2>New Core APIs</h2>
+<p>
+    Onyx how has support for some common interchange formats and functionality used in web and server development.
+</p>
+
+<h3>Protobufs</h3>
+<p>
+    There is now an official <a href="https://github.com/onyx-lang/pkg-protobuf">protobuf</a> library for Onyx that supports serialization and deserialization.
+    There is also a <a href="https://github.com/onyx-lang/protoc-gen-onyx">protoc plugin</a> that you can use to generate Onyx types from a <code>.proto</code> file.
+</p>
+
+<h3>Basic JWT support</h3>
+<p>
+    Onyx how has the beginnings of <code>core.crypto.keys</code>, with basic support for decoding and encoding HS256 JWTs.
+    Once Onyx has support for other crypto functionality, namely RSA and EC, other token signatures and be implemented.
+</p>
+
+<h3>XML decoding</h3>
+<p>
+    Onyx now supports decoding XML documents in <code>core.encoding.xml</code>.
+    Encoding XML should just be done with formatted printing to a <code>dyn_str</code>.
+</p>
+
+<h2>Other items of note</h2>
+
+<h3>Short-circuiting logic operators</h3>
+<p>
+    Onyx has had the standard boolean operators <code>&&</code> and <code>||</code>
+    since its inception. But until this release, they did not behave how they do in
+    <em>all other programming languages</em> &mdash; they did not <a href="https://en.wikipedia.org/wiki/Short-circuit_evaluation">short-curcuit</a>.
+</p>
+<p>
+    That was fixed in this release. These operators now short-circuit as you would expect them to.
+</p>
+
+<h3>Fixed-sized arrays passed by value</h3>
+<p>
+    When trying to use fixed-sized arrays as "vector-like" types, there was
+    a lot of unexpected behavior when passing them to functions. This was because
+    fixed-sized arrays like <code>[4] i32</code> were passed by reference. In other
+    words, a pointer to the first element was implicitly passed so any changes made to
+    the array would be reflected in the original array.
+</p>
+<p> These semantics were copied from C and seemed logical for the time. But seeing how
+    Onyx has evolved in a different direction, this no longer makes sense, so it has
+    been changed &mdash; <strong>all fixed-sized arrays are now passed by value</strong>.
+    If you still want the pass by reference semantics, use a slice type instead (<code>[] T</code>).
+</p>
+
+<h3>Referencing branches in dependencies</h3>
+<p>
+    When specifying dependencies in <code>onyx-pkg.kdl</code>, you can now target a particular
+    branch from a repository, instead of a version. This will re-clone the branch ever time you
+    run <code>onyx pkg sync</code>, which is useful when testing a package you are developing.
+</p>
+
+<pre class="hljs"><code class="language-kdl">dependencies {
+    some-package branch="feature-branch" git="https://github.com/user/repo"
+}
+</code></pre>
+
+<h2>Goals for 0.1.14</h2>
+<p>
+    My primary focus for 0.1.14 will be to refactor the entire codebase of the compiler to
+    separate out the CLI from the compiler internals. The compiler internals will be available
+    as a standard dynamic library and header file, so they can be embedded into interesting places.
+    The CLI will then be rewritten to use these compiler internals.
+</p>
+<p>
+    While in this process, I may extend the capabilities of compiler extensions with more hooks and
+    program introspection. But, I have not yet designed what that system will look like, so that may
+    be on hold until 0.1.15 or later.
+</p>
+
+<h2>Updating</h2>
+<p>
+    To update to the newest version of Onyx simply use the same install script found on the homepage.
+    It will automatically detect your previous install and will override it with the new version.
+</p>
+<pre class="hljs"><code class="language-sh">$ sh <(curl https://get.onyxlang.io -sSfL)
+</code></pre>
+<p>
+    You can also run <code>onyx self-upgrade</code> if you are on MacOS or Linux!
+</p>
+<p>
+    Happy programming!
+</p>
+
+
+<h2>Full Changelog</h2>
+<div class="container">
+    <h3>Additions</h3>
+    <ul>
+        <li>Unwrap operator, <code>x!</code>.</li>
+        <ul>
+            <li>Similar to try operator (<code>x?</code>), but panics if value is not present.</li>
+        </ul>
+        <li>"Field update" syntax. A shorthand to change a field of a structure.</li>
+        <ul>
+            <li><code>.{ ..old_value, field = new_value }</code></li>
+        </ul>
+        <li><code>onyx watch</code> now works on MacOS.</li>
+        <li><code>onyx run-watch</code> to automatically re-run the program on changes.</li>
+        <li><code>#wasm_section</code> directive to add custom sections to the WASM binary.</li>
+        <li>Custom commands per project</li>
+        <ul>
+            <li>Installed in a <code>.onyx</code> directory</li>
+        </ul>
+        <li><code>onyx pkg build</code> can now run shell commands and multi-stage builds.</li>
+        <li><code>Stalled</code> compiler hook to allow for code injection when the compiler stalls.</li>
+        <li><code>Slice.map</code></li>
+        <li><code>Slice.map_inplace</code></li>
+        <li><code>Slice.fold1</code></li>
+        <li><code>Slice.get_opt</code></li>
+        <li><code>Iterator.from</code></li>
+        <li><code>iter.group_by</code></li>
+        <li><code>core.alloc.debug</code></li>
+        <li><code>core.os.args</code></li>
+        <li><code>core.crypto.hmac</code></li>
+        <li><code>core.crypto.keys</code></li>
+        <li><code>core.encoding.json.Value.as_entry_array</code></li>
+        <li><code>core.encoding.base64 { encode_url, decode_url }</code></li>
+        <li><code>core.encoding.xml</code></li>
+    </ul>
+
+    <h3>Changes</h3>
+    <ul>
+        <li>Capture/closure syntax is now <code>(params) use (captures) ...</code>.</li>
+        <ul>
+            <li><code>(x: i32) use (variable) -> str { ... }</code></li>
+            <li><code>(x) use (variable) => { ... }</code></li>
+        </ul>
+        <li><code>&&</code> and <code>||</code> now short-circuit.</li>
+        <li>Fixed-sized arrays (<code>[N] T</code>) are now passed by value.</li>
+        <li>The size of the tag field for unions is now dependent on the number of variants.</li>
+        <li>Parsing structs no longer sometimes needs <code>#type</code>.</li>
+        <li>Renamed <code>core.alloc.memdebug</code> to <code>core.alloc.memwatch</code>.</li>
+    </ul>
+
+    <h3>Bugfixes</h3>
+    <ul>
+        <li>Many, many random bugs.</li>
+    </ul>
+</div>

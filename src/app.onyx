@@ -5,7 +5,7 @@ use nimbus {*}
 use core.encoding.json
 
 runtime.vars.Enable_Heap_Debug :: true
-runtime.vars.Debug :: true
+// runtime.vars.Debug :: true
 // runtime.vars.CGI_MODE :: true
 
 reg: otmp.TemplateRegistry

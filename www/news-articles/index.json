@@ -1,5 +1,11 @@
 [
     {
+        "name": "Beta Release 0.1.13",
+        "path": "release-0.1.13",
+        "date": "8th November 2024",
+        "description": "Its been nearly 6 months since a release of Onyx &mdash; which is way too long! I've been putting off releasing this version until I felt there were enough changes to justify a new release. Now there are way too many little changes made over these past months from using Onyx, and it is due time to push them out to everyone!"
+    },
+    {
         "name": "Beta Release 0.1.12",
         "path": "release-0.1.12",
         "date": "19th May 2024",

@@ -7,80 +7,80 @@ use core {
 }
 
 Package :: struct {
-    url, name, description: str;
+    url, name, description: str
 }
 
 Example :: struct {
-    title, name, description, author, html: str;
-    tags: [] str;
+    title, name, description, author, html: str
+    tags: [] str
 }
 
-core_packages: [] Package;
-third_party_packages: [] Package;
+core_packages: [] Package
+third_party_packages: [] Package
 
-examples: Cached_Resource([] Example);
+examples: Cached_Resource([] Example)
 
 
 
 load_library_list :: () {
     os.get_contents("www/packages/core_packages.json")
-    |> json.decode_into(&core_packages);
+    |> json.decode_into(&core_packages)
 
-    Slice.sort(core_packages, (a, b) => string.compare(a.name, b.name));
+    Slice.sort(core_packages, (a, b) => string.compare(a.name, b.name))
 
     os.get_contents("www/packages/third_party_packages.json")
-    |> json.decode_into(&third_party_packages);
+    |> json.decode_into(&third_party_packages)
 
-    Slice.sort(third_party_packages, (a, b) => string.compare(a.name, b.name));
+    Slice.sort(third_party_packages, (a, b) => string.compare(a.name, b.name))
 }
 
 load_examples :: () -> ? [] Example {
     #context_scope {
-        context.allocator = alloc.heap_allocator;
+        context.allocator = alloc.heap_allocator
 
-        examples: struct { list: [..] Example };
+        examples: struct { list: [..] Example }
 
         os.get_contents("www/examples/index.json")
-        |> json.decode_into(&examples);
+        |> json.decode_into(&examples)
 
         for &example in examples.list {
-            code_path := os.path_join("www/examples", tprintf("{}.html", example.name));
-            example.html = os.get_contents(code_path);
+            code_path := os.path_join("www/examples", tprintf("{}.html", example.name))
+            example.html = os.get_contents(code_path)
         }
 
-        return examples.list;
+        return examples.list
     }
 }
 
 delete_examples :: (exs: &[] Example) do #context_scope {
-    context.allocator = alloc.heap_allocator;
+    context.allocator = alloc.heap_allocator
 
     for &ex in *exs {
-        delete(&ex.html);
+        delete(&ex.html)
     }
 
-    delete(exs);
+    delete(exs)
 }
 
 
 Article :: struct { name, description, path, date: str }
-news_articles: Cached_Resource([] Article);
+news_articles: Cached_Resource([] Article)
 
 fetch_articles :: () -> ? [] Article {
-    article_file := os.get_contents("www/news-articles/index.json");
-    article_index, json_err := json.decode_with_error(article_file);
+    article_file := os.get_contents("www/news-articles/index.json")
+    article_index, json_err := json.decode_with_error(article_file)
     if json_err->has_error() {
-        return .{};
+        return .{}
     }
 
-    articles: [] Article;
+    articles: [] Article
     #context_scope {
-        context.allocator = alloc.heap_allocator;
-        json.as_any(article_index.root, &articles);
+        context.allocator = alloc.heap_allocator
+        json.as_any(article_index.root, &articles)
     }
-    return articles;
+    return articles
 }
 
 release_articles :: (articles: &[] Article) {
-    delete(articles, allocator=alloc.heap_allocator);
+    delete(articles, allocator=alloc.heap_allocator)
 }

@@ -1,6 +1,4 @@
-FROM onyx:alpine
-
-# RUN apt install --yes git
+FROM onyxlanguage/onyx:nightly-alpine AS build
 
 WORKDIR /app
 
@@ -10,9 +8,13 @@ RUN onyx pkg sync
 COPY src src
 COPY build.onyx build.onyx
 RUN onyx pkg build default
-RUN rm -r src
+
+FROM onyxlanguage/onyx:nightly-alpine
+
+WORKDIR /app
 
 COPY www www
+COPY --from=build /app/out.wasm /app/out.wasm
 
 ENV SERVER_PORT=8080
 EXPOSE 8080
