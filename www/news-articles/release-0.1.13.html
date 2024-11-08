@@ -82,7 +82,7 @@
 <p>
     Now, these custom commands can be installed globally in the <code>ONYX_PATH/tools</code> directory, or per project
     in the <code>./.onyx</code> directory. These commands always come in the form of <code>.wasm</code> files that
-    accepts the remaining command-line arguments. In other words,
+    accept the remaining command-line arguments. In other words,
 </p>
 
 <pre class="hljs"><code class="language-shell">$ onyx tool-name arg1 arg2
@@ -94,9 +94,9 @@
 </code></pre>
 
 <p>
-    Custom commands get their description in <code>onyx help</code> by reading a custom section in the WASM binary
-    called <code>onyx-command-description</code>. If you are creating a custom command and would like to set this,
-    you can use the <code>#wasm_section</code> directive like so:
+    Custom commands now show up in <code>onyx help</code>. They get their description by reading a custom section
+    in the WASM binary called <code>onyx-command-description</code>. If you are creating a custom command and would
+    like to set this, you can use the <code>#wasm_section</code> directive like so:
 </p>
 
 <pre class="hljs"><code class="language-onyx">#wasm_section "onyx-command-description" "A concise description here."
@@ -104,7 +104,7 @@
 
 <h2>New Core APIs</h2>
 <p>
-    Onyx how has support for some common interchange formats and functionality used in web and server development.
+    Onyx now has support for some common interchange formats and functionality used in web and server development.
 </p>
 
 <h3>Protobufs</h3>
@@ -129,7 +129,7 @@
 
 <h3>Changes to <code>#load</code> directive</h3>
 <p>
-    When loading more files into the current compilation, the <code>#load</code> directive used to behave in an
+    When loading more files into the current compilation, the <code>#load</code> directive behaved in an
     arguably strange way. It had a <em>global</em> search path, that you could append directories to using <code>#load_path</code>
     or <code>-I dir</code>. Unless you explicitly prefixed the file path with <code>./</code>, it would search
     through all known paths to find a match. When it did not find a match, it would default to loading the file
