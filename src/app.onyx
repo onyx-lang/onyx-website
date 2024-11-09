@@ -49,6 +49,19 @@ main :: () {
         n->add(logger(style=.V2))
     }
 
+    n->add(c => {
+        Install_Script :: "https://raw.githubusercontent.com/onyx-lang/onyx/master/bin/install.sh"
+
+        c->header("Host")->with([host] {
+            if host == "get.onyxlang.io" || host == "get.onyxlang.dev" {
+                c->redirect(302, Install_Script)
+                return
+            }
+        })
+
+        c->next()
+    })
+
     n->add(static("/static/", "./www/static/"))
 
     #if #defined(runtime.vars.Debug) {
