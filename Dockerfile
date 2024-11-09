@@ -1,4 +1,4 @@
-FROM onyxlanguage/onyx:nightly-alpine AS build
+FROM onyxlanguage/onyx:nightly-ovm-alpine AS build
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY src src
 COPY build.onyx build.onyx
 RUN onyx pkg build default
 
-FROM onyxlanguage/onyx:nightly-alpine
+FROM onyxlanguage/onyx:nightly-ovm-alpine
 
 WORKDIR /app
 
