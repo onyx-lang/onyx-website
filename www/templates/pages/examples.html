@@ -14,19 +14,18 @@ Onyx Examples
 <div class="example-container">
     {{ foreach ex in examples }}
     <div class="container card">
-        <div style="position: relative">
-            <a href="/examples/{% ex.name %}" style="position: absolute; inset: 0">
-            </a>
+        <div class="example-card">
+            <a class="example-card-link" href="/examples/{% ex.name %}" aria-label="{% ex.title %}"></a>
 
             <h3>{% ex.title %}</h3>
-            
-            <div>
+
+            <div class="example-tags">
                 {{ foreach tag in ex.tags }}
                 <span class="example-tag">{% tag %}</span>
                 {{ endforeach }}
             </div>
 
-            <div style="margin: 8px 0;">{% ex.description %}</div>
+            <p class="example-description">{% ex.description %}</p>
         </div>
     </div>
     {{ endforeach }}

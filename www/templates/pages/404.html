@@ -1,9 +1,13 @@
-<html>
-    <body>
-        <div style="color: red; text-align: center; margin-top: 128px;">
-            <h1>404 - Page not found :(</h1>
-            <p>(This is probably not your fault...)</p>
-        </div>
-    </body>
-</html>
+{{ block "title" }}
+Page not found
+{{ endblock }}
 
+{{ block "page_content" }}
+<div class="container header not-found">
+    <h1>404 - Page not found :(</h1>
+    <p>(This is probably not your fault...)</p>
+    <p><a class="link-button" href="/">Back to the homepage</a></p>
+</div>
+{{ endblock }}
+
+{{ extends "pages/normal_page" }}

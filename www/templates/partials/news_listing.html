@@ -1,16 +1,15 @@
 {{ foreach article in articles }}
-<div class="container">
-    <div style="padding-top: 32px; padding-bottom: 32px;">
-        <h2 style="float: left; margin: 0; margin-bottom: 8px;">
+<div class="container news-item">
+    <div class="news-item-header">
+        <h2>
             <a href="/news/{% article.path %}">
                 <span>{% $article.name %}</span>
             </a>
         </h2>
-        <p style="float: right; line-height: 1.5rem;"><em>{% article.date %}</em></p>
-        <br>
-        <p style="clear:both;">
-        {% article.description %}
-        </p>
+        <p class="news-item-date"><em>{% article.date %}</em></p>
     </div>
+    <p class="news-item-summary">
+        {% article.description %}
+    </p>
 </div>
 {{ endforeach }}

@@ -1,4 +1,4 @@
 #load "./lib/packages"
 
-#load_all "./src"
+#load "./src"
 
