@@ -1,12 +1,12 @@
 {{block "title"}}Onyx Package Manager{{endblock}}
 
 {{ let navbar_page = "docs" }}
+{{ let docs_page = "packages" }}
 
-{{ block "page_content" }}
+{{ block "docs_content" }}
 
 <div class="container header">
     <h1>Onyx Package Manager</h1>
-    <div>⇦ <a href="/docs">Back to the docs</a></div>
 </div>
 
 <div class="container">
@@ -198,4 +198,4 @@ package package_name_here
 
 {{ endblock }}
 
-{{ extends "pages/normal_page" }}
+{{ extends "pages/docs_page" }}

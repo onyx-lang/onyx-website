@@ -7,7 +7,7 @@ use core.encoding.json
 
 @route.{.GET, "/"}
 (c: Context) {
-    articles := iter.as_iter(news_articles->get() ?? .[])->take(2)->collect()
+    articles := Iterator.from(news_articles->get() ?? .[])->take(2)->collect()
     c->render("pages/homepage", &.{ articles = articles })
 }
 
@@ -68,7 +68,7 @@ use core.encoding.json
 @route.{.GET, "/news/:article"}
 (c: Context) {
     article_path := c->param("article") ?? ""
-    article := array.first(news_articles->get() ?? .[], [n](n.path == article_path))
+    article := Array.first(news_articles->get() ?? .[], [n](n.path == article_path))
     if !article {
         c->render("pages/404", null, status=404)
         return

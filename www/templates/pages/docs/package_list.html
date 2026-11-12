@@ -1,12 +1,12 @@
 {{block "title"}}Onyx Package Manager{{endblock}}
 
 {{ let navbar_page = "docs" }}
+{{ let docs_page = "package-list" }}
 
-{{ block "page_content" }}
+{{ block "docs_content" }}
 
 <div class="container header">
     <h1>Package Listing</h1>
-    <div>⇦ <a href="/docs">Back to the docs</a></div>
 
     <p>
         This list serves as the official package index for the time being.
@@ -84,4 +84,4 @@
 
 {{ endblock }}
 
-{{ extends "pages/normal_page" }}
+{{ extends "pages/docs_page" }}

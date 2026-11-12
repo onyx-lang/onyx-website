@@ -52,12 +52,12 @@ main :: () {
     n->add(c => {
         Install_Script :: "https://raw.githubusercontent.com/onyx-lang/onyx/master/bin/install.sh"
 
-        c->header("Host")->with([host] {
+        if c->header("Host") as host {
             if host == "get.onyxlang.io" || host == "get.onyxlang.dev" {
                 c->redirect(302, Install_Script)
                 return
             }
-        })
+        }
 
         c->next()
     })

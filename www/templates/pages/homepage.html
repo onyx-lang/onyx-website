@@ -195,6 +195,7 @@ main :: () {
 }</code></pre>
 </div>
 </div>
+</div>
 
 <div class="container">
     <div class="title">
@@ -230,9 +231,6 @@ main :: () {
 </div>
 {% partial "partials/news_listing" %}
 
-</div>
-</div>
-
 <script>
 document.querySelector("#install-command .copy-button").addEventListener("click", e => {
     navigator.clipboard.writeText("sh <(curl https://get.onyxlang.io -sSfL)").then(_ => {
@@ -257,6 +255,15 @@ for(var PERLIN_YWRAPB=4,PERLIN_YWRAP=1<<PERLIN_YWRAPB,PERLIN_ZWRAPB=8,PERLIN_ZWR
     let columns = 0;
     let rows = 0;
 
+    let bg = [24, 24, 27];
+
+    function readBackground() {
+        let parsed = getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g);
+        if (parsed && parsed.length >= 3) {
+            bg = parsed.slice(0, 3).map(Number);
+        }
+    }
+
     function resize() {
         let rect = canvas.getBoundingClientRect();
 
@@ -265,24 +272,23 @@ for(var PERLIN_YWRAPB=4,PERLIN_YWRAP=1<<PERLIN_YWRAPB,PERLIN_ZWRAPB=8,PERLIN_ZWR
 
         canvas.width = rect.width;
         canvas.height = rect.height;
-        ctx.fillStyle = '#0b0b12';
+        readBackground();
+        ctx.fillStyle = `rgb(${bg[0]}, ${bg[1]}, ${bg[2]})`;
         ctx.fillRect(0, 0, rect.width, rect.height);
     }
 
     resize();
     window.addEventListener("resize", resize);
+    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", resize);
 
     function drawHex(x, y, color) {
         ctx.fillStyle = color;
         ctx.beginPath();
+        let radius = 32;
+        let ox = y % 2 == 0 ? 23.5 : 0;
         for (let i = 0; i < 6; i++) {
-            let xx = Math.floor(x * 47 + 24 * Math.cos(i * Math.PI / 3 + Math.PI / 6));
-            let yy = Math.floor(y * 42 + 24 * Math.sin(i * Math.PI / 3 + Math.PI / 6));
-
-            if (y % 2 == 0) {
-                xx += 24;
-            }
-
+            let xx = x * 47 + ox + radius * Math.cos(i * Math.PI / 3 + Math.PI / 6);
+            let yy = y * 42 + radius * Math.sin(i * Math.PI / 3 + Math.PI / 6);
             if (i == 0) ctx.moveTo(xx, yy);
             else        ctx.lineTo(xx, yy);
         }
@@ -292,18 +298,23 @@ for(var PERLIN_YWRAPB=4,PERLIN_YWRAP=1<<PERLIN_YWRAPB,PERLIN_ZWRAPB=8,PERLIN_ZWR
 
     let noise = new Noise();
 
-    let even = true;
     function draw() {
-        even = !even;
+        ctx.fillStyle = `rgb(${bg[0] | 0}, ${bg[1] | 0}, ${bg[2] | 0})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        let dark = (bg[0] + bg[1] + bg[2]) / 3 < 128;
         for (let y = 0; y < rows; y++) {
             for (let x = 0; x < columns; x++) {
-                if (even == ((x + y) % 2 == 0)) continue;
-
                 if (y > 11 && (y + x % 11 + x % 3) - 16 > x % 6) continue;
                 let v = noise.get(x / 10, y / 10, Date.now() / 2500) * 3 - 1.5;
                 let r = 12 * (1 - v) + 60 * v;
                 r = Math.max(12, Math.min(60, r));
-                drawHex(x, y, `rgba(${r}, ${r}, ${r * 1.5}, 1)`);
+                let t = (r - 12) / 48;
+                if (t < 0.08) continue;
+                let R = bg[0] + t * (dark ? 48 : -71);
+                let G = bg[1] + t * (dark ? 48 : -71);
+                let B = bg[2] + t * (dark ? 72 : -44);
+                drawHex(x, y, `rgb(${R | 0}, ${G | 0}, ${B | 0})`);
             }
         }
 

@@ -26,12 +26,12 @@ load_library_list :: () {
     os.get_contents("www/packages/core_packages.json")
     |> json.decode_into(&core_packages)
 
-    Slice.sort(core_packages, (a, b) => string.compare(a.name, b.name))
+    Slice.sort(core_packages, (a, b) => str.compare(a.name, b.name))
 
     os.get_contents("www/packages/third_party_packages.json")
     |> json.decode_into(&third_party_packages)
 
-    Slice.sort(third_party_packages, (a, b) => string.compare(a.name, b.name))
+    Slice.sort(third_party_packages, (a, b) => str.compare(a.name, b.name))
 }
 
 load_examples :: () -> ? [] Example {
@@ -44,7 +44,7 @@ load_examples :: () -> ? [] Example {
         |> json.decode_into(&examples)
 
         for &example in examples.list {
-            code_path := os.path_join("www/examples", tprintf("{}.html", example.name))
+            code_path := os.Path.join("www/examples", tprintf("{}.html", example.name))
             example.html = os.get_contents(code_path)
         }
 
@@ -66,19 +66,15 @@ delete_examples :: (exs: &[] Example) do #context_scope {
 Article :: struct { name, description, path, date: str }
 news_articles: Cached_Resource([] Article)
 
-fetch_articles :: () -> ? [] Article {
+fetch_articles :: () -> (articles: ? [] Article) {
     article_file := os.get_contents("www/news-articles/index.json")
-    article_index, json_err := json.decode_with_error(article_file)
-    if json_err->has_error() {
-        return .{}
+    if json.decode(article_file).Ok as a {
+        #context_scope {
+            context.allocator = alloc.heap_allocator
+            json.as_any(a.root, &articles)
+        }
     }
-
-    articles: [] Article
-    #context_scope {
-        context.allocator = alloc.heap_allocator
-        json.as_any(article_index.root, &articles)
-    }
-    return articles
+    return
 }
 
 release_articles :: (articles: &[] Article) {

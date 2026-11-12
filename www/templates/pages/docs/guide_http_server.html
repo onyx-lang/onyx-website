@@ -1,12 +1,12 @@
 {{block "title"}}HTTP Server in Onyx{{endblock}}
 
 {{ let navbar_page = "docs" }}
+{{ let docs_page = "http-server" }}
 
-{{ block "page_content" }}
+{{ block "docs_content" }}
 
 <div class="container header">
     <h1>Guide - HTTP Server</h1>
-    <div>⇦ <a href="/docs/guides">Back to the guides</a></div>
 
     <p>
         This guide walks you through all steps of setting up an HTTP server Onyx,
@@ -291,4 +291,4 @@ package: &lt;your-namespace&gt;/&lt;your-package-name&gt;</code></pre>
     
 {{ endblock }}
 
-{{ extends "pages/normal_page" }}
+{{ extends "pages/docs_page" }}

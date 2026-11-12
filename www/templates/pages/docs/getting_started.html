@@ -3,12 +3,12 @@
 {{ endblock }}
 
 {{ let navbar_page = "docs" }}
+{{ let docs_page = "getting-started" }}
 
-{{ block "page_content" }}
+{{ block "docs_content" }}
 
 <div class="container header">
     <h1>Getting Started</h1>
-    <div>⇦ <a href="/docs">Back to the docs</a></div>
 </div>
 
 <div class="container">
@@ -33,7 +33,7 @@
 
     <p>
         <em>This is an optional step, but does set you up to use packages in your project.</em>
-        <em>Learn more about the package manager <a href="/docs/package">here</a>.</em>
+        <em>Learn more about the package manager <a href="/docs/packages">here</a>.</em>
     </p>
 
     <p>Create a new directory and setup a new project. Optionally project values when prompted.</p>
@@ -83,4 +83,4 @@ Hello, Onyx!</code></pre>
 
 {{ endblock }}
 
-{{ extends "pages/normal_page" }}
+{{ extends "pages/docs_page" }}

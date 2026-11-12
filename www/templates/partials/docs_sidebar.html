@@ -1,0 +1,24 @@
+<aside class="docs-sidebar">
+    <input type="checkbox" id="docs-nav-toggle" class="docs-nav-toggle">
+    <label class="docs-nav-toggle-label" for="docs-nav-toggle">Contents</label>
+    <nav class="docs-nav" aria-label="Documentation">
+            <a href="/docs" {{ if docs_page == "overview" }} data-active {{ endif }}>Overview</a>
+
+            <p class="docs-nav-label">Getting Started</p>
+            <a href="/docs/getting_started" {{ if docs_page == "getting-started" }} data-active {{ endif }}>Getting Started</a>
+            <a href="/docs/install" {{ if docs_page == "install" }} data-active {{ endif }}>Install</a>
+            <a href="/docs/setup" {{ if docs_page == "setup" }} data-active {{ endif }}>Environment Setup</a>
+
+            <p class="docs-nav-label">Learn</p>
+            <a href="/docs/design" {{ if docs_page == "design" }} data-active {{ endif }}>Design</a>
+            <a href="/docs/guides" {{ if docs_page == "guides" }} data-active {{ endif }}>Guides</a>
+            <a class="docs-nav-sub" href="/docs/guides/http-server" {{ if docs_page == "http-server" }} data-active {{ endif }}>HTTP Server</a>
+            <a class="docs-nav-sub" href="/docs/guides/raylib" {{ if docs_page == "raylib" }} data-active {{ endif }}>Raylib</a>
+            <a href="https://docs.onyxlang.io/book">Language Reference</a>
+
+            <p class="docs-nav-label">Packages</p>
+            <a href="/docs/packages" {{ if docs_page == "packages" }} data-active {{ endif }}>Package Manager</a>
+            <a href="/docs/packages/list" {{ if docs_page == "package-list" }} data-active {{ endif }}>External Packages</a>
+            <a href="https://docs.onyxlang.io/packages/core">Core Packages</a>
+        </nav>
+</aside>
