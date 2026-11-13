@@ -1,91 +1,107 @@
-{{ block "title" }}
-    Onyx Programming Language
-{{ endblock }}
-
-{{ let navbar_page = "home" }}
-{{ let navbar_logo_hidden = true }}
-
-{{ block "outer_page_content" }}
+{{ block "title" }} Onyx Programming Language {{ endblock }} {{ let navbar_page
+= "home" }} {{ let navbar_logo_hidden = true }} {{ block "outer_page_content" }}
 
 <div id="homepage-header">
-    <canvas id="animation"></canvas>
+  <canvas id="animation"></canvas>
 
-    <div class="container header">
-        <div class="hero-intro">
-            <svg viewBox="0 0 64 16" version="1.1" alt="Onyx Logo" id="homepage-logo">
-                {% partial "partials/logo_svg" %}
-            </svg>
+  <div class="container header">
+    <div class="hero-intro">
+      <svg viewBox="0 0 64 16" version="1.1" alt="Onyx Logo" id="homepage-logo">
+        {% partial "partials/logo_svg" %}
+      </svg>
 
-            <div class="hero-copy">
-                <h1>The <b>Onyx</b> Programming Language</h1>
-                <p class="lede">An efficient, procedural, and pragmatic programming language</p>
-            </div>
-        </div>
-
-        <div class="homepage-card-container">
-            <div>
-                <h2>Efficient</h2>
-                <br />
-                <p>The Onyx compiler is <em>fast</em>. Turnaround time is non-existent using Onyx's custom WebAssembly code generator.</p>
-            </div>
-            <div>
-                <h2>Procedural</h2>
-                <br />
-                <p>Onyx uses a simple programming and memory model. It is familiar to anyone with any programming experience.</p>
-            </div>
-            <div>
-                <h2>Pragmatic</h2>
-                <br />
-                <p>Onyx exists to solve real problems. It provides a wide-range of orthogonal language features to fit any task.</p>
-            </div>
-        </div>
-
-        <p class="hero-note">Read about <a href="/docs/design">design goals</a> of Onyx.</p>
+      <div class="hero-copy">
+        <h1>The <b>Onyx</b> Programming Language</h1>
+        <p class="lede">
+          An efficient, procedural, and pragmatic programming language
+        </p>
+      </div>
     </div>
+
+    <div class="homepage-card-container">
+      <div>
+        <h2>Efficient</h2>
+        <br />
+        <p>
+          The Onyx compiler is <em>fast</em>. Turnaround time is non-existent
+          using Onyx's custom WebAssembly code generator.
+        </p>
+      </div>
+      <div>
+        <h2>Procedural</h2>
+        <br />
+        <p>
+          Onyx uses a simple programming and memory model. It is familiar to
+          anyone with any programming experience.
+        </p>
+      </div>
+      <div>
+        <h2>Pragmatic</h2>
+        <br />
+        <p>
+          Onyx exists to solve real problems. It provides a wide-range of
+          orthogonal language features to fit any task.
+        </p>
+      </div>
+    </div>
+
+    <p class="hero-note">
+      Read about <a href="/docs/design">design goals</a> of Onyx.
+    </p>
+  </div>
 </div>
 
-{{ endblock }}
-
-{{ block "page_content" }}
+{{ endblock }} {{ block "page_content" }}
 <div class="container">
-    <div class="title">
-        <h2>Install Onyx</h2>
-    </div>
-    
-    <p>Run the following command on your Linux or MacOS system to install the latest version of Onyx.</p>
-
-    <div class="container card" id="install-card">
-        <div class="install-line">
-            <div id="install-command">
-                <span class="install-text"><span class="prompt">$</span> <span class="cmd">sh</span> &lt;(curl https://get.onyxlang.io -sSfL)</span>
-                <span class="copy-button">Copy</span>
-            </div>
-        </div>
-    </div>
-
-    <p>Read the <a href="/docs/install">Installation Guide</a> for more details.</p>
-</div>
-
-
-
-<div class="container">
-    <div class="title">
-        <h2>Language Features</h2>
-    </div>
+  <div class="title">
+    <h2>Install Onyx</h2>
+  </div>
 
   <p>
-    For full language documentation and reference <a href="https://docs.onyxlang.io">see the Onyx Book</a>.
+    Run the following command on your Linux or MacOS system to install the
+    latest version of Onyx.
   </p>
 
-<div class="scrollport">
-<div>
+  <div class="container card" id="install-card">
+    <div class="install-line">
+      <div id="install-command">
+        <span class="install-text"
+          ><span class="prompt">$</span> <span class="cmd">sh</span> &lt;(curl
+          https://get.onyxlang.io -sSfL)</span
+        >
+        <span class="copy-button">Copy</span>
+      </div>
+    </div>
+  </div>
+
+  <p>
+    Read the <a href="/docs/install">Installation Guide</a> for more details.
+  </p>
+</div>
+
+<div class="container">
+  <div class="title">
+    <h2>Language Features</h2>
+  </div>
+
+  <p>
+    For full language documentation and reference
+    <a href="https://docs.onyxlang.io">see the Onyx Book</a>.
+  </p>
+
+  <div class="scrollport">
     <div>
+      <div>
         <h2>Modern Syntax</h2>
         <br />
-        <p>Onyx uses a modernized C-like syntax, similar to Jai or Odin. Onyx is a procedural language, but does allow for functional-inspired syntax using the pipe operator.
-    </div>
+        <p>
+          Onyx uses a modernized C-like syntax, similar to Jai or Odin. Onyx is
+          a procedural language, but does allow for functional-inspired syntax
+          using the pipe operator.
+        </p>
+      </div>
 
-    <pre class="hljs"><code class="language-onyx">use core { printf, iter }
+      <pre class="hljs"><code class="language-onyx">use core { printf, iter }
 
 main :: () {
     for i in 1 .. 10 {
@@ -95,21 +111,23 @@ main :: () {
 }
 
 factorial :: (n: i32) -> i32 {
-    return iter.as_iter(1 .. n)
-        |> iter.fold(1, (x, y) => x * y)
+    return Iterator.from(1 .. n)
+        |> Iterator.fold(1, (x, y) => x * y)
 }
 </code></pre>
-
-</div>
-
-<div>
-    <div>
-        <h2>Type Safety</h2>
-        <br />
-        <p>Onyx is <b>strictly</b> type-checked. The type-inference in Onyx allows for many types to be omitted with out sacrificing safety.</p>
     </div>
 
-    <pre class="hljs"><code class="language-onyx">use core { printf }
+    <div>
+      <div>
+        <h2>Type Safety</h2>
+        <br />
+        <p>
+          Onyx is <b>strictly</b> type-checked. The type-inference in Onyx
+          allows for many types to be omitted with out sacrificing safety.
+        </p>
+      </div>
+
+      <pre class="hljs"><code class="language-onyx">use core { printf }
 
 main :: () {
     // Inferred variable type
@@ -123,64 +141,68 @@ main :: () {
     printf("Value: {}.\n", change_value(x))
 }
 </code></pre>
-</div>
+    </div>
 
-<div>
     <div>
+      <div>
         <h2>Fast Compilation</h2>
         <br />
-        <p>Onyx's compiler is written entirely in C and features a incredibly fast compilation. The server for this site was compiled in <b>just 47 milliseconds</b>.</p>
-    </div>
+        <p>
+          Onyx's compiler is written entirely in C and features a incredibly
+          fast compilation. The server for this site was compiled in
+          <b>just 67 milliseconds</b>.
+        </p>
+      </div>
 
-    <pre class="hljs"><code class="language-sh">$ onyx build -V build.onyx
-
-File search path:
-	/home/brendan/.onyx
-	.
-
-Type table size: 151092 bytes.
-Foreign blocks size: 8 bytes.
-Tagged procedure size: 840 bytes.
-Tagged global size: 8 bytes.
+      <pre class="hljs"><code class="language-sh">$ onyx build -V build.onyx
 
 Statistics:
-    Time taken: 47.000000 ms
-    Processed 22144 lines
-    Processed 115240 tokens 
-
-Outputting to WASM file:   site.wasm</code></pre>
-</div>
-
-<div>
-    <div>
-        <h2>WebAssembly</h2>
-        <br />
-        <p>Onyx compiles solely to <a href="https://webassembly.org">WebAssembly</a>. You can use a builtin WebAssembly runtime using <code>onyx run</code>, or compile to WASM and run using a WebAssembly runner, like Wasmer or Wasmtime.</p>
+    Time taken: 67.000000 ms
+    Processed 32737 lines (488611.937500 lines/second).
+    Processed 192781 tokens (2877328.250000 tokens/second).
+</code></pre>
     </div>
 
+    <div>
+      <div>
+        <h2>WebAssembly</h2>
+        <br />
+        <p>
+          Onyx compiles solely to
+          <a href="https://webassembly.org">WebAssembly</a>. You can use a
+          builtin WebAssembly runtime using <code>onyx run</code>, compile to
+          WASM and run using a WebAssembly runner, or even compile to a native
+          executable on Linux or MacOS.
+        </p>
+      </div>
 
-    <pre class="hljs"><code># Compile and run directly.
+      <pre class="hljs"><code># Compile and run directly.
 $ onyx run hello.onyx
 Hello, World!
 
-# This time target 'WASI'.
+# This time target 'WASI' and run using Wasmer.
 $ onyx build -r wasi -o hello.wasm hello.onyx
-
-# Run using Wasmer.
 $ wasmer run hello.wasm
 Hello, World!
+
+# Compile to a native executable.
+$ onyx build-exe -o hello hello.onyx
+$ ./hello
+Hello, World!
 </code></pre>
-
-</div>
-
-<div>
-    <div>
-        <h2>C-FFI</h2>
-        <br />
-        <p>Onyx features built-in support for linking to native C-libraries on Linux and MacOS.</p>
     </div>
 
-    <pre class="hljs"><code class="language-onyx">use core {*}
+    <div>
+      <div>
+        <h2>C-FFI</h2>
+        <br />
+        <p>
+          Onyx features built-in support for linking to native C-libraries on
+          Linux and MacOS.
+        </p>
+      </div>
+
+      <pre class="hljs"><code class="language-onyx">use core {*}
 
 // Using #dyncall dynamically loads
 // the library at runtime using dlopen().
@@ -193,136 +215,253 @@ main :: () {
 
     write(1, msg)
 }</code></pre>
-</div>
-</div>
+    </div>
+  </div>
 </div>
 
 <div class="container">
-    <div class="title">
-        <h2>Examples</h2>
-    </div>
-    <p>Learn more from complete examples on the <a href="/examples">Examples</a> page.</p>
+  <div class="title">
+    <h2>Examples</h2>
+  </div>
+  <p>
+    Learn more from complete examples on the
+    <a href="/examples">Examples</a> page.
+  </p>
 </div>
 
 <div class="container">
-    <div class="title">
-        <h2>Onyx Community</h2>
-    </div>
+  <div class="title">
+    <h2>Onyx Community</h2>
+  </div>
 
-    <p>
-        The Onyx programming language is on Discord! It is the place to chat about language
-        features, discuss problems you are having, and showcase your projects.
-    </p>
-    <p>
-        Onyx is an open source project so contributions from the community are welcome and encouraged!
-        The <code>onyx-lang/onyx</code> GitHub repository is the official source of Onyx.
-    </p>
+  <p>
+    The Onyx programming language is on Discord! It is the place to chat about
+    language features, discuss problems you are having, and showcase your
+    projects.
+  </p>
+  <p>
+    Onyx is an open source project so contributions from the community are
+    welcome and encouraged! The <code>onyx-lang/onyx</code> GitHub repository is
+    the official source of Onyx.
+  </p>
 
-    <div class="button-row">
-        <a href="https://discord.gg/bhuN36dqj7" class="link-button">Join Discord</a>
-        <a href="https://github.com/onyx-lang/onyx" class="link-button">Go to GitHub</a>
-    </div>
+  <div class="button-row">
+    <a href="https://discord.gg/bhuN36dqj7" class="link-button">Join Discord</a>
+    <a href="https://github.com/onyx-lang/onyx" class="link-button"
+      >Go to GitHub</a
+    >
+  </div>
 </div>
 
 <div class="container">
-    <div class="title">
-        <h2>Recent News</h2>
-    </div>
+  <div class="title">
+    <h2>Recent News</h2>
+  </div>
 </div>
 {% partial "partials/news_listing" %}
 
 <script>
-document.querySelector("#install-command .copy-button").addEventListener("click", e => {
-    navigator.clipboard.writeText("sh <(curl https://get.onyxlang.io -sSfL)").then(_ => {
-        e.target.innerHTML = "Copied!";
-        setTimeout(_ => { e.target.innerHTML="Copy" }, 5000);
+  document
+    .querySelector("#install-command .copy-button")
+    .addEventListener("click", (e) => {
+      navigator.clipboard
+        .writeText("sh <(curl https://get.onyxlang.io -sSfL)")
+        .then((_) => {
+          e.target.innerHTML = "Copied!";
+          setTimeout((_) => {
+            e.target.innerHTML = "Copy";
+          }, 5000);
+        });
     });
-})
 </script>
 
-{{endblock}}
-
-{{ block "scripts" }}
+{{endblock}} {{ block "scripts" }}
 <script>
-for(var PERLIN_YWRAPB=4,PERLIN_YWRAP=1<<PERLIN_YWRAPB,PERLIN_ZWRAPB=8,PERLIN_ZWRAP=1<<PERLIN_ZWRAPB,PERLIN_SIZE=4095,SINCOS_PRECISION=.5,SINCOS_LENGTH=Math.floor(360/SINCOS_PRECISION),sinLUT=new Array(SINCOS_LENGTH),cosLUT=new Array(SINCOS_LENGTH),DEG_TO_RAD=Math.PI/180,i=0;i<SINCOS_LENGTH;i++)sinLUT[i]=Math.sin(i*DEG_TO_RAD*SINCOS_PRECISION),cosLUT[i]=Math.cos(i*DEG_TO_RAD*SINCOS_PRECISION);var perlin_PI=SINCOS_LENGTH;perlin_PI>>=1;var Noise=function(){this.perlin_octaves=4,this.perlin_amp_falloff=.5,this.perlin=null};Noise.prototype={noiseSeed:function(r){var i=function(){var r,i,I=4294967296;return{setSeed:function(n){i=r=(null==n?Math.random()*I:n)>>>0},getSeed:function(){return r},rand:function(){return(i=(1664525*i+1013904223)%I)/I}}}();i.setSeed(r),this.perlin=new Array(PERLIN_SIZE+1);for(var I=0;I<PERLIN_SIZE+1;I++)this.perlin[I]=i.rand();return this},get:function(r,i,I){if(i=i||0,I=I||0,null==this.perlin){this.perlin=new Array(PERLIN_SIZE+1);for(var n=0;n<PERLIN_SIZE+1;n++)this.perlin[n]=Math.random()}r<0&&(r=-r),i<0&&(i=-i),I<0&&(I=-I);for(var E,t,_,e,N,P=Math.floor(r),R=Math.floor(i),S=Math.floor(I),o=r-P,L=i-R,l=I-S,a=0,s=.5,h=function(r){return.5*(1-cosLUT[Math.floor(r*perlin_PI)%SINCOS_LENGTH])},p=0;p<this.perlin_octaves;p++){var f=P+(R<<PERLIN_YWRAPB)+(S<<PERLIN_ZWRAPB);E=h(o),t=h(L),_=this.perlin[f&PERLIN_SIZE],_+=E*(this.perlin[f+1&PERLIN_SIZE]-_),e=this.perlin[f+PERLIN_YWRAP&PERLIN_SIZE],_+=t*((e+=E*(this.perlin[f+PERLIN_YWRAP+1&PERLIN_SIZE]-e))-_),f+=PERLIN_ZWRAP,e=this.perlin[f&PERLIN_SIZE],e+=E*(this.perlin[f+1&PERLIN_SIZE]-e),N=this.perlin[f+PERLIN_YWRAP&PERLIN_SIZE],e+=t*((N+=E*(this.perlin[f+PERLIN_YWRAP+1&PERLIN_SIZE]-N))-e),a+=(_+=h(l)*(e-_))*s,s*=this.perlin_amp_falloff,P<<=1,R<<=1,S<<=1,(o*=2)>=1&&(P++,o--),(L*=2)>=1&&(R++,L--),(l*=2)>=1&&(S++,l--)}return a}};
+  for (
+    var PERLIN_YWRAPB = 4,
+      PERLIN_YWRAP = 1 << PERLIN_YWRAPB,
+      PERLIN_ZWRAPB = 8,
+      PERLIN_ZWRAP = 1 << PERLIN_ZWRAPB,
+      PERLIN_SIZE = 4095,
+      SINCOS_PRECISION = 0.5,
+      SINCOS_LENGTH = Math.floor(360 / SINCOS_PRECISION),
+      sinLUT = new Array(SINCOS_LENGTH),
+      cosLUT = new Array(SINCOS_LENGTH),
+      DEG_TO_RAD = Math.PI / 180,
+      i = 0;
+    i < SINCOS_LENGTH;
+    i++
+  )
+    ((sinLUT[i] = Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION)),
+      (cosLUT[i] = Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION)));
+  var perlin_PI = SINCOS_LENGTH;
+  perlin_PI >>= 1;
+  var Noise = function () {
+    ((this.perlin_octaves = 4),
+      (this.perlin_amp_falloff = 0.5),
+      (this.perlin = null));
+  };
+  Noise.prototype = {
+    noiseSeed: function (r) {
+      var i = (function () {
+        var r,
+          i,
+          I = 4294967296;
+        return {
+          setSeed: function (n) {
+            i = r = (null == n ? Math.random() * I : n) >>> 0;
+          },
+          getSeed: function () {
+            return r;
+          },
+          rand: function () {
+            return (i = (1664525 * i + 1013904223) % I) / I;
+          },
+        };
+      })();
+      (i.setSeed(r), (this.perlin = new Array(PERLIN_SIZE + 1)));
+      for (var I = 0; I < PERLIN_SIZE + 1; I++) this.perlin[I] = i.rand();
+      return this;
+    },
+    get: function (r, i, I) {
+      if (((i = i || 0), (I = I || 0), null == this.perlin)) {
+        this.perlin = new Array(PERLIN_SIZE + 1);
+        for (var n = 0; n < PERLIN_SIZE + 1; n++)
+          this.perlin[n] = Math.random();
+      }
+      (r < 0 && (r = -r), i < 0 && (i = -i), I < 0 && (I = -I));
+      for (
+        var E,
+          t,
+          _,
+          e,
+          N,
+          P = Math.floor(r),
+          R = Math.floor(i),
+          S = Math.floor(I),
+          o = r - P,
+          L = i - R,
+          l = I - S,
+          a = 0,
+          s = 0.5,
+          h = function (r) {
+            return (
+              0.5 * (1 - cosLUT[Math.floor(r * perlin_PI) % SINCOS_LENGTH])
+            );
+          },
+          p = 0;
+        p < this.perlin_octaves;
+        p++
+      ) {
+        var f = P + (R << PERLIN_YWRAPB) + (S << PERLIN_ZWRAPB);
+        ((E = h(o)),
+          (t = h(L)),
+          (_ = this.perlin[f & PERLIN_SIZE]),
+          (_ += E * (this.perlin[(f + 1) & PERLIN_SIZE] - _)),
+          (e = this.perlin[(f + PERLIN_YWRAP) & PERLIN_SIZE]),
+          (_ +=
+            t *
+            ((e +=
+              E * (this.perlin[(f + PERLIN_YWRAP + 1) & PERLIN_SIZE] - e)) -
+              _)),
+          (f += PERLIN_ZWRAP),
+          (e = this.perlin[f & PERLIN_SIZE]),
+          (e += E * (this.perlin[(f + 1) & PERLIN_SIZE] - e)),
+          (N = this.perlin[(f + PERLIN_YWRAP) & PERLIN_SIZE]),
+          (e +=
+            t *
+            ((N +=
+              E * (this.perlin[(f + PERLIN_YWRAP + 1) & PERLIN_SIZE] - N)) -
+              e)),
+          (a += (_ += h(l) * (e - _)) * s),
+          (s *= this.perlin_amp_falloff),
+          (P <<= 1),
+          (R <<= 1),
+          (S <<= 1),
+          (o *= 2) >= 1 && (P++, o--),
+          (L *= 2) >= 1 && (R++, L--),
+          (l *= 2) >= 1 && (S++, l--));
+      }
+      return a;
+    },
+  };
 </script>
 
 <script>
-    let canvas = document.getElementById("animation");
-    let ctx = canvas.getContext("2d", {alpha: false});
-    ctx.imageSmoothingEnabled = false;
+  let canvas = document.getElementById("animation");
+  let ctx = canvas.getContext("2d", { alpha: false });
+  ctx.imageSmoothingEnabled = false;
 
-    let columns = 0;
-    let rows = 0;
+  let columns = 0;
+  let rows = 0;
 
-    let bg = [24, 24, 27];
+  let bg = [24, 24, 27];
 
-    function readBackground() {
-        let parsed = getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g);
-        if (parsed && parsed.length >= 3) {
-            bg = parsed.slice(0, 3).map(Number);
-        }
+  function readBackground() {
+    let parsed = getComputedStyle(document.body).backgroundColor.match(
+      /[\d.]+/g,
+    );
+    if (parsed && parsed.length >= 3) {
+      bg = parsed.slice(0, 3).map(Number);
+    }
+  }
+
+  function resize() {
+    let rect = canvas.getBoundingClientRect();
+
+    columns = Math.ceil(rect.width / 24);
+    rows = 19 - (canvas.width > 800 ? 0 : 2);
+
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    readBackground();
+    ctx.fillStyle = `rgb(${bg[0]}, ${bg[1]}, ${bg[2]})`;
+    ctx.fillRect(0, 0, rect.width, rect.height);
+  }
+
+  resize();
+  window.addEventListener("resize", resize);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", resize);
+
+  function drawHex(x, y, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    let radius = 32;
+    let ox = y % 2 == 0 ? 29 : 0;
+    for (let i = 0; i < 6; i++) {
+      let xx = x * 58 + ox + radius * Math.cos((i * Math.PI) / 3 + Math.PI / 6);
+      let yy = y * 50 + radius * Math.sin((i * Math.PI) / 3 + Math.PI / 6);
+      if (i == 0) ctx.moveTo(xx, yy);
+      else ctx.lineTo(xx, yy);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  let noise = new Noise();
+
+  function draw() {
+    ctx.fillStyle = `rgb(${bg[0] | 0}, ${bg[1] | 0}, ${bg[2] | 0})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let dark = (bg[0] + bg[1] + bg[2]) / 3 < 128;
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < columns; x++) {
+        // if (y > 11 && y + (x % 11) + (x % 3) - 16 > x % 6) continue;
+        let v = noise.get(x / 10, y / 10, Date.now() / 2500) * 3 - 1.5;
+        let r = 0 * (1 - v) + 60 * v;
+        // r = Math.max(12, Math.min(60, r));
+        let t = (r - 1) / 60;
+        if (t < 0.0) continue;
+        let R = bg[0] + t * (dark ? 48 : -71);
+        let G = bg[1] + t * (dark ? 48 : -71);
+        let B = bg[2] + t * (dark ? 72 : -44);
+        drawHex(x, y, `rgb(${R | 0}, ${G | 0}, ${B | 0})`);
+      }
     }
 
-    function resize() {
-        let rect = canvas.getBoundingClientRect();
-
-        columns = Math.ceil(rect.width / 24);
-        rows = 19 - (canvas.width > 800 ? 0 : 2);
-
-        canvas.width = rect.width;
-        canvas.height = rect.height;
-        readBackground();
-        ctx.fillStyle = `rgb(${bg[0]}, ${bg[1]}, ${bg[2]})`;
-        ctx.fillRect(0, 0, rect.width, rect.height);
-    }
-
-    resize();
-    window.addEventListener("resize", resize);
-    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", resize);
-
-    function drawHex(x, y, color) {
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        let radius = 32;
-        let ox = y % 2 == 0 ? 23.5 : 0;
-        for (let i = 0; i < 6; i++) {
-            let xx = x * 47 + ox + radius * Math.cos(i * Math.PI / 3 + Math.PI / 6);
-            let yy = y * 42 + radius * Math.sin(i * Math.PI / 3 + Math.PI / 6);
-            if (i == 0) ctx.moveTo(xx, yy);
-            else        ctx.lineTo(xx, yy);
-        }
-        ctx.closePath();
-        ctx.fill();
-    }
-
-    let noise = new Noise();
-
-    function draw() {
-        ctx.fillStyle = `rgb(${bg[0] | 0}, ${bg[1] | 0}, ${bg[2] | 0})`;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        let dark = (bg[0] + bg[1] + bg[2]) / 3 < 128;
-        for (let y = 0; y < rows; y++) {
-            for (let x = 0; x < columns; x++) {
-                if (y > 11 && (y + x % 11 + x % 3) - 16 > x % 6) continue;
-                let v = noise.get(x / 10, y / 10, Date.now() / 2500) * 3 - 1.5;
-                let r = 12 * (1 - v) + 60 * v;
-                r = Math.max(12, Math.min(60, r));
-                let t = (r - 12) / 48;
-                if (t < 0.08) continue;
-                let R = bg[0] + t * (dark ? 48 : -71);
-                let G = bg[1] + t * (dark ? 48 : -71);
-                let B = bg[2] + t * (dark ? 72 : -44);
-                drawHex(x, y, `rgb(${R | 0}, ${G | 0}, ${B | 0})`);
-            }
-        }
-
-        window.requestAnimationFrame(draw);
-    }
     window.requestAnimationFrame(draw);
-
+  }
+  window.requestAnimationFrame(draw);
 </script>
-{{ endblock }}
-
-{{extends "pages/normal_page"}}
+{{ endblock }} {{extends "pages/normal_page"}}
