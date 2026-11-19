@@ -1,0 +1,543 @@
+<h2>
+    A Worthwhile Wait...
+</h2>
+
+<p>
+    Over the past 2 years, Onyx has undergone a lot of changes and improvements.
+    Every time I finished a major enhancement, it never felt like the right time
+    to release a new version of the language because other aspects of that change
+    were not fully realized. Now, after a lot of iteration, Onyx is more polished
+    and capable than ever before.
+</p>
+
+<p>
+    Before getting into the changes, the first notable change is the version naming.
+    Instead of continually incrementing a number at the end with no semantic meaning,
+    versions are now named by the year and month they are released, with point releases
+    if multiple versions are released in the same month. This does not mean that there
+    necessarily will be monthly releases.
+</p>
+
+<p>
+    Onyx is still in <em>beta</em>, but this release is a large step towards stabilization
+    of the first "edition" of Onyx. If Onyx ever becomes big enough to warrant
+    a locked down, critical fixes only release, it will likely be similar to
+    <a href="https://doc.rust-lang.org/edition-guide/editions/">Rust Editions</a>.
+</p>
+
+<p>
+    Enough preamble, let's talk about what changed this version.
+</p>
+
+<h2>
+    1. Major Refactoring
+</h2>
+
+<p>
+    I won't delve too much into the details here, but the Onyx compiler underwent
+    2 major refactorings that enabled a lot of new features:
+</p>
+<ol>
+    <li>
+        <b>Separate the compiler logic from the command-line interface.</b>
+        You can now use <code>libonyx</code> and <code>onyx.h</code> from any C/C++
+        project to compile and run an Onyx program from within any other project.
+        This opens the door for embedding Onyx in game-engines, editors, or a plugin system.
+    </li>
+    <li>
+        <b>Simplify the type-checking phase of the compiler.</b>
+        Type-checking used to be a two-phase process which prohibitted some of the
+        new features discussed below. This was also a huge simplification win.
+    </li>
+</ol>
+
+<h2>
+    2. New Language Features
+</h2>
+
+<p>
+    We will get started with new features in the language itself.
+</p>
+
+<h3>
+    For-loops are Macros
+</h3>
+
+<p>
+    For-loops were majorly refactored.
+    Instead of the compiler having a set of known iterable types that it would generate the code for,
+    all for-loops are implicitly converted into a call of <code>__for_expansion</code> with three arguments:
+    the iterable, for-expansion flags, and the body of the code.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// A for-loop like this:
+for x, y in iterable {
+    // body
+}
+// Is exactly the same as:
+__for_expansion(iterable, .{}, [x, y] {
+    // body
+})</code></pre>
+
+<p>
+    All of the for-loop types that the compiler supported before are now implemented in the userland standard library.
+    You can see them in <a href="https://github.com/onyx-lang/onyx/tree/master/core/operations.onyx"><code>core/operations.onyx</code></a>.
+</p>
+
+<p>
+    Writing a for-loop for your own custom type is very easy; simply add an overload to the <code>__for_expansion</code> global overload set.
+    You may want to support multiple "shapes" of a for-loop, so you can provide multiple overloads that use a <code>where</code> clause on
+    the number of captures, or the captures' types.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// A custom type we want to be iterable
+Pairs_Iter :: struct (T: type_expr) {
+    elems: [] T
+}
+
+pairs :: (arr: [] $T) => Pair_Iter(T).{arr}
+
+#overload
+__for_expansion :: macro (pairs: Pairs_Iter($T), $flags: __For_Expansion_Flags, $body: Code)
+    where body.capture_count == 2
+{
+    elements := pairs.elems
+    for i in 0 .. elements.count - 1 {
+        for j in i+1 .. elements.count {
+            // Use #scope to make sure i, j, and elements are not visible
+            #unquote body(elements[i], elements[j]) #scope(body)
+        }
+    }
+}
+
+main :: () {
+    arr := .[1, 2, 3]
+    for x, y in pairs(arr) {
+        printf("({}, {})\n", x, y)
+    }
+}
+
+// (1, 1)
+// (1, 2)
+// ...
+</code></pre>
+
+<h3>
+    Improved Optional Usability
+</h3>
+
+<p>
+    When working with optionals, it is very common to want to write: "If there is a value, run this code with the value".
+    Before, the way to do that would be with a <code>switch</code> statement, or <code>Optional.with</code>, but now
+    there is a special syntax on <code>if</code>s and <code>while</code>s to extract the value out of an optional if present.
+</p>
+
+<pre class="hljs"><code class="language-onyx">optional_int: ? i32 = 123
+
+if optional_int as value {
+    // value is i32
+}
+</code></pre>
+
+<p>
+    Combining this with the <code>&lt;union&gt;.&lt;variant&gt;</code> syntax that turns a union into an optional of a variant,
+    you can now easily write code that works with all union types when you only care about a certain case.
+    In this example, the body of the <code>if</code> only runs when the result was holding the <code>Ok</code> variant.
+</p>
+
+<pre class="hljs"><code class="language-onyx">result: Result(i32, str) = operation()
+
+// result.Ok is ? i32
+if result.Ok as value {
+    // value is i32
+}
+</code></pre>
+
+<p>
+    This construct also works with <code>while</code> loops, allowing you to create another kind of "iterable" where you repeatedly call a function to get the next value, until it is empty.
+    (much like Zig)
+</p>
+
+<pre class="hljs"><code class="language-onyx">iterable: Iterator(i32) = Iterator.from(1 .. 20)
+
+while Iterator.next(iterable) as value {
+    println(value)
+}
+
+// 1
+// 2
+// ...
+</code></pre>
+
+<h3>
+    Polymorphic Return Types
+</h3>
+
+<p>
+    You can have a polymorphic variable introduced in the return-type.
+    This forces the polymorph solver to use the expected type from the call-site to fill in the variable.
+    If there is no expected return type, you will get a compile error.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// Solve R from the call-site
+give_123 :: () -> $R {
+    return 123
+}
+
+give_result :: (v: R) -> Result($R, str) {
+    return .{Ok = v}
+}
+
+main :: () {
+    i123: i32 = give_123()
+    f123 := cast(f32) give_123()
+
+    float_result: Result(f32, str) = give_result(123)
+
+    println(i123)
+    println(f123)
+    println(float_result)
+}
+
+// 123
+// 123.0000
+// Ok(123.0000)
+</code></pre>
+
+<p>
+    This change also influences overloaded functions.
+    If multiple overload options work, the result type will be used as a tie-breaker.
+    You can combine this with <code>where</code> for some interesting results.
+</p>
+
+
+<pre class="hljs"><code class="language-onyx">use core {intrinsics, println}
+
+produce_value :: #match {
+    () -> str { return "a string" }
+
+    () -> $R where intrinsics.types.type_is_number(R) {
+        return 123
+    }
+}
+
+main :: () {
+    println(cast(str) produce_value())
+    println(cast(i32) produce_value())
+}
+
+// a string
+// 123
+</code></pre>
+
+<p>
+    This feature is used by a new <code>interface</code> called <code>From</code> and a overloaded procedure called <code>From.from</code>.
+    This interface is very similar to Rust's "From" trait.
+    When you write <code>x: i32 = From.from(y)</code>, it sees if there is a definition of <code>i32.from</code> that takes the given type.
+</p>
+
+<h3>
+    Package Parameters
+</h3>
+
+<p>
+    The final feature worth mentioning is <em>package parameters</em>.
+    This feature came about from noticing that many times when I'm writing packages,
+    there are some natural options that I want the end user to be able to control,
+    such as printing debug information, or even an injectable hook into the processing.
+    Since this was such a common thing I was noticing, I decided to make it a language
+    feature instead of using slightly hacky <code>#if #defined()</code> everywhere.
+    Here is how <code>#package_parameters</code> work.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// foo.onyx
+package foo
+
+// Declare package parameters and their default values.
+// If a parameter doesn't have a default value, one must be supplied by the user.
+#package_parameters(
+    log_level: Log_Level
+    event_hook: (Event) -> void = (ev: Event) {}
+) {
+    // This block is for things to be compiled before the parameters are known.
+    // Use this block for types needed by the parameters.
+    Log_Level :: enum { Debug; Info; Warning; Error }
+
+    Event :: union {
+        Event1: i32
+        Event2: str
+    }
+}
+
+
+// main.onyx
+#load "foo"
+
+use foo
+
+// Supply package parameters to `foo`.
+// At most 1 #package_parameters can be used per package.
+#package_parameters foo(log_level=.Info, event_hook=main_event_hook)
+
+main_event_hook :: (ev: foo.Event) {
+    // ...
+}
+
+// Some of the core libraries support parameters too.
+#package_parameters core.alloc.heap(Debug = true)
+</code></pre>
+
+<p>
+    You can also support package parameters from the command-line using <code>--param</code>.
+    You can pass arbitrary strings as expressions, even function bodies, but be reasonable.
+</p>
+
+<pre class="hljs"><code class="language-sh">onyx run --param 'foo.log_level=.Info' --param 'foo.event_hook=(ev) => {}' main.onyx
+</code></pre>
+
+<h2>
+    3. New Targets and Integrations
+</h2>
+
+<h3>
+    Compiler as a Library
+</h3>
+
+<p>
+    The compiler's command-line interface was completely rewritten to split out
+    a linkable, standalone C-library. The <code>libonyx</code> library can be used
+    to integrate Onyx within any existing native project. Here is an example of
+    using the library to compile a simple Onyx program and write the WASM to a file.
+</p>
+
+<pre class="hljs"><code class="language-onyx">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include "onyx.h"
+
+int main(void) {
+    // Create a compilation context.
+    onyx_context_t* ctx = onyx_context_create();
+
+    // Set some compilation options.
+    onyx_set_option_int(ctx, ONYX_OPTION_MULTI_THREADING, 1);
+    onyx_set_option_int(ctx, ONYX_OPTION_PLATFORM, ONYX_PLATFORM_ONYX);
+    onyx_add_mapped_dir(ctx, "core", -1, "/home/you/.onyx/core", -1);
+
+    // For this example, just inject raw code.
+    // You would probably use onyx_add_source().
+    onyx_inject_code(ctx,
+        "package main\n"
+        "use core {println}\n"
+        "main :: () {\n"
+        "    println(\"Hello, World!\");\n"
+        "}",
+        -1
+    );
+
+    // Pump the compilation until it completes.
+    // You can handle some compilation events here like
+    // ONYX_EVENT_LOG or ONYX_EVENT_ALL_TYPES_CHECKED
+    while (onyx_pump(ctx) == ONYX_PUMP_CONTINUE) {
+        // Maybe do something with onyx_event_*
+    }
+
+    // Print errors, if any.
+    int errors = onyx_error_count(ctx);
+    if (errors > 0) {
+        for (int i = 0; i < errors; i++) {
+            printf("Error at %s:(%d, %d) | %s\n",
+                onyx_error_filename(ctx, i),
+                onyx_error_line(ctx, i),
+                onyx_error_column(ctx, i),
+                onyx_error_message(ctx, i)
+            );
+        }
+        return 1;
+    }
+
+    // Create and write output file.
+    int wasm_file_size = onyx_output_length(ctx, ONYX_OUTPUT_TYPE_WASM);
+    char *wasm_buffer = malloc(wasm_file_size);
+    onyx_output_write(ctx, ONYX_OUTPUT_TYPE_WASM, wasm_buffer);
+
+    FILE *wasm_file = fopen("hello.wasm", "wb");
+    fwrite(wasm_buffer, wasm_file_size, 1, wasm_file);
+    fclose(wasm_file);
+
+    free(wasm_buffer);
+    onyx_context_free(ctx);
+}</code></pre>
+
+<p>
+    Compiling is very easy on GCC and Clang. The header file and library are included in the distribution of the toolchain.
+</p>
+
+<pre class="hljs"><code class="language-sh">gcc -I$ONYX_PATH/include -L$ONYX_PATH/lib -lonyx program.c
+</code></pre>
+
+<h3>
+    Just-In-Time and Ahead-Of-Time Native Compilation
+</h3>
+
+<p>
+    Onyx's WebAssembly runtime saw a lot of improvements over the past couple months.
+    The interpreter itself is about 40% faster thanks to shrinking internal data structure
+    sizes and changing from a tail-call approach to <code>goto *instructions[index];</code>.
+</p>
+
+<p>
+    There was also a lot of work done to transpile the Onyx virtual machine bytecode instructions
+    to <strong>native x86-64 and ARM64.</strong> This was done very naïvely in a non-optimizing single-pass,
+    so there will be more work done in the future to make the resulting machine code even faster.
+    That being said, it is still <strong>2-4x</strong> faster than the bytecode interpreter.
+</p>
+
+<p>
+    You can take advantage of the new native compilation by passing <code>--jit</code>.
+    You can also set <code>ONYX_JIT=1</code> in your environment to enable it everywhere.
+</p>
+
+<pre class="hljs"><code class="language-sh">onyx run --jit program.onyx
+</code></pre>
+
+<p>
+    With native compilation underway, it was easy to add the ability to compile Onyx to a native executable
+    on MacOS and Linux. You can use <code>onyx build-exe</code> to produce the executable. Note, this does
+    require a C compiler/linker on your system that is accessible by running the <code>cc</code> command.
+    This is just used to link the object file with a native-helper archive.
+</p>
+
+<pre class="hljs"><code class="language-sh">$ onyx build-exe -o hello hello_world.onyx
+$ ./hello
+Hello World
+$ ldd ./hello
+    linux-vdso.so.1 (0x000071d5b86c8000)
+    libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x000071d5b853c000)
+    libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x000071d5b8348000)
+    /lib64/ld-linux-x86-64.so.2 (0x000071d5b86ca000)
+</code></pre>
+
+<p>
+    The resulting executable does not have many external dependencies, just the C standard library and math library,
+    as well as the runtime dynamic linking libraries on Linux. Getting rid of the libc and libm should be relatively
+    easy, and the dynamic linking libraries are necessary for linking to other libraries at runtime, like GLFW or Raylib.
+</p>
+
+<p>
+    Native compilation is still under a lot of development, but it is a promising avenue for making Onyx more practical
+    for real-world applications.
+</p>
+
+<h3>
+    WASM Object Linking
+</h3>
+
+<p>
+    In the past, if you wanted to integrate with other WASM code, there was no way to do so in Onyx.
+    Now, you can use the <code>#object</code> directive to statically link a WASM
+    file produced by Clang or GCC.
+</p>
+
+<pre class="hljs"><code class="language-onyx">use core.libc
+
+#object "some_library.wasm" {
+    add :: (x, y: i32) -> i32 ---
+
+    // Use #provide to provide externs to the library
+    #provide {
+        malloc :: (size: i32) -> rawptr ---
+    }
+
+    // Use #namespace to provide a whole package or structure
+    #provide { #namespace libc }
+}
+
+main :: () {
+    // Called just like a normal procedure.
+    println(add(1, 2))
+}
+</code></pre>
+
+<h3>
+    WIT Bindgen
+</h3>
+
+<p>
+    The final integration to mention is the <a href="https://component-model.bytecodealliance.org">WASM Component Model</a>.
+    The missing piece here was being able to generate Onyx bindings for a WIT world.
+    Now, you can use the provided <code>onyx wit-bindgen</code> tool to generate these bindings.
+    Internally it uses <code>wasm-tools</code> command to parse WIT files into a digestable format,
+    so that needs to be installed to work.
+</p>
+
+<pre class="hljs"><code class="language-sh">onyx wit-bindgen wit/ --world command --out generated
+</code></pre>
+
+<p>
+    There is also a new platform supported for WASI Preview 2, called <code>wasip2</code>.
+</p>
+
+<h2>
+    4. Compilation Info and the Language Server
+</h2>
+
+<p>
+</p>
+
+<h2>
+    5. Deprecation Cleanup
+</h2>
+
+<p>
+    There was a large cleanup in the core library to standardize the shape of
+    the APIs. There was an old convention to put functions that operate on a type
+    in a package with that type. Now, the convention is to put functions that operate
+    on a type directly on the type.
+</p>
+
+<p>
+    For example, <code>core.map</code> was used to operate on <code>Map</code>s
+    but now you just use the <code>Map</code> type directly.
+</p>
+
+<pre class="hljs"><code class="language-onyx">// old
+use core.map
+
+main :: () {
+    m: Map(str, i32)
+    map.put(&m, "test", 123)
+    println(map.get(&m, "test"))
+}
+
+// new
+main :: () {
+    // Map is in the global scope
+    m: Map(str, i32)
+    Map.put(&m, "test", 123)
+    println(Map.get(&m, "test"))
+}
+</code></pre>
+
+<p>
+    The reason this is the convention now is to allow for using the method-call operator
+    in more places. This is the same code using the method call operator.
+</p>
+<pre class="hljs"><code class="language-onyx">main :: () {
+    m: Map(str, i32)
+    m->put("test", 123)
+    println(m->get("test"))
+}
+</code></pre>
+
+<p>
+    If you have existing Onyx codebases, you may need to update them to use this new convention.
+    Most types had aliases for their methods for several years, so there is a chance you were
+    already using this convention. This release just fully removes the old top-level functions.
+</p>
+
+<h2>
+    Looking Forward
+</h2>
+
+<p>
+</p>

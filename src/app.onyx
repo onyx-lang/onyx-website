@@ -1,12 +1,18 @@
+#package_parameters(
+    Debug: bool = false
+    Mode: Operation_Mode = .Server
+) {
+    Operation_Mode :: enum {
+        Server
+        CGI
+    }
+}
+
 use core {package, *}
 use runtime
 use otmp
 use nimbus {*}
 use core.encoding.json
-
-runtime.vars.Enable_Heap_Debug :: true
-// runtime.vars.Debug :: true
-// runtime.vars.CGI_MODE :: true
 
 reg: otmp.TemplateRegistry
 Context.render :: (c: Context, template: str, vars: any, status := 200) {
@@ -22,20 +28,17 @@ Context.render :: (c: Context, template: str, vars: any, status := 200) {
 
 main :: () {
     load_library_list()
-    
+
     reg = otmp.registry()
     reg->load_directory("www/templates", ".html")
 
     news_articles = .{
-        resource = .{}
         max_age = 60 * 60 // 1 hour
-
         fetch_resource = fetch_articles
         release_resource = release_articles
     }
 
     examples = .{
-        resource = .{}
         max_age = 60 * 60 * 24 // 1 day
         fetch_resource = load_examples
         release_resource = delete_examples
@@ -45,7 +48,7 @@ main :: () {
 
     set_mime_type("svg", "image/svg+xml")
 
-    #if !#defined(runtime.vars.CGI_MODE) {
+    #if Mode != .CGI {
         n->add(logger(style=.V2))
     }
 
@@ -64,7 +67,7 @@ main :: () {
 
     n->add(static("/static/", "./www/static/"))
 
-    #if #defined(runtime.vars.Debug) {
+    #if Debug {
         n->add(c => {
             reg->refresh_templates()
             c->next()
@@ -81,7 +84,7 @@ main :: () {
 
     n->add_tagged_routes()
 
-    #if #defined(runtime.vars.CGI_MODE) {
+    #if Mode == .CGI {
         n->cgi()
 
     } else {
@@ -96,4 +99,3 @@ main :: () {
         logf(.Info, "Server stopping...")
     }
 }
-

@@ -1,5 +1,3 @@
-package main
-
 use core {package, tprintf}
 use core.time
 
@@ -42,4 +40,3 @@ time.duration :: (t2, t1: time.Timestamp) -> i32 {
     t2_ := t2
     return ~~(t2_->to_epoch() - t1_->to_epoch())
 }
-

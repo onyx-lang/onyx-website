@@ -1,4 +1,11 @@
-#load "./lib/packages"
+package main
 
+#load "./lib/packages"
 #load "./src"
 
+// #package_parameters core.alloc.heap(
+//     Debug = true
+//     Clear_Freed_Memory = true
+// )
+
+// #package_parameters main(Debug = true)
