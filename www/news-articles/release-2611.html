@@ -419,8 +419,9 @@ $ ldd ./hello
 
 <p>
     The resulting executable does not have many external dependencies, just the C standard library and math library,
-    as well as the runtime dynamic linking libraries on Linux. Getting rid of the libc and libm should be relatively
-    easy, and the dynamic linking libraries are necessary for linking to other libraries at runtime, like GLFW or Raylib.
+    as well as the runtime dynamic linking libraries on Linux. Getting rid of the libc and libm would be relatively
+    easy in the future, and the dynamic linking libraries are necessary for linking to other libraries at runtime,
+    like GLFW or Raylib.
 </p>
 
 <p>
@@ -482,6 +483,96 @@ main :: () {
 </h2>
 
 <p>
+    Another large feature this release is "<strong>compilation info</strong>", which is the compiler
+    exporting about symbols, types, and more to your build program or compiler extension so you can do
+    interesting things with it. Under the hood, compilation info is serialized to a <a href="https://protobuf.dev">protobuf</a>,
+    which can be deserialized by the supplied <code>onyx.toolchain.CompilationInfo</code> library, or
+    by any protobuf toolchain in any language. The reason for exporting a protobuf is because the
+    compilation info has to be accessible both to the consumer of <code>libonyx</code>, which could be
+    any language (in principle), and a compiler extension, which gets its input over a socket from the
+    compiler. Protobuf was a natural choice for this due to its relative decoding ease and mature cross
+    language tooling.
+</p>
+
+<p>
+    Here is an contrived example of printing all of the function names and types in the <code>main</code> package.
+    It is also using the provided <code>onyx.toolchain.Builder</code> which links the Onyx compiler library
+    into an Onyx program, so you can write an Onyx program to compile another Onyx program; very useful
+    if you have a complicated build process with multiple steps and options.
+</p>
+
+<pre class="hljs"><code class="language-onyx">#load "core:onyx/toolchain/module"
+
+use core {*}
+use onyx.toolchain {Builder, CompilationInfo}
+
+program :: #code_as_str {
+    use core {*}
+
+    func1 :: (x: i32) {
+        println(x)
+    }
+
+    func2 :: (x: str) -> i32 {
+        if conv.parse(i32, x) as v {
+            return v
+        }
+        return 0
+    }
+
+    main :: () {
+        func1(10)
+        func1(func2("123"))
+    }
+}
+
+main :: () {
+    b := Builder.make()
+    b->enable(.MULTI_THREADING)
+    b->set_platform(.ONYX)
+
+    core_path := os.Path.join(os.env("ONYX_PATH") ?? "", "core")
+    b->map_dir("core", core_path)
+
+    // Need to skip the '{' and '}' surrounding the code
+    prog := program[1 .. program.count - 1]
+    b->inject_source_as("program.onyx", prog)
+
+    b->compile()
+
+    // Should do some error checking...
+
+    // Get the compilation info
+    info: CompilationInfo = b->compilation_info()
+
+    // Find the package named `main`
+    if info->package_named("main") as main_package {
+        // Get the symbol ids inside the package public scope
+        main_symbols := info->symbols_in_scope(main_package.scope_id)
+        for symbol_id in main_symbols {
+            // Get the actual symbol information
+            if info->get_symbol(symbol_id) as symbol {
+                // Only print for functions
+                if symbol.kind != .Function do continue
+
+                // If the symbol doesn't have a type (polymorphic), skip it
+                if info->get_type(symbol.type_id) as type {
+                    eprintf("{}: {}\n", symbol.name, type.name)
+                }
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>
+    Compilation info does not tell you everything about your program. It does not, for example,
+    tell you anything about the syntax tree nodes of functions. This may be added in the future,
+    but that would require a lot more events to be sent which could slow down compilation even
+    more. The information that is already there is enough to make the language server for Onyx,
+    <code>onyx lsp</code>, smart enough to do simple <em>auto-completion</em> of struct fields,
+    methods, and package symbols. It is far from perfect, but will continue to get better with
+    further releases.
 </p>
 
 <h2>
@@ -536,8 +627,20 @@ main :: () {
 </p>
 
 <h2>
-    Looking Forward
+    Try it out!
 </h2>
 
 <p>
+    Like usual, to update to the newest version of Onyx simply use the same install script found on the homepage.
+    It will automatically detect your previous install and will override it with the new version.
+</p>
+
+<pre class="hljs"><code class="language-sh">$ sh <(curl https://get.onyxlang.io -sSfL)
+</code></pre>
+
+<p>
+    You can also run <code>onyx self-upgrade</code> if you are on MacOS or Linux!
+</p>
+<p>
+    Happy programming!
 </p>
