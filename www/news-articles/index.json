@@ -2,8 +2,8 @@
     {
         "name": "Beta Release 2611",
         "path": "release-2611",
-        "date": "19th November 2026",
-        "description": ""
+        "date": "23rd November 2026",
+        "description": "The past two years of Onyx development has been sporadic and infrequent, but fruitful. This release brings new compilation targets, new integrations, and more stability."
     },
     {
         "name": "Beta Release 0.1.13",
