@@ -1059,7 +1059,6 @@ canvas#animation {
 .docs-nav a[data-active] {
     background: var(--hover);
     color: var(--accent);
-    box-shadow: inset 2px 0 0 var(--accent);
 }
 
 .docs-nav a.docs-nav-sub {
